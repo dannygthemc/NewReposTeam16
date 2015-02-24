@@ -23,8 +23,17 @@ public class weatherApp {
 	public weatherApp(){
 		current = new weatherData();
 		longTerm = new weatherData[5];	//Covers next 5 days
+		for (int i = 0; i < longTerm.length; i ++){
+			longTerm[i] = new weatherData();
+		}
 		shortTerm = new weatherData[8];	//Covers 24 hours
+		for (int i = 0; i < shortTerm.length; i ++){
+			shortTerm[i] = new weatherData();
+		}
 		myLocations = new location[5];
+		for (int i = 0; i < myLocations.length; i ++){
+			myLocations[i] = new location();
+		}
 		customView = new customWeatherPref();
 		
 	}
@@ -81,7 +90,7 @@ public class weatherApp {
 	
 	public void removeLocation(location A){
 		int i = 0;
-		while (myLocations[i].cityID != A.cityID) i ++;
+		while (myLocations[i].getCityID() != A.getCityID()) i ++;
 		while (i < myLocations.length - 1){
 			myLocations[i] = myLocations[i + 1];
 			i ++;

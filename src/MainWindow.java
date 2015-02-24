@@ -7,6 +7,7 @@ import javax.swing.JFrame; //used to create a Jframe
 
 
 
+
 //used to create a menu bar and responses to user Interface
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,6 +25,7 @@ import javax.swing.JMenuItem;
 
 
 
+
 //used to create controls
 import java.awt.Dimension;
 import java.awt.Image;
@@ -32,10 +34,12 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JRadioButton;
+
 
 
 
@@ -56,7 +60,8 @@ import javax.swing.GroupLayout;
 
 
 
-import org.imgscalr.Scalr;
+//import org.imgscalr.Scalr;
+
 
 
 //used to organize border layout
@@ -66,7 +71,6 @@ import java.io.IOException;
 
 	public class MainWindow extends JFrame  {
 		
-		private weatherData obj = new weatherData();
 		private weatherApp app = new weatherApp();
 		
 		
@@ -85,8 +89,15 @@ import java.io.IOException;
 			//this.add(this.createForm()); 
 			
 			this.setLayout(new BorderLayout());
+			app.grab();
 			
-			this.add(this.createForm(), BorderLayout.CENTER);
+			
+			JTabbedPane tabbedPane = new JTabbedPane();
+			 tabbedPane.addTab("Current", null, this.createForm(app.getCurrent()),"");
+			 tabbedPane.addTab("Short Term", null, this.createMultiForm(app.getShortTerm()),"");
+			 tabbedPane.addTab("Long Term", null, this.createMultiForm(app.getLongTerm()),"");
+			 
+			this.add(tabbedPane, BorderLayout.CENTER);
 			
 		}
 		
@@ -109,11 +120,32 @@ import java.io.IOException;
 			return menubar;
 		}
 		
-		private JPanel createForm() {
+		private JPanel createMultiForm(weatherData[] range){
+			JPanel panel = new JPanel();
 			
-			weatherData tmp = new weatherData();
-			app.grab();
-			tmp = app.getCurrent();
+			JPanel[] pans = new JPanel[range.length];
+			for (int i = 0; i < range.length; i ++){
+				pans[i] = createForm(range[i]);
+				panel.add(pans[i]);
+			}
+//			GroupLayout layout = new GroupLayout(panel);
+//			layout.setAutoCreateGaps(true);
+//			layout.setAutoCreateContainerGaps(true);
+//			layout.setHorizontalGroup( layout.createSequentialGroup()
+//					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+//						.addComponent(pans[0])
+//						.addComponent(pans[1])
+//						.addComponent(pans[2])
+//						.addComponent(pans[3])
+//						.addComponent(pans[4])
+//						)
+//					 );
+//			panel.setLayout(layout);
+			return panel;
+			
+		}
+		
+		private JPanel createForm(weatherData tmp) {
 			
 			JPanel panel = new JPanel();
 			JLabel lblcity = new JLabel(tmp.getName() + ", " + tmp.getCount()  ); //displays temperature
@@ -138,10 +170,9 @@ import java.io.IOException;
 			JLabel lblset = new JLabel("Sunset Time: ");
 			JLabel lblset2 = new JLabel("" + tmp.getSunset());
 			
-			
 			BufferedImage pic = tmp.getIcon();
-			pic  = Scalr.resize(pic, 80);
-			JLabel lblPic = new JLabel(new ImageIcon(pic));
+			//pic  = Scalr.resize(pic, 80);
+			JLabel lblPic = new JLabel("Icon Image Commented Out");//new ImageIcon(pic));
 			
 			
 			//adds control with layout organization

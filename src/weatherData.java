@@ -20,7 +20,21 @@ public class weatherData {
 	
 	//instantiates an object of the class
 	public weatherData(){
-		
+		weatherIcon = null;
+		name = "Default";
+		country = "Default";
+		temp = 0;
+		windSpeed = 0;
+		windDir = 0;
+		pressure = 0;
+		humidity = 0;
+		condition = "Default";
+		minTemp = 0;
+		maxTemp = 0;
+		sunrise = "12345";
+		sunset = "12345";
+		lon = 0;
+		lat = 0;
 	}
 	
 	
