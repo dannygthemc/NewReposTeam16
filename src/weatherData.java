@@ -1,52 +1,139 @@
+import java.awt.image.BufferedImage;
 
 public class weatherData {
-	public int maxTemp;
-	public int minTemp;
-	public int speed;
-	public int airPressure;
-	public int humidity;
-	public String skyCondition;
-	public int sunset;//Should we make these strings?
-	public int sunrise;//Should we make these strings?
-	public String windDirection;
-	public int windDirectionDegree;
-	public int precipitation;
-	boolean metric; //Not in UML
+
+	private BufferedImage weatherIcon; //holds weather icon
+	private String name; //holds city name
+	private String country; //holds country name
+	private float temp; //holds temp data;
+	private float windSpeed; //holds wind speed
+	private float windDir; //holds wind direction in degrees
+	private float pressure; //holds air pressure
+	private float humidity; //holds humidity index
+	private String condition; //holds description of weather condition
+	private float minTemp; //holds expected min temp
+	private float maxTemp; //holds expected max temp
+	private String sunrise; //holds expected time of sunrise
+	private String sunset; //holds expected times of sunset
+	private float lon; //holds longitude data
+	private float lat; //holds latitude date
 	
+	//instantiates an object of the class
 	public weatherData(){
-		metric = true;
-		maxTemp = 0;
-		minTemp = 0;
-		speed = 0;
-		airPressure = 0;
-		humidity = 0;
-		skyCondition = "Default";
-		sunset = 0;
-		sunrise = 0;
-		windDirection = "Default";
-		precipitation = 0;
+		
 	}
 	
-	public void convertImperial() {
-		if (metric){
-			maxTemp = maxTemp * 9/5 + 32; //To F
-			minTemp = minTemp * 9/5 + 32; //To F
-			speed = (int)(3.28084 * speed); //To fps
-			airPressure = (int)(airPressure * 10 * 0.0145038);//To psi
-			precipitation = (int)(precipitation * 0.0393701);//To inches
-			metric = false;
-		}
+	
+	//assigns values to all variables
+	public void fill(BufferedImage pic, String city, String count, float temp2, float windSpeed2, float windDir2, float pressure2, float humidity2, String condit, float minTemp2, float maxTemp2, String rise, String set){
+		
+		weatherIcon = pic;
+		name = city;
+		country = count;
+		temp = temp2;
+		windSpeed = windSpeed2;
+		windDir = windDir2;
+		pressure = pressure2;
+		humidity = humidity2;
+		condition = condit;
+		minTemp = minTemp2;
+		maxTemp = maxTemp2;
+		sunrise = rise;
+		sunset = set;
 	}
 	
-	public void convertMetric(){
-		if(!metric){
-			maxTemp = 5/9 * (maxTemp - 32); //To C
-			minTemp = 5/9 * (minTemp - 32); //To C
-			speed = (int)(speed / 3.28084); //To m/s
-			airPressure = (int)(airPressure / (0.145038)); // To hPa
-			precipitation = (int)(precipitation / 0.0393701); // To mm
-			metric = true;
-		}
+	//methods to set the variables
+	public void setLon(float longitude){
+		lon = longitude;
+	}
+	public void setLat(float latitude){
+		lat= latitude; 
+	}
+	public void setName(String nm){
+		name = nm;
+	}
+	public void setCount(String count){
+		country = count; 
+	}
+	public void setTemp(float tmp){
+		temp = tmp;
+	}
+	public void setSpeed(float speed){
+		windSpeed = speed;
+	}
+	public void setDir(float dir){
+		windDir = dir;
+	}
+	public void setPress(float press){
+		pressure = press;
+	}
+	public void setHumid(float humid){
+		humidity = humid;
+	}
+	public void setCondit(String condit){
+		condition = condit;
+	}
+	public void setMin(float min){
+		minTemp = min;
+	}
+	public void setMax(float max){
+		maxTemp = max;
+	}
+	public void setSunrise(String rise){
+		sunrise = rise;
+	}
+	public void setSunset(String set){
+		sunset = set;
+	}
+	public void setIcon(BufferedImage icon){
+		weatherIcon = icon;
+	}
+	
+	//methods to get the variables
+	public Float getLon(){
+		return lon;
+	}
+	public Float getLat(){
+		return lat; 
+	}
+	public String getName(){
+		return name;
+	}
+	public String getCount(){
+		return country; 
+	}
+	public float getTemp(){
+		return temp;
+	}
+	public float getSpeed(){
+		return windSpeed;
+	}
+	public float getDir(){
+		return windDir;
+	}
+	public float getPress(){
+		return pressure;
+	}
+	public float getHumid(){
+		return humidity;
+	}
+	public String getCondit(){
+		return condition;
+	}
+	public float getMin(){
+		return minTemp;
+	}
+	public float getMax(){
+		return maxTemp;
+	}
+	public String getSunrise(){
+		return sunrise;
+	}
+	public String getSunset(){
+		return sunset;
+	}
+	public BufferedImage getIcon(){
+		return weatherIcon;
 	}
 	
 	
