@@ -23,10 +23,18 @@ public class weatherApp {
 	public weatherApp(){
 		current = new weatherData();
 		longTerm = new weatherData[5];	//Covers next 5 days
+		for (int i = 0; i < 5; i ++){
+			longTerm[i] = new weatherData();
+		}
 		shortTerm = new weatherData[10];	//Covers 24 hours
+		for (int i = 0; i < 10; i ++){
+			shortTerm[i] = new weatherData();
+		}
 		myLocations = new location[5];
+		for (int i = 0; i < 5; i ++){
+			myLocations[i] = new location();
+		}
 		customView = new customWeatherPref();
-		
 	}
 	
 	public weatherData getCurrent() {
@@ -67,11 +75,11 @@ public class weatherApp {
 	
 	public void addLocation(location A){
 		int j = 0;
-		while (j < myLocations.length && myLocations[j] != null) j ++;
+		while (j < myLocations.length && myLocations[j].getCityID() != 0) j ++;
 		if (j < myLocations.length) myLocations[j] = A;
 		else {
 			location[] temp = new location[myLocations.length + 1];
-			for (int i = 0; i < temp.length; i ++){
+			for (int i = 0; i < temp.length - 1; i ++){
 				temp[i] = myLocations[i];
 			}
 			temp[myLocations.length] = A;

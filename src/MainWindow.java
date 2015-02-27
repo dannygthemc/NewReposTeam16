@@ -1,13 +1,4 @@
 import javax.swing.JFrame; //used to create a Jframe
-
-
-
-
-
-
-
-
-
 //used to create a menu bar and responses to user Interface
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,14 +8,6 @@ import java.awt.image.BufferedImage;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-
-
-
-
-
-
-
-
 
 //used to create controls
 import java.awt.Dimension;
@@ -41,34 +24,20 @@ import javax.swing.ButtonGroup;
 import javax.swing.JRadioButton;
 
 
-
-
-
-
-
-
-
 //used to organize layout
 import java.awt.Color;
 
 import javax.swing.GroupLayout;
 
-
-
-
-
-
-
-
-
 import org.imgscalr.Scalr;
-
-
 
 //used to organize border layout
 import java.awt.BorderLayout;
 import java.io.File;
 import java.io.IOException;
+import javax.swing.JComboBox;
+import javax.swing.JTextField;
+import javax.swing.JOptionPane;
 
 	public class MainWindow extends JFrame  {
 		
@@ -286,6 +255,7 @@ import java.io.IOException;
 		//defines a Menu bar with a "File" option, which can be called by "alt + f"
 		//menu bar contains option for exiting current program
 		private JMenuBar createMenubar() {
+			//File ->Exit menu item
 			JMenuBar menubar = new JMenuBar();
 			JMenu mnuFile = new JMenu("File");
 			mnuFile.setMnemonic(KeyEvent.VK_F);
@@ -299,10 +269,67 @@ import java.io.IOException;
 			});
 			mnuFile.add(mniFileExit);
 			menubar.add(mnuFile);
+			
+			//Locations -> MyLocations
+			JComboBox locBar = new JComboBox();
+			for (int i = 0; i < app.getMyLocations().length; i ++){
+				location tempLoc = app.getMyLocations()[i];
+				if (tempLoc.getCityID() != 0){
+					locBar.addItem(tempLoc.getName());
+				} 
+				
+			}
+			if (locBar.getItemCount() == 0){
+				locBar.addItem("Save Loc: Empty");
+			}
+			locBar.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent event){
+					String item = ((JComboBox)event.getSource()).getSelectedItem().toString();
+					updateWeatherView(item);
+				}
+			});
+			menubar.add(locBar);
+			
+			//Search text box
+			JTextField txtBar = new JTextField("Search Location");
+			txtBar.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent event){
+					searchBoxUsed(((JTextField) event.getSource()).getText());
+				}
+			});
+			menubar.add(txtBar);
 			return menubar;
 		}
 		
+		//Refresh the views when saved city is clicked
+		private void updateWeatherView(String cityName){
+			location update = new location();
+			for (int i = 0; i < app.getMyLocations().length; i ++){
+				if (app.getMyLocations()[i].getName().equals(cityName));
+					update = app.getMyLocations()[i];
+			}
+			//TODO:
+			///Update the weather view based on 'update' location
+		}
 		
+		//Refresh the views when new city is searched
+		private void searchBoxUsed(String txt){
+			location searchedLoc = new location();
+			searchedLoc.setCityID(1234);
+			searchedLoc.setName(txt);
+			//TODO:
+			//Assign the new location a location object from Omar's database
+			//Verify it was a correct entry
+			JFrame frame = new JFrame();
+			int result = JOptionPane.showConfirmDialog(frame, "Did you mean: " + txt + " Lat:1235 Lon:1234?");
+		    // JOptionPane.showInternalConfirmDialog(desktop, "Continue printing?");
+		    if (JOptionPane.YES_OPTION == result) {
+				app.addLocation(searchedLoc);
+				this.initUI();
+		    }
+		}
 		
 		private JPanel createForm() {
 			
