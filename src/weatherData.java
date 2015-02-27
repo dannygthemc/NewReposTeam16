@@ -20,27 +20,15 @@ public class weatherData {
 	
 	//instantiates an object of the class
 	public weatherData(){
-		weatherIcon = null;
-		name = "Default";
-		country = "Default";
-		temp = 0;
-		windSpeed = 0;
-		windDir = 0;
-		pressure = 0;
-		humidity = 0;
-		condition = "Default";
-		minTemp = 0;
-		maxTemp = 0;
-		sunrise = "12345";
-		sunset = "12345";
-		lon = 0;
-		lat = 0;
+		
 	}
 	
 	
 	//assigns values to all variables
-	public void fill(BufferedImage pic, String city, String count, float temp2, float windSpeed2, float windDir2, float pressure2, float humidity2, String condit, float minTemp2, float maxTemp2, String rise, String set){
+	public void fill(float longit, float latit, BufferedImage pic, String city, String count, float temp2, float windSpeed2, float windDir2, float pressure2, float humidity2, String condit, float minTemp2, float maxTemp2, String rise, String set){
 		
+		lon = longit;
+		lat = latit;
 		weatherIcon = pic;
 		name = city;
 		country = count;

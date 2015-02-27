@@ -23,17 +23,8 @@ public class weatherApp {
 	public weatherApp(){
 		current = new weatherData();
 		longTerm = new weatherData[5];	//Covers next 5 days
-		for (int i = 0; i < longTerm.length; i ++){
-			longTerm[i] = new weatherData();
-		}
-		shortTerm = new weatherData[8];	//Covers 24 hours
-		for (int i = 0; i < shortTerm.length; i ++){
-			shortTerm[i] = new weatherData();
-		}
+		shortTerm = new weatherData[10];	//Covers 24 hours
 		myLocations = new location[5];
-		for (int i = 0; i < myLocations.length; i ++){
-			myLocations[i] = new location();
-		}
 		customView = new customWeatherPref();
 		
 	}
@@ -161,9 +152,9 @@ public class weatherApp {
 		    StringTokenizer tokens;
 		    tokens = new StringTokenizer(line,  " \" "  );
 		    
-		    String tmp = null;
-		    String city = null;
-		    String icon = null;
+		    String tmp = null; //used to hold tokens
+		    String city = null; //holds city name
+		    String icon = null; //holds image icon name
 		    float lon = 0; //holds longitude value
 		    float lat = 0; //holds latitude value
 		    String country = null;//holds country code
@@ -247,6 +238,170 @@ public class weatherApp {
 		    } catch (IOException e) {
 		    }
 		    
-		    current.fill(pic, city, country,  temp, windSpeed, windDir, pressure, humidity, description, minTemp, maxTemp, formattedSunrise, formattedSunset);
-		}	
+		    current.fill(lon, lat, pic, city, country,  temp, windSpeed, windDir, pressure, humidity, description, minTemp, maxTemp, formattedSunrise, formattedSunset);
+		}
+	
+	public void grabShortTerm(){
+		
+		URL url = null;
+		try {
+			url = new URL("http://api.openweathermap.org/data/2.5/forecast?id=6058560&units=metric"); //need to be able to input the id and the units
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		URLConnection con = null;
+		try {
+			con = url.openConnection();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		InputStream is = null;
+	    try {
+			is =con.getInputStream();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	    BufferedReader br = new BufferedReader(new InputStreamReader(is)); //used to read input from JSON
+	    
+	    String line = null; //holds info grabbed
+	
+	    // read each line and write to System.out
+	    try {
+			while (br.ready()) { //line = br.readLine()) != null
+			    line = br.readLine();
+			    //System.out.println(line);
+				
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    
+	    System.out.println(line);
+	    
+	    line = line.replace('{', ' ');
+	    line = line.replace('}', ' ');
+	    line = line.replace(':', ' ');
+	    line = line.replace(';', ' ');
+	    line = line.replace(',', ' ');
+	    line = line.replace('[', ' ');
+	    
+	    System.out.println(line);
+	    
+	    String[] tokens; //used to hold separate, 3 hour weather calls
+	    //StringTokenizer tokens;
+	    tokens = line.split("weather");
+	    
+	    String tmp = null;
+	    int i =0;
+	    
+	   while(i <=9){
+	    	
+	    	tmp = tokens[i];
+	    	System.out.println(tmp);
+	    	i++;
+	    }
+	   
+	   StringTokenizer tokens2; //used to divide up each 3 hour period
+	   float lon = 0; //used to temporarily hold longitude
+	   float lat = 0; //used to temporarily hold latitude
+	   String count = null; //holds country name
+	   String name = null; //holds city name
+	   float temp = 0; //holds temperature
+	   float minTemp = 0; //holds min temperature
+	   float maxTemp = 0; //holds max temperature
+	   String descrip = ""; //holds weather description
+	   String icon = null; //holds name of weather icon
+	   BufferedImage pic = null; //holds picture of weather icon
+	   String time = null;
+	   
+	   //initialize array of weatherData objects
+	   for(int j = 0; j <=9; j++){
+		   
+		   shortTerm[j] = new weatherData();
+	   }
+	   
+	   String hold = null; //holds tokens temporarily
+	   tokens2 = new StringTokenizer(tokens[0],  " \" "  );
+	   
+	   //used to grab the first line of data
+	   //i.e. city, country, coordinates
+	   while(tokens2.hasMoreTokens()){
+		   tmp = tokens2.nextToken();
+		   System.out.println(tmp);
+		   if(tmp.equals("lon")) //grabs longitude data
+	    		lon = Float.parseFloat(tokens2.nextToken());
+	    	if(tmp.equals("lat")) //grabs latitude data
+	    		lat = Float.parseFloat(tokens2.nextToken());
+	    	if(tmp.equals("country")) //grabs country name
+	    		count = (tokens2.nextToken());
+	    	if(tmp.equals("name")) //grabs country name
+	    		name = (tokens2.nextToken()); 	
+	   }
+	   
+	   //sets data of the first weatherData object, location data
+	   shortTerm[0].setLon(lon);
+	   shortTerm[0].setLat(lat);
+	   shortTerm[0].setCount(count);
+	   shortTerm[0].setName(name);
+	   
+	   //used to grab data for the next 8, 3 hour periods
+	   for(int k =1; k <=9; k++){
+		   
+		   descrip = "";//reset description
+		   time = ""; //reset time
+		   tokens2 = new StringTokenizer(tokens[k],  " \" "  ); //tokenizes current line of data
+		   //grabs needed data 
+		   while(tokens2.hasMoreTokens()){
+			   
+			    tmp = tokens2.nextToken();
+		    	if(tmp.equals("temp")) //grabs current temp
+		    		temp = Float.parseFloat(tokens2.nextToken());
+		    	if(tmp.equals("dt_txt")){ //grabs time of grab
+		    		String tk = tokens2.nextToken();
+		    		while(tk.equals("dt") == false){
+		    			time = time.concat(tk) + " ";
+		    			tk = tokens2.nextToken();
+		    		}
+		    	}
+		    	if(tmp.equals("temp_min")) //grabs min temp
+		    		minTemp = Float.parseFloat(tokens2.nextToken());
+		    	if(tmp.equals("temp_max")) //grabs max temp
+		    		maxTemp = Float.parseFloat(tokens2.nextToken());
+		    	if(tmp.equals("description")){//grabs weather description
+		    		String token = tokens2.nextToken();
+		    		while(token.equals("icon") == false){
+		    			descrip = descrip.concat(token) + " ";
+		    			token = tokens2.nextToken();
+		    		}
+		    		icon = tokens2.nextToken(); //grabs icon type
+		    	}
+		   }
+		   
+		   //gets the image for the proper weather description
+		    
+		    try {
+		        URL iconUrl = new URL("http://openweathermap.org/img/w/" + icon + ".png");
+		        pic = ImageIO.read(iconUrl);
+		    } catch (IOException e) {
+		    }
+		    
+		    //sets the values of the current weatherData object
+		    shortTerm[k].setTemp(temp);
+		    shortTerm[k].setMin(minTemp);
+		    shortTerm[k].setMax(minTemp);
+		    shortTerm[k].setCondit(descrip);
+		    shortTerm[k].setIcon(pic);
+		    shortTerm[k].setSunrise(time); //used to hold the time info was grabbed at instead of actually the sunrise
+		   
+	   }
+	   
+	   
+	}
 }

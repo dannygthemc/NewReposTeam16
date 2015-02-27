@@ -60,7 +60,8 @@ import javax.swing.GroupLayout;
 
 
 
-//import org.imgscalr.Scalr;
+
+import org.imgscalr.Scalr;
 
 
 
@@ -82,23 +83,204 @@ import java.io.IOException;
 		//initializes the User Interface elements we've defined below
 		private void initUI () {
 			this.setTitle("Weather Application"); 
-			this.setSize(300, 500);
+			this.setSize(350, 500);
 			this.setLocationRelativeTo(null);
 			this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 			this.setJMenuBar(this.createMenubar()); 
-			//this.add(this.createForm()); 
 			
 			this.setLayout(new BorderLayout());
-			app.grab();
-			
 			
 			JTabbedPane tabbedPane = new JTabbedPane();
-			 tabbedPane.addTab("Current", null, this.createForm(app.getCurrent()),"");
-			 tabbedPane.addTab("Short Term", null, this.createMultiForm(app.getShortTerm()),"");
-			 tabbedPane.addTab("Long Term", null, this.createMultiForm(app.getLongTerm()),"");
+			 tabbedPane.addTab("Current", null, this.createForm());
+			 tabbedPane.addTab("Short Term", null, this.createFormTwo());
+			 
+			this.add(this.createForm(), BorderLayout.CENTER);
+			JLabel test = new JLabel ("Hello");
+			this.add(test);
+			
+			 //tabbedPane.addTab("Long Term", null, this.createMultiForm(app.getLongTerm()),"");
 			 
 			this.add(tabbedPane, BorderLayout.CENTER);
 			
+		}
+		
+		//used to create Panel for the shorTermForecast Tab
+		private JPanel createFormTwo(){
+			
+			JPanel panel = new JPanel();
+			
+			weatherData[] tmp = new weatherData[10]; //holds weather data objects
+			app.grabShortTerm(); //grabs current weather data info from database
+			tmp = app.getShortTerm(); //grabs weatherData objects now filled with data
+			
+			//used for formatting
+			JLabel lbl1 = new JLabel("Time: ");
+			JLabel lbl2 = new JLabel("Temp: ");
+			JLabel lbl3 = new JLabel("Weather Condition:");
+			
+			JLabel lblcity = new JLabel(tmp[0].getName() + ", " + tmp[0].getCount() + ", " + tmp[0].getLon() + ", " + tmp[0].getLat() ); //displays location info
+			JLabel[] temp = new JLabel[9]; //array of temperature labels
+			JLabel[] time = new JLabel[9]; //array of time stamps
+			JLabel[] descrip = new JLabel[9]; //array of description labels
+			JLabel[] lblPic = new JLabel[9]; //array of picture labels
+			
+			BufferedImage pic = null; //used to temporarily hold pictures
+			JLabel hold; //temporarily hold labels for storage
+			JLabel hold2;
+			JLabel hold3;
+			JLabel hold4;
+			
+			//fills the arrays with their respective values
+			for(int i =0; i<9; i++){
+				hold = new JLabel("" +tmp[i+1].getTemp()); //creates a new label
+				temp[i] = hold; //puts it in the array
+				hold2 = new JLabel("" +tmp[i+1].getCondit());
+				descrip[i] = hold2;
+				
+				pic = tmp[i+1].getIcon();
+				pic  = Scalr.resize(pic, 80);
+				hold3 = new JLabel(new ImageIcon(pic));
+				lblPic[i] = hold3;
+				hold4 = new JLabel(tmp[i+1].getSunrise());//timestamp stored in Sunrise, since this variable was not in use for ShorTerm
+				time[i] = hold4;
+			}
+			GroupLayout layout = new GroupLayout(panel);
+			layout.setAutoCreateGaps(true);
+			layout.setAutoCreateContainerGaps(true);
+			layout.setHorizontalGroup( layout.createSequentialGroup()
+						
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+								.addComponent(lblcity)
+								.addGap(10)
+								.addComponent(lbl1)
+								.addComponent(lbl2)
+								.addComponent(lbl3)
+								
+						)
+						
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+								
+								.addComponent(lblPic[0])
+								.addComponent(time[0])
+								.addComponent(temp[0])
+								.addComponent(descrip[0])
+								.addGap(30)
+								.addComponent(lblPic[5])
+								.addComponent(time[5])
+								.addComponent(temp[5])
+								.addComponent(descrip[5])
+								
+						)
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+								
+								.addComponent(lblPic[1])
+								.addComponent(time[1])
+								.addComponent(temp[1])
+								.addComponent(descrip[1])
+								.addGap(30)
+								.addComponent(lblPic[6])
+								.addComponent(time[6])
+								.addComponent(temp[6])
+								.addComponent(descrip[6])
+								
+						)
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+								
+								.addComponent(lblPic[2])
+								.addComponent(time[2])
+								.addComponent(temp[2])
+								.addComponent(descrip[2])
+								.addGap(30)
+								.addComponent(lblPic[7])
+								.addComponent(time[7])
+								.addComponent(temp[7])
+								.addComponent(descrip[7])
+						)
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+								
+								.addComponent(lblPic[3])
+								.addComponent(time[3])
+								.addComponent(temp[3])
+								.addComponent(descrip[3])
+								.addGap(30)
+								.addComponent(lblPic[8])
+								.addComponent(time[8])
+								.addComponent(temp[8])
+								.addComponent(descrip[8])
+								
+						)
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+								
+								.addComponent(lblPic[4])
+								.addComponent(time[4])
+								.addComponent(temp[4])
+								.addComponent(descrip[4])
+								
+						)
+						
+						);
+			layout.setVerticalGroup( layout.createSequentialGroup()
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(lblcity)
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(lblPic[0])
+							.addComponent(lblPic[1])
+							.addComponent(lblPic[2])
+							.addComponent(lblPic[3])
+							.addComponent(lblPic[4])
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(lbl1)
+							.addComponent(time[0])
+							.addComponent(time[1])
+							.addComponent(time[2])
+							.addComponent(time[3])
+							.addComponent(time[4])
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(lbl2)
+							.addComponent(temp[0])
+							.addComponent(temp[1])
+							.addComponent(temp[2])
+							.addComponent(temp[3])
+							.addComponent(temp[4])
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(lbl3)
+							.addComponent(descrip[0])
+							.addComponent(descrip[1])
+							.addComponent(descrip[2])
+							.addComponent(descrip[3])
+							.addComponent(descrip[4])
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(lblPic[5])
+							.addComponent(lblPic[6])
+							.addComponent(lblPic[7])
+							.addComponent(lblPic[8])
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(time[5])
+							.addComponent(time[6])
+							.addComponent(time[7])
+							.addComponent(time[8])
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(temp[5])
+							.addComponent(temp[6])
+							.addComponent(temp[7])
+							.addComponent(temp[8])
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(descrip[5])
+							.addComponent(descrip[6])
+							.addComponent(descrip[7])
+							.addComponent(descrip[8])
+							)		
+					);
+			panel.setLayout(layout);
+			return panel;
 		}
 		
 		//defines a Menu bar with a "File" option, which can be called by "alt + f"
@@ -120,35 +302,16 @@ import java.io.IOException;
 			return menubar;
 		}
 		
-		private JPanel createMultiForm(weatherData[] range){
-			JPanel panel = new JPanel();
-			
-			JPanel[] pans = new JPanel[range.length];
-			for (int i = 0; i < range.length; i ++){
-				pans[i] = createForm(range[i]);
-				panel.add(pans[i]);
-			}
-//			GroupLayout layout = new GroupLayout(panel);
-//			layout.setAutoCreateGaps(true);
-//			layout.setAutoCreateContainerGaps(true);
-//			layout.setHorizontalGroup( layout.createSequentialGroup()
-//					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-//						.addComponent(pans[0])
-//						.addComponent(pans[1])
-//						.addComponent(pans[2])
-//						.addComponent(pans[3])
-//						.addComponent(pans[4])
-//						)
-//					 );
-//			panel.setLayout(layout);
-			return panel;
-			
-		}
 		
-		private JPanel createForm(weatherData tmp) {
+		
+		private JPanel createForm() {
+			
+			weatherData tmp = new weatherData();
+			app.grab();
+			tmp = app.getCurrent();
 			
 			JPanel panel = new JPanel();
-			JLabel lblcity = new JLabel(tmp.getName() + ", " + tmp.getCount()  ); //displays temperature
+			JLabel lblcity = new JLabel(tmp.getName() + ", " + tmp.getCount() + ", " + tmp.getLon() + ", " + tmp.getLat() ); //displays location info
 			JLabel lbldescrip = new JLabel("Weather Condition: ");
 			JLabel lbldescrip2 = new JLabel("" +tmp.getCondit());
 			JLabel lbltemp = new JLabel("Temp:  "); //displays temperature
@@ -170,9 +333,10 @@ import java.io.IOException;
 			JLabel lblset = new JLabel("Sunset Time: ");
 			JLabel lblset2 = new JLabel("" + tmp.getSunset());
 			
+			
 			BufferedImage pic = tmp.getIcon();
-			//pic  = Scalr.resize(pic, 80);
-			JLabel lblPic = new JLabel("Icon Image Commented Out");//new ImageIcon(pic));
+			pic  = Scalr.resize(pic, 80);
+			JLabel lblPic = new JLabel(new ImageIcon(pic));
 			
 			
 			//adds control with layout organization

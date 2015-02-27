@@ -6,8 +6,8 @@ public class customWeatherPref {
 	private boolean airPressure;
 	private boolean humidity;
 	private boolean skyCondition;
-	private boolean sunset;
-	private boolean sunrise;
+	private boolean sunset;//Should we make these booleans?
+	private boolean sunrise;//Should we make these booleans?
 	private boolean windDirection;
 	private boolean windDirectionDegree;
 	private boolean precipitation;
