@@ -40,7 +40,6 @@ import javax.swing.JTextField;
 import javax.swing.JOptionPane;
 
 	public class MainWindow extends JFrame  {
-		
 		private weatherApp app = new weatherApp();
 		
 		
@@ -271,7 +270,7 @@ import javax.swing.JOptionPane;
 			menubar.add(mnuFile);
 			
 			//Locations -> MyLocations
-			JComboBox locBar = new JComboBox();
+			JComboBox<String> locBar = new JComboBox<String>();
 			for (int i = 0; i < app.getMyLocations().length; i ++){
 				location tempLoc = app.getMyLocations()[i];
 				if (tempLoc.getCityID() != 0){
@@ -281,11 +280,13 @@ import javax.swing.JOptionPane;
 			}
 			if (locBar.getItemCount() == 0){
 				locBar.addItem("Save Loc: Empty");
+			} else {
+				locBar.addItem("Remove Loc?");
 			}
 			locBar.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent event){
-					String item = ((JComboBox)event.getSource()).getSelectedItem().toString();
+					String item = ((JComboBox<String>)event.getSource()).getSelectedItem().toString();
 					updateWeatherView(item);
 				}
 			});
@@ -300,18 +301,46 @@ import javax.swing.JOptionPane;
 				}
 			});
 			menubar.add(txtBar);
+			
+			//Refresh button
+			JMenu refresh = new JMenu("Refresh");
+			refresh.setMnemonic(KeyEvent.VK_E);
+			refresh.addActionListener(new ActionListener() {
+			 @Override
+			 public void actionPerformed(ActionEvent event) {
+				 
+			 }
+			});
+			menubar.add(refresh);
 			return menubar;
 		}
 		
 		//Refresh the views when saved city is clicked
 		private void updateWeatherView(String cityName){
-			location update = new location();
-			for (int i = 0; i < app.getMyLocations().length; i ++){
-				if (app.getMyLocations()[i].getName().equals(cityName));
-					update = app.getMyLocations()[i];
+			if (cityName.equals("Remove Loc?")){
+				JFrame frame = new JFrame();
+				String[] possibilities = new String[app.getMyLocations().length];
+				for (int i = 0; i < app.getMyLocations().length; i ++){
+					String name =  app.getMyLocations()[i].getName();
+					if (!name.equals("Default")){
+						possibilities[i] = name;
+					}
+				}
+				String response = (String) JOptionPane.showInputDialog(frame, "Pick a location to remove:", "Remove Location",  
+						JOptionPane.QUESTION_MESSAGE, null, possibilities, "Titan");
+				app.removeLocation(response);
+				//TODO:
+				//Update the mylocations view when location is removed
+				
+			} else {
+				location update = new location();
+				for (int i = 0; i < app.getMyLocations().length; i ++){
+					if (app.getMyLocations()[i].getName().equals(cityName));
+						update = app.getMyLocations()[i];
+				}
+				//TODO:
+				///Update the weather view based on 'update' location
 			}
-			//TODO:
-			///Update the weather view based on 'update' location
 		}
 		
 		//Refresh the views when new city is searched

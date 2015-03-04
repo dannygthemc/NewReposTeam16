@@ -87,14 +87,14 @@ public class weatherApp {
 		}
 	}
 	
-	public void removeLocation(location A){
+	public void removeLocation(String A){
 		int i = 0;
-		while (myLocations[i].getCityID() != A.getCityID()) i ++;
+		while (myLocations[i].getName() != A) i ++;
 		while (i < myLocations.length - 1){
 			myLocations[i] = myLocations[i + 1];
 			i ++;
 		}
-		myLocations[i] = null;
+		myLocations[i] = new location();
 	}
 	
 	public customWeatherPref getCustomView(){
