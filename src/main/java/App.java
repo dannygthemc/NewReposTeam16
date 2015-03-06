@@ -1,3 +1,4 @@
+package cs2212b.team16;
 import javax.swing.SwingUtilities;
 
 public class App {

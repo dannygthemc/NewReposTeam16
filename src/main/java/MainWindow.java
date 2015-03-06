@@ -1,3 +1,4 @@
+package cs2212b.team16;
 import javax.swing.JFrame; //used to create a Jframe
 //used to create a menu bar and responses to user Interface
 import java.awt.event.ActionEvent;
@@ -29,7 +30,7 @@ import java.awt.Color;
 
 import javax.swing.GroupLayout;
 
-import org.imgscalr.Scalr;
+//import org.imgscalr.Scalr;
 
 //used to organize border layout
 import java.awt.BorderLayout;
@@ -115,7 +116,7 @@ import javax.swing.JOptionPane;
 				descrip[i] = hold2;
 				
 				pic = tmp[i+1].getIcon();
-				pic  = Scalr.resize(pic, 80);
+				//pic  = Scalr.resize(pic, 80);
 				hold3 = new JLabel(new ImageIcon(pic));
 				lblPic[i] = hold3;
 				hold4 = new JLabel(tmp[i+1].getSunrise());//timestamp stored in Sunrise, since this variable was not in use for ShorTerm
@@ -404,7 +405,7 @@ import javax.swing.JOptionPane;
 			
 			
 			BufferedImage pic = tmp.getIcon();
-			pic  = Scalr.resize(pic, 80);
+			//pic  = Scalr.resize(pic, 80);
 			JLabel lblPic = new JLabel(new ImageIcon(pic));
 			
 			

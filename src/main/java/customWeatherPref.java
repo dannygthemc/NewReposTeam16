@@ -1,4 +1,4 @@
-
+package cs2212b.team16;
 public class customWeatherPref {
 	private boolean maxTemp;
 	private boolean minTemp;

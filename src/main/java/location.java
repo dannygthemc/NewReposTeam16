@@ -1,3 +1,4 @@
+package cs2212b.team16;
 public class location {
 	private int latitude;
 	private int longitude;

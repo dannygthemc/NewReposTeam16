@@ -1,3 +1,4 @@
+package cs2212b.team16;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
