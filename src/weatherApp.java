@@ -309,7 +309,7 @@ public class weatherApp {
 	    String tmp = null;
 	    int i =0;
 	    
-	   while(i <=9){
+	   while(i <= 9){
 	    	
 	    	tmp = tokens[i];
 	    	System.out.println(tmp);

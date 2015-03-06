@@ -41,7 +41,16 @@ import javax.swing.JOptionPane;
 
 	public class MainWindow extends JFrame  {
 		private weatherApp app = new weatherApp();
-		
+		JComboBox<String> locBar = new JComboBox<String>();
+		JMenuBar menubar;
+		ActionListener Jcombo = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event){
+				String item = ((JComboBox<String>)event.getSource()).getSelectedItem().toString();
+				updateWeatherView(item);
+			}
+		};
+
 		
 		//instantiates an instance of the MainWindow that's been defined
 		public MainWindow() {
@@ -51,7 +60,7 @@ import javax.swing.JOptionPane;
 		//initializes the User Interface elements we've defined below
 		private void initUI () {
 			this.setTitle("Weather Application"); 
-			this.setSize(350, 500);
+			this.setSize(960, 540);
 			this.setLocationRelativeTo(null);
 			this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 			this.setJMenuBar(this.createMenubar()); 
@@ -255,7 +264,7 @@ import javax.swing.JOptionPane;
 		//menu bar contains option for exiting current program
 		private JMenuBar createMenubar() {
 			//File ->Exit menu item
-			JMenuBar menubar = new JMenuBar();
+			menubar = new JMenuBar();
 			JMenu mnuFile = new JMenu("File");
 			mnuFile.setMnemonic(KeyEvent.VK_F);
 			JMenuItem mniFileExit = new JMenuItem("Exit");
@@ -268,28 +277,10 @@ import javax.swing.JOptionPane;
 			});
 			mnuFile.add(mniFileExit);
 			menubar.add(mnuFile);
-			
+	
 			//Locations -> MyLocations
-			JComboBox<String> locBar = new JComboBox<String>();
-			for (int i = 0; i < app.getMyLocations().length; i ++){
-				location tempLoc = app.getMyLocations()[i];
-				if (tempLoc.getCityID() != 0){
-					locBar.addItem(tempLoc.getName());
-				} 
-				
-			}
-			if (locBar.getItemCount() == 0){
-				locBar.addItem("Save Loc: Empty");
-			} else {
-				locBar.addItem("Remove Loc?");
-			}
-			locBar.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent event){
-					String item = ((JComboBox<String>)event.getSource()).getSelectedItem().toString();
-					updateWeatherView(item);
-				}
-			});
+			populateMyLocationsBox();
+			locBar.addActionListener(Jcombo);
 			menubar.add(locBar);
 			
 			//Search text box
@@ -315,9 +306,28 @@ import javax.swing.JOptionPane;
 			return menubar;
 		}
 		
+		private void populateMyLocationsBox(){
+			locBar.removeActionListener(Jcombo);
+			//locBar.removeAllItems();
+			for (int i = 0; i < app.getMyLocations().length; i ++){
+				location tempLoc = app.getMyLocations()[i];
+				if (tempLoc.getCityID() != 0){
+					locBar.addItem(tempLoc.getName());
+				} 
+			}
+			if (locBar.getItemCount() == 0){
+				locBar.addItem("--Empty--");
+			} else {
+				locBar.addItem("--Remove?--");
+			}
+			//locBar.revalidate();
+			//locBar.setVisible(true);
+			locBar.addActionListener(Jcombo);
+		}
+		
 		//Refresh the views when saved city is clicked
 		private void updateWeatherView(String cityName){
-			if (cityName.equals("Remove Loc?")){
+			if (cityName.equals("--Remove?--")){
 				JFrame frame = new JFrame();
 				String[] possibilities = new String[app.getMyLocations().length];
 				for (int i = 0; i < app.getMyLocations().length; i ++){
@@ -328,10 +338,13 @@ import javax.swing.JOptionPane;
 				}
 				String response = (String) JOptionPane.showInputDialog(frame, "Pick a location to remove:", "Remove Location",  
 						JOptionPane.QUESTION_MESSAGE, null, possibilities, "Titan");
-				app.removeLocation(response);
+				if (response != null) app.removeLocation(response);
 				//TODO:
 				//Update the mylocations view when location is removed
+				populateMyLocationsBox();
 				
+			} else if (cityName.equals("--Empty--")){
+				//Do nothing
 			} else {
 				location update = new location();
 				for (int i = 0; i < app.getMyLocations().length; i ++){
@@ -353,10 +366,10 @@ import javax.swing.JOptionPane;
 			//Verify it was a correct entry
 			JFrame frame = new JFrame();
 			int result = JOptionPane.showConfirmDialog(frame, "Did you mean: " + txt + " Lat:1235 Lon:1234?");
-		    // JOptionPane.showInternalConfirmDialog(desktop, "Continue printing?");
 		    if (JOptionPane.YES_OPTION == result) {
 				app.addLocation(searchedLoc);
-				this.initUI();
+				populateMyLocationsBox();
+				//this.initUI();
 		    }
 		}
 		
