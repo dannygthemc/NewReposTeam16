@@ -1,5 +1,21 @@
 package cs2212b.team16;
+/*
+ * @author: Daniel, James, Omar, Long, Angus, Nick
+ * this class used to define the GUI for the application
+ * Calls the main weatherApp class only
+ */
 import javax.swing.JFrame; //used to create a Jframe
+
+
+
+
+
+
+
+
+
+
+
 //used to create a menu bar and responses to user Interface
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,12 +26,24 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
+
+
+
+
+
+
+
+
+
+
 //used to create controls
 import java.awt.Dimension;
 import java.awt.Image;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JTabbedPane;
@@ -25,67 +53,177 @@ import javax.swing.ButtonGroup;
 import javax.swing.JRadioButton;
 
 
+
+
+
+
+
+
+
+
+
 //used to organize layout
 import java.awt.Color;
 
 import javax.swing.GroupLayout;
 
-//import org.imgscalr.Scalr;
+
+
+
+
+
+
+
+
+
+
+import org.imgscalr.Scalr;
+
+
+
+
 
 //used to organize border layout
 import java.awt.BorderLayout;
 import java.io.File;
 import java.io.IOException;
-import javax.swing.JComboBox;
-import javax.swing.JTextField;
-import javax.swing.JOptionPane;
 
 	public class MainWindow extends JFrame  {
+		
 		private weatherApp app = new weatherApp();
-		JComboBox<String> locBar = new JComboBox<String>();
+		JComboBox<String> locBar = new JComboBox<String>(); //used to list searched locations
 		JMenuBar menubar;
-		ActionListener Jcombo = new ActionListener() {
+		ActionListener Jcombo = new ActionListener() { //updates weatherView when a new item is searched
 			@Override
 			public void actionPerformed(ActionEvent event){
 				String item = ((JComboBox<String>)event.getSource()).getSelectedItem().toString();
 				updateWeatherView(item);
 			}
 		};
-
 		
-		//instantiates an instance of the MainWindow that's been defined
+		/*
+		 * instantiates an instance of the MainWindow that's been defined
+		 * @param none
+		 * @return none
+		 */
 		public MainWindow() {
 			this.initUI();
 			
 		}
-		//initializes the User Interface elements we've defined below
+		
+		/*
+		 * initializes the User Interface elements defined below
+		 * @param none
+		 * @return none, initializes UI
+		 * 
+		 */
 		private void initUI () {
-			this.setTitle("Weather Application"); 
-			this.setSize(960, 540);
+			
+			this.setTitle("Weather Application"); //sets title of frame 
+			this.setSize(350, 500); //sets size of frame
 			this.setLocationRelativeTo(null);
-			this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+			this.setDefaultCloseOperation(EXIT_ON_CLOSE); //initiates exit on close command
 			this.setJMenuBar(this.createMenubar()); 
 			
 			this.setLayout(new BorderLayout());
 			
-			JTabbedPane tabbedPane = new JTabbedPane();
-			 tabbedPane.addTab("Current", null, this.createForm());
-			 tabbedPane.addTab("Short Term", null, this.createFormTwo());
-			 
-			this.add(this.createForm(), BorderLayout.CENTER);
-			JLabel test = new JLabel ("Hello");
-			this.add(test);
-			
+
+			JTabbedPane tabbedPane = new JTabbedPane(); //creates a tab pane
+			 tabbedPane.addTab("Current", null, this.createForm()); //fills a tab window with current data
+			 tabbedPane.addTab("Short Term", null, this.createFormTwo()); //fills a tab window with short term data
 			 //tabbedPane.addTab("Long Term", null, this.createMultiForm(app.getLongTerm()),"");
 			 
-			this.add(tabbedPane, BorderLayout.CENTER);
+			this.add(tabbedPane, BorderLayout.CENTER);//adds the tabbed pane to the main window
 			
 		}
+		/*
+		 * used to fill the location box with preset locations
+		 * @param none
+		 * @return none, fills location box
+		 */
+		private void populateMyLocationsBox(){
+			locBar.removeActionListener(Jcombo);
+			//locBar.removeAllItems();
+			for (int i = 0; i < app.getMyLocations().length; i ++){
+				location tempLoc = app.getMyLocations()[i];
+				if (tempLoc.getCityID() != 0){
+					locBar.addItem(tempLoc.getName());
+				} 
+			}
+			if (locBar.getItemCount() == 0){
+				locBar.addItem("--Empty--");
+			} else {
+				locBar.addItem("--Remove?--");
+			}
+			//locBar.revalidate();
+			//locBar.setVisible(true);
+			locBar.addActionListener(Jcombo);
+		}
 		
-		//used to create Panel for the shorTermForecast Tab
+		/*
+		 * Refresh the views when saved city is clicked
+		 * @param string of city name clicked
+		 * @return none, updates weatherView
+		 */
+		private void updateWeatherView(String cityName){
+			if (cityName.equals("--Remove?--")){
+					JFrame frame = new JFrame();
+					String[] possibilities = new String[app.getMyLocations().length];
+					for (int i = 0; i < app.getMyLocations().length; i ++){
+						String name =  app.getMyLocations()[i].getName();
+						if (!name.equals("Default")){
+							possibilities[i] = name;
+						}
+					}
+					String response = (String) JOptionPane.showInputDialog(frame, "Pick a location to remove:", "Remove Location",  
+							JOptionPane.QUESTION_MESSAGE, null, possibilities, "Titan");
+					if (response != null) app.removeLocation(response);
+					//TODO:
+					//Update the mylocations view when location is removed
+					populateMyLocationsBox();
+						
+			 } else if (cityName.equals("--Empty--")){
+						//Do nothing
+			} else {
+					location update = new location();
+					for (int i = 0; i < app.getMyLocations().length; i ++){
+						if (app.getMyLocations()[i].getName().equals(cityName));
+							update = app.getMyLocations()[i];
+					}
+					//TODO:
+					///Update the weather view based on 'update' location
+				}
+			}
+				
+			/*
+			 * Refresh the views when new city is searched
+			 * @param String of city searched for
+			 * @return none, adds city to search Box
+			 */
+			private void searchBoxUsed(String txt){
+				location searchedLoc = new location();
+				searchedLoc.setCityID(1234);
+				searchedLoc.setName(txt);
+				//TODO:
+				//Assign the new location a location object from Omar's database
+				//Verify it was a correct entry
+				JFrame frame = new JFrame();
+				int result = JOptionPane.showConfirmDialog(frame, "Did you mean: " + txt + " Lat:1235 Lon:1234?");
+				if (JOptionPane.YES_OPTION == result) {
+						app.addLocation(searchedLoc);
+						populateMyLocationsBox();
+						//this.initUI();
+				 }
+			}
+		
+		/*
+		 * used to create Panel for the shorTermForecast Tab
+		 * @param none
+		 * @return JPanel filled with shortTerm data
+		 */
 		private JPanel createFormTwo(){
 			
-			JPanel panel = new JPanel();
+			JPanel panel = new JPanel();//creates a new JPanel
 			
 			weatherData[] tmp = new weatherData[10]; //holds weather data objects
 			app.grabShortTerm(); //grabs current weather data info from database
@@ -116,18 +254,20 @@ import javax.swing.JOptionPane;
 				descrip[i] = hold2;
 				
 				pic = tmp[i+1].getIcon();
-				//pic  = Scalr.resize(pic, 80);
+				pic  = Scalr.resize(pic, 80);
 				hold3 = new JLabel(new ImageIcon(pic));
 				lblPic[i] = hold3;
 				hold4 = new JLabel(tmp[i+1].getSunrise());//timestamp stored in Sunrise, since this variable was not in use for ShorTerm
 				time[i] = hold4;
 			}
+			
+			//Group layout used to organize GUI
 			GroupLayout layout = new GroupLayout(panel);
 			layout.setAutoCreateGaps(true);
 			layout.setAutoCreateContainerGaps(true);
-			layout.setHorizontalGroup( layout.createSequentialGroup()
+			layout.setHorizontalGroup( layout.createSequentialGroup() //sets the horizontal groups
 						
-						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING) //shows city data
 								.addComponent(lblcity)
 								.addGap(10)
 								.addComponent(lbl1)
@@ -135,7 +275,7 @@ import javax.swing.JOptionPane;
 								.addComponent(lbl3)
 								
 						)
-						
+						//the rest of the horizontal groups contain weather Data in 3 hour increments
 						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 								
 								.addComponent(lblPic[0])
@@ -197,18 +337,18 @@ import javax.swing.JOptionPane;
 						)
 						
 						);
-			layout.setVerticalGroup( layout.createSequentialGroup()
-					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+			layout.setVerticalGroup( layout.createSequentialGroup() //sets the vertical groups
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)//city is in its own vertical group
 							.addComponent(lblcity)
 							)
-					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //pics aligned vertically
 							.addComponent(lblPic[0])
 							.addComponent(lblPic[1])
 							.addComponent(lblPic[2])
 							.addComponent(lblPic[3])
 							.addComponent(lblPic[4])
 							)
-					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //times aligned vertically
 							.addComponent(lbl1)
 							.addComponent(time[0])
 							.addComponent(time[1])
@@ -216,7 +356,7 @@ import javax.swing.JOptionPane;
 							.addComponent(time[3])
 							.addComponent(time[4])
 							)
-					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //temps aligned vertically
 							.addComponent(lbl2)
 							.addComponent(temp[0])
 							.addComponent(temp[1])
@@ -224,7 +364,7 @@ import javax.swing.JOptionPane;
 							.addComponent(temp[3])
 							.addComponent(temp[4])
 							)
-					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //descrips alligned vertically
 							.addComponent(lbl3)
 							.addComponent(descrip[0])
 							.addComponent(descrip[1])
@@ -232,148 +372,62 @@ import javax.swing.JOptionPane;
 							.addComponent(descrip[3])
 							.addComponent(descrip[4])
 							)
-					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //this is the start of the second row of weather Data, pics aligned
 							.addComponent(lblPic[5])
 							.addComponent(lblPic[6])
 							.addComponent(lblPic[7])
 							.addComponent(lblPic[8])
 							)
-					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //times aligned
 							.addComponent(time[5])
 							.addComponent(time[6])
 							.addComponent(time[7])
 							.addComponent(time[8])
 							)
-					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)//temps aligned
 							.addComponent(temp[5])
 							.addComponent(temp[6])
 							.addComponent(temp[7])
 							.addComponent(temp[8])
 							)
-					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)//descrips aligned
 							.addComponent(descrip[5])
 							.addComponent(descrip[6])
 							.addComponent(descrip[7])
 							.addComponent(descrip[8])
 							)		
 					);
-			panel.setLayout(layout);
-			return panel;
+			panel.setLayout(layout); //sets the defined layout to the panel
+			return panel; //returns the panel
 		}
 		
-		//defines a Menu bar with a "File" option, which can be called by "alt + f"
-		//menu bar contains option for exiting current program
+		/*
+		 * defines a Menu bar with a "File" option, which can be called by "alt + f"
+		 * menu bar contains option for exiting current program
+		 */
 		private JMenuBar createMenubar() {
-			//File ->Exit menu item
-			menubar = new JMenuBar();
-			JMenu mnuFile = new JMenu("File");
+			JMenuBar menubar = new JMenuBar(); //creates new menu bar
+			JMenu mnuFile = new JMenu("File"); //creates file option
 			mnuFile.setMnemonic(KeyEvent.VK_F);
-			JMenuItem mniFileExit = new JMenuItem("Exit");
+			JMenuItem mniFileExit = new JMenuItem("Exit"); //creates exit button
 			mniFileExit.setMnemonic(KeyEvent.VK_E);
-			mniFileExit.setToolTipText("Exit application");
+			mniFileExit.setToolTipText("Exit application"); //sets tool tip
 			mniFileExit.addActionListener(new ActionListener() {
 			 @Override
-			 public void actionPerformed(ActionEvent event) {
-			System.exit(0); }
+			 public void actionPerformed(ActionEvent event) { //when clicked
+			System.exit(0); } //exit program
 			});
-			mnuFile.add(mniFileExit);
+			mnuFile.add(mniFileExit); //adds it to the menubar
 			menubar.add(mnuFile);
-	
-			//Locations -> MyLocations
-			populateMyLocationsBox();
-			locBar.addActionListener(Jcombo);
-			menubar.add(locBar);
-			
-			//Search text box
-			JTextField txtBar = new JTextField("Search Location");
-			txtBar.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent event){
-					searchBoxUsed(((JTextField) event.getSource()).getText());
-				}
-			});
-			menubar.add(txtBar);
-			
-			//Refresh button
-			JMenu refresh = new JMenu("Refresh");
-			refresh.setMnemonic(KeyEvent.VK_E);
-			refresh.addActionListener(new ActionListener() {
-			 @Override
-			 public void actionPerformed(ActionEvent event) {
-				 
-			 }
-			});
-			menubar.add(refresh);
-			return menubar;
+			return menubar; //returns menubar
 		}
 		
-		private void populateMyLocationsBox(){
-			locBar.removeActionListener(Jcombo);
-			//locBar.removeAllItems();
-			for (int i = 0; i < app.getMyLocations().length; i ++){
-				location tempLoc = app.getMyLocations()[i];
-				if (tempLoc.getCityID() != 0){
-					locBar.addItem(tempLoc.getName());
-				} 
-			}
-			if (locBar.getItemCount() == 0){
-				locBar.addItem("--Empty--");
-			} else {
-				locBar.addItem("--Remove?--");
-			}
-			//locBar.revalidate();
-			//locBar.setVisible(true);
-			locBar.addActionListener(Jcombo);
-		}
 		
-		//Refresh the views when saved city is clicked
-		private void updateWeatherView(String cityName){
-			if (cityName.equals("--Remove?--")){
-				JFrame frame = new JFrame();
-				String[] possibilities = new String[app.getMyLocations().length];
-				for (int i = 0; i < app.getMyLocations().length; i ++){
-					String name =  app.getMyLocations()[i].getName();
-					if (!name.equals("Default")){
-						possibilities[i] = name;
-					}
-				}
-				String response = (String) JOptionPane.showInputDialog(frame, "Pick a location to remove:", "Remove Location",  
-						JOptionPane.QUESTION_MESSAGE, null, possibilities, "Titan");
-				if (response != null) app.removeLocation(response);
-				//TODO:
-				//Update the mylocations view when location is removed
-				populateMyLocationsBox();
-				
-			} else if (cityName.equals("--Empty--")){
-				//Do nothing
-			} else {
-				location update = new location();
-				for (int i = 0; i < app.getMyLocations().length; i ++){
-					if (app.getMyLocations()[i].getName().equals(cityName));
-						update = app.getMyLocations()[i];
-				}
-				//TODO:
-				///Update the weather view based on 'update' location
-			}
-		}
-		
-		//Refresh the views when new city is searched
-		private void searchBoxUsed(String txt){
-			location searchedLoc = new location();
-			searchedLoc.setCityID(1234);
-			searchedLoc.setName(txt);
-			//TODO:
-			//Assign the new location a location object from Omar's database
-			//Verify it was a correct entry
-			JFrame frame = new JFrame();
-			int result = JOptionPane.showConfirmDialog(frame, "Did you mean: " + txt + " Lat:1235 Lon:1234?");
-		    if (JOptionPane.YES_OPTION == result) {
-				app.addLocation(searchedLoc);
-				populateMyLocationsBox();
-				//this.initUI();
-		    }
-		}
-		
+		/*
+		 * used to add current weather data to a Panel
+		 * @param none
+		 * @return none, creates Panel of current weather data
+		 */
 		private JPanel createForm() {
 			
 			weatherData tmp = new weatherData();
@@ -384,37 +438,37 @@ import javax.swing.JOptionPane;
 			JLabel lblcity = new JLabel(tmp.getName() + ", " + tmp.getCount() + ", " + tmp.getLon() + ", " + tmp.getLat() ); //displays location info
 			JLabel lbldescrip = new JLabel("Weather Condition: ");
 			JLabel lbldescrip2 = new JLabel("" +tmp.getCondit());
-			JLabel lbltemp = new JLabel("Temp:  "); //displays temperature
-			JLabel lbltemp2 = new JLabel("" + tmp.getTemp());
-			JLabel lblmin = new JLabel("Min Temp: "); //displays minTemp
-			JLabel lblmin2 = new JLabel("" + tmp.getMin());
-			JLabel lblmax = new JLabel("Max Temp: " );
-			JLabel lblmax2 = new JLabel("" + tmp.getMax());
-			JLabel lblspeed = new JLabel("Wind Speed: ");
-			JLabel lblspeed2 = new JLabel("" + tmp.getSpeed());
-			JLabel lbldir = new JLabel("Wind Direction: ");
-			JLabel lbldir2 = new JLabel("" + tmp.getDir());
-			JLabel lblpress = new JLabel("Air Pressure: ");
-			JLabel lblpress2 = new JLabel("" + tmp.getPress());
-			JLabel lblhumid = new JLabel("Humidity: ");
-			JLabel lblhumid2 = new JLabel("" + tmp.getHumid());
-			JLabel lblrise = new JLabel("Sunrise Time: ");
-			JLabel lblrise2 = new JLabel("" + tmp.getSunrise());
-			JLabel lblset = new JLabel("Sunset Time: ");
-			JLabel lblset2 = new JLabel("" + tmp.getSunset());
+			JLabel lbltemp = new JLabel("Temp:  "); //label for temp
+			JLabel lbltemp2 = new JLabel("" + tmp.getTemp()); //actual temp
+			JLabel lblmin = new JLabel("Min Temp: "); //label for min
+			JLabel lblmin2 = new JLabel("" + tmp.getMin()); //actual min
+			JLabel lblmax = new JLabel("Max Temp: " ); //label for max
+			JLabel lblmax2 = new JLabel("" + tmp.getMax()); //actual max
+			JLabel lblspeed = new JLabel("Wind Speed: "); //label for speed
+			JLabel lblspeed2 = new JLabel("" + tmp.getSpeed()); //actual speed
+			JLabel lbldir = new JLabel("Wind Direction: "); //label for dir 
+			JLabel lbldir2 = new JLabel("" + tmp.getDir()); //actual dir
+			JLabel lblpress = new JLabel("Air Pressure: "); //label for pressure
+			JLabel lblpress2 = new JLabel("" + tmp.getPress()); //actual pressure
+			JLabel lblhumid = new JLabel("Humidity: "); //label for humid
+			JLabel lblhumid2 = new JLabel("" + tmp.getHumid()); //actual humdi
+			JLabel lblrise = new JLabel("Sunrise Time: "); //label for sunrise
+			JLabel lblrise2 = new JLabel("" + tmp.getSunrise()); //actual sunrise
+			JLabel lblset = new JLabel("Sunset Time: "); //label for susnet
+			JLabel lblset2 = new JLabel("" + tmp.getSunset()); //actual sunset
 			
-			
+			//used to set picture
 			BufferedImage pic = tmp.getIcon();
-			//pic  = Scalr.resize(pic, 80);
-			JLabel lblPic = new JLabel(new ImageIcon(pic));
+			pic  = Scalr.resize(pic, 80);
+			JLabel lblPic = new JLabel(new ImageIcon(pic)); //holds picture
 			
 			
 			//adds control with layout organization
 			GroupLayout layout = new GroupLayout(panel);
 			layout.setAutoCreateGaps(true);
 			layout.setAutoCreateContainerGaps(true);
-			layout.setHorizontalGroup( layout.createSequentialGroup()
-						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+			layout.setHorizontalGroup( layout.createSequentialGroup() //sets horizontal groups
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING) //holds all the identifier labels
 							.addComponent(lblcity)
 							.addComponent(lblPic)
 							.addComponent(lbldescrip)
@@ -429,7 +483,7 @@ import javax.swing.JOptionPane;
 							.addComponent(lblset)
 							
 							)
-						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING) //sets wetaher Data labels
 							
 							.addComponent(lbldescrip2)
 							.addComponent(lbltemp2)
@@ -443,14 +497,14 @@ import javax.swing.JOptionPane;
 							.addComponent(lblset2)
 							)
 						 );
-			layout.setVerticalGroup( layout.createSequentialGroup()
-					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+			layout.setVerticalGroup( layout.createSequentialGroup() //sets verticsal groups
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //city is on its own
 							.addComponent(lblcity)
 							)
-					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //pic is on its own
 							.addComponent(lblPic)
 							)
-					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //the rest have the identifier, followed by the actual data
 							.addComponent(lbldescrip)
 							.addComponent(lbldescrip2)
 							)
@@ -491,9 +545,9 @@ import javax.swing.JOptionPane;
 							.addComponent(lblset2)
 							)					
 						);
-							// Replace all the panel.add(...) statements with the following statement
-							panel.setLayout(layout);
-							return panel; 			
+							
+						panel.setLayout(layout); //sets the layout
+						return panel; //returns the panel 			
 								
 			}
 	}

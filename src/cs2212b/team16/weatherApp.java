@@ -1,4 +1,10 @@
 package cs2212b.team16;
+/*
+ * @author: Daniel, James, Omar, Long, Angus, Nick
+ * this class used to define the weather Application
+ * calls the location and weatherData classes to perform its duties
+ * 
+ */
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,12 +21,17 @@ import javax.imageio.ImageIO;
 
 
 public class weatherApp {
-	private weatherData current;
-	private weatherData[] longTerm;
-	private weatherData[] shortTerm;
-	private location[] myLocations;	//** Why is this a boolean array in UML**?
-	private customWeatherPref customView;
+	private weatherData current; //used to store current location data
+	private weatherData[] longTerm; //used to store long term data
+	private weatherData[] shortTerm; //used to store short term data
+	private location[] myLocations;	//used to store users preset locations
 	
+	/*
+	 * instantiates an object of the class
+	 * initiates all the arrays
+	 * @param no parameters
+	 * @return no returns
+	 */
 	public weatherApp(){
 		current = new weatherData();
 		longTerm = new weatherData[5];	//Covers next 5 days
@@ -31,25 +42,45 @@ public class weatherApp {
 		for (int i = 0; i < 10; i ++){
 			shortTerm[i] = new weatherData();
 		}
-		myLocations = new location[5];
+		myLocations = new location[5]; //holds five locations
 		for (int i = 0; i < 5; i ++){
 			myLocations[i] = new location();
 		}
-		customView = new customWeatherPref();
+		
 	}
 	
+	/*
+	 * returns current weather data object
+	 * @param no parameters
+	 * @return weather Data object holding current weatehr Data
+	 */
 	public weatherData getCurrent() {
 		return current;
 	}
 	
+	/*
+	 * this method allows setting of the current weatherData object
+	 * @param no parameters
+	 * @return no returns
+	 */
 	public void setCurrent(weatherData current){
 		this.current = current;
 	}
 	
+	/*
+	 * this method returns the longTerm weather data array
+	 * @param no parameters
+	 * @return weather Data array 
+	 */
 	public weatherData[] getLongTerm() {
 		return longTerm;
 	}
 	
+	/*
+	 * the method is used to fill the longTerm array with weather Data
+	 * @param weather data array
+	 * @return no returns, fills longTerm
+	 */
 	public void setLongTerm(weatherData[] longTerm){
 		int smallest = this.longTerm.length;
 		if (smallest > longTerm.length) smallest = longTerm.length;
@@ -58,10 +89,11 @@ public class weatherApp {
 		}
 	}
 	
-	public weatherData[] getShortTerm(){
-		return shortTerm;
-	}
-	
+	/*
+	 * the method is used to fill the shortTerm array with weather Data
+	 * @param weather data array
+	 * @return no returns, fills shortTerm
+	 */
 	public void setShortTerm(weatherData[] shortTerm){
 		int smallest = this.shortTerm.length;
 		if (smallest > shortTerm.length) smallest = shortTerm.length;
@@ -69,18 +101,37 @@ public class weatherApp {
 			this.shortTerm[i] = shortTerm[i];
 		}
 	}
+	/*
+	 * this methop returns the shorTerm data array
+	 * @param no parameters
+	 * @return weather Data array
+	 */
+	public weatherData[] getShortTerm(){
+		return shortTerm;
+	}
 	
+	/*
+	 * this method returns the array of user's saved location data
+	 * @param no parameters
+	 * @return location array
+	 */
 	public location[] getMyLocations(){
 		return myLocations;
 	}
 	
+	/*
+	 * adds a location to the myLocation array
+	 * @param location
+	 * @return no returns
+	 * 	 
+	 */
 	public void addLocation(location A){
 		int j = 0;
-		while (j < myLocations.length && myLocations[j].getCityID() != 0) j ++;
+		while (j < myLocations.length && myLocations[j] != null) j ++;
 		if (j < myLocations.length) myLocations[j] = A;
 		else {
 			location[] temp = new location[myLocations.length + 1];
-			for (int i = 0; i < temp.length - 1; i ++){
+			for (int i = 0; i < temp.length; i ++){
 				temp[i] = myLocations[i];
 			}
 			temp[myLocations.length] = A;
@@ -88,6 +139,11 @@ public class weatherApp {
 		}
 	}
 	
+	/*
+	 * removes a location from the location array
+	 * @param String A, representing location
+	 * @return no returns
+	 */
 	public void removeLocation(String A){
 		int i = 0;
 		while (myLocations[i].getName() != A) i ++;
@@ -98,19 +154,17 @@ public class weatherApp {
 		myLocations[i] = new location();
 	}
 	
-	public customWeatherPref getCustomView(){
-		return customView;
-	}
 	
-	public void setCustomView(customWeatherPref customView){
-		this.customView = customView;
-	}
-	
-	//fills weatherDataobject with JSON data
-	//will eventually pass in a city ID and units
+	/*
+	 * fills current weatherData object with JSON data
+	 * will eventually pass in a city ID and units
+	 * @param (none yet) eventually: city id & units
+	 * @return no returns
+	 */
+
 	public void grab(){
 			
-			URL url = null;
+			URL url = null; //used to hold the desired URL address
 			try {
 				url = new URL("http://api.openweathermap.org/data/2.5/weather?id=6058560&units=metric"); //need to be able to input the id and the units
 			} catch (MalformedURLException e) {
@@ -118,7 +172,7 @@ public class weatherApp {
 				e.printStackTrace();
 			}
 			
-			URLConnection con = null;
+			URLConnection con = null;//used to establish a connection to the desired address
 			try {
 				con = url.openConnection();
 			} catch (IOException e) {
@@ -126,7 +180,7 @@ public class weatherApp {
 				e.printStackTrace();
 			}
 			
-			InputStream is = null;
+			InputStream is = null; //used to read from the connection
 		    try {
 				is =con.getInputStream();
 			} catch (IOException e) {
@@ -150,14 +204,16 @@ public class weatherApp {
 				e.printStackTrace();
 			}
 		    
-		    System.out.println(line);
+		    System.out.println(line);//used for debugging
 		    
+		    //formats the string for easy parsing
 		    line = line.replace('{', ' ');
 		    line = line.replace('}', ' ');
 		    line = line.replace(':', ' ');
 		    line = line.replace(';', ' ');
 		    line = line.replace(',', ' ');
 		    
+		    //used to separate segments of JSON 
 		    StringTokenizer tokens;
 		    tokens = new StringTokenizer(line,  " \" "  );
 		    
@@ -228,7 +284,7 @@ public class weatherApp {
 		    Date date = new Date(sunrise*1000L); // *1000 is to convert seconds to milliseconds
 		    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z"); // the format of date
 		    String formattedSunrise = sdf.format(date);
-		    System.out.println(formattedSunrise);
+		    System.out.println(formattedSunrise); //used for debugging
 		    
 		    //the following formats a date time out of the unix time provided by the JSON
 		    Date date2 = new Date(sunset*1000L); // *1000 is to convert seconds to milliseconds
@@ -236,6 +292,7 @@ public class weatherApp {
 		    String formattedSunset = sdf2.format(date2);
 		    System.out.println(formattedSunset);
 		    
+		    //used for debugging
 		    System.out.println(description);
 		    System.out.println(minTemp);
 		    
@@ -247,12 +304,18 @@ public class weatherApp {
 		    } catch (IOException e) {
 		    }
 		    
+		    //fills the current object with the data
 		    current.fill(lon, lat, pic, city, country,  temp, windSpeed, windDir, pressure, humidity, description, minTemp, maxTemp, formattedSunrise, formattedSunset);
 		}
 	
+	/*
+	 * this grabs the data for the short term data structure
+	 * @param (none yet) eventually: city id & unites
+	 * @return no returns
+	 */
 	public void grabShortTerm(){
 		
-		URL url = null;
+		URL url = null; //used to hold desired URL
 		try {
 			url = new URL("http://api.openweathermap.org/data/2.5/forecast?id=6058560&units=metric"); //need to be able to input the id and the units
 		} catch (MalformedURLException e) {
@@ -260,7 +323,7 @@ public class weatherApp {
 			e.printStackTrace();
 		}
 		
-		URLConnection con = null;
+		URLConnection con = null; //used to establish connection
 		try {
 			con = url.openConnection();
 		} catch (IOException e) {
@@ -268,7 +331,7 @@ public class weatherApp {
 			e.printStackTrace();
 		}
 		
-		InputStream is = null;
+		InputStream is = null; //used to read from connection
 	    try {
 			is =con.getInputStream();
 		} catch (IOException e) {
@@ -294,6 +357,7 @@ public class weatherApp {
 	    
 	    System.out.println(line);
 	    
+	    //formats the string for easy parsing
 	    line = line.replace('{', ' ');
 	    line = line.replace('}', ' ');
 	    line = line.replace(':', ' ');
@@ -301,7 +365,7 @@ public class weatherApp {
 	    line = line.replace(',', ' ');
 	    line = line.replace('[', ' ');
 	    
-	    System.out.println(line);
+	    System.out.println(line);//used for debugging
 	    
 	    String[] tokens; //used to hold separate, 3 hour weather calls
 	    //StringTokenizer tokens;
@@ -309,8 +373,10 @@ public class weatherApp {
 	    
 	    String tmp = null;
 	    int i =0;
-	    
-	   while(i <= 9){
+	   
+	    //separates 10 lines of data into different string
+	    //first line holds city info, next 9 hold weather data in 3 hour increments
+	   while(i <=9){
 	    	
 	    	tmp = tokens[i];
 	    	System.out.println(tmp);
