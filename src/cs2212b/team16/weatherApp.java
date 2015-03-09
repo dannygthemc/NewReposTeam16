@@ -127,7 +127,7 @@ public class weatherApp {
 	 */
 	public void addLocation(location A){
 		int j = 0;
-		while (j < myLocations.length && myLocations[j] != null) j ++;
+		while (j < myLocations.length && !myLocations[j].getName().equals("Default")) j ++;
 		if (j < myLocations.length) myLocations[j] = A;
 		else {
 			location[] temp = new location[myLocations.length + 1];

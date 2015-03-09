@@ -96,8 +96,10 @@ import java.io.IOException;
 		ActionListener Jcombo = new ActionListener() { //updates weatherView when a new item is searched
 			@Override
 			public void actionPerformed(ActionEvent event){
-				String item = ((JComboBox<String>)event.getSource()).getSelectedItem().toString();
-				updateWeatherView(item);
+				if (((JComboBox<String>)event.getSource()).getSelectedItem() != null){
+					String item = ((JComboBox<String>)event.getSource()).getSelectedItem().toString();
+					updateWeatherView(item);
+				}
 			}
 		};
 		
@@ -143,7 +145,7 @@ import java.io.IOException;
 		 */
 		private void populateMyLocationsBox(){
 			locBar.removeActionListener(Jcombo);
-			//locBar.removeAllItems();
+			locBar.removeAllItems();
 			for (int i = 0; i < app.getMyLocations().length; i ++){
 				location tempLoc = app.getMyLocations()[i];
 				if (tempLoc.getCityID() != 0){
@@ -419,10 +421,35 @@ import java.io.IOException;
 			});
 			mnuFile.add(mniFileExit); //adds it to the menubar
 			menubar.add(mnuFile);
-			return menubar; //returns menubar
+	
+			//Locations -> MyLocations
+			populateMyLocationsBox();
+			locBar.addActionListener(Jcombo);
+			menubar.add(locBar);
+						
+			//Search text box
+			JTextField txtBar = new JTextField("Search Location");
+			txtBar.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent event){
+					searchBoxUsed(((JTextField) event.getSource()).getText());
+				}
+			});
+			menubar.add(txtBar);
+				
+			//Refresh button
+			JMenu refresh = new JMenu("Refresh");
+			refresh.setMnemonic(KeyEvent.VK_E);
+			refresh.addActionListener(new ActionListener() {
+			 @Override
+			 public void actionPerformed(ActionEvent event) {			 
+			 			}
+			});
+			menubar.add(refresh);
+			return menubar;
 		}
 		
-		
+				
 		/*
 		 * used to add current weather data to a Panel
 		 * @param none
