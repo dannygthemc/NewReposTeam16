@@ -306,7 +306,7 @@ public class weatherApp {
 		    
 		    //fills the current object with the data
 		    current.fill(lon, lat, pic, city, country,  temp, windSpeed, windDir, pressure, humidity, description, minTemp, maxTemp, formattedSunrise, formattedSunset);
-		}
+	}
 	
 	/*
 	 * this grabs the data for the short term data structure

@@ -16,6 +16,7 @@ import javax.swing.JFrame; //used to create a Jframe
 
 
 
+
 //used to create a menu bar and responses to user Interface
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,6 +26,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+
 
 
 
@@ -62,10 +64,12 @@ import javax.swing.JRadioButton;
 
 
 
+
 //used to organize layout
 import java.awt.Color;
 
 import javax.swing.GroupLayout;
+
 
 
 
@@ -83,17 +87,26 @@ import org.imgscalr.Scalr;
 
 
 
+
 //used to organize border layout
 import java.awt.BorderLayout;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Date;
 
 	public class MainWindow extends JFrame  {
 		
 		private weatherApp app = new weatherApp();
-		JComboBox<String> locBar = new JComboBox<String>(); //used to list searched locations
-		JMenuBar menubar;
-		ActionListener Jcombo = new ActionListener() { //updates weatherView when a new item is searched
+		
+		//GUI Initializations to allow dynmaic changes
+		private JComboBox<String> locBar = new JComboBox<String>(); //used to list searched locations
+		private JMenuBar menubar;
+		private JLabel refreshLabel = new JLabel();
+		private JTabbedPane tabbedPane = new JTabbedPane(); //creates a tab pane
+		private JPanel currentPanel = new JPanel();
+		private JPanel shortPanel = new JPanel();
+		private ActionListener Jcombo = new ActionListener() { //updates weatherView when a new item is searched
 			@Override
 			public void actionPerformed(ActionEvent event){
 				if (((JComboBox<String>)event.getSource()).getSelectedItem() != null){
@@ -127,17 +140,57 @@ import java.io.IOException;
 			this.setDefaultCloseOperation(EXIT_ON_CLOSE); //initiates exit on close command
 			this.setJMenuBar(this.createMenubar()); 
 			
-			this.setLayout(new BorderLayout());
+			createForm();
+			createFormTwo();
 			
+			tabbedPane.addTab("Current", null, currentPanel); //fills a tab window with current data
+			tabbedPane.addTab("Short Term", null, shortPanel); //fills a tab window with short term data
+			//tabbedPane.addTab("Long Term", null, this.createMultiForm(app.getLongTerm()),"");
+			//this.setLayout(new BorderLayout());
+			
+			
+			GroupLayout layout = new GroupLayout(this.getContentPane());
+			layout.setAutoCreateGaps(true);
+			layout.setAutoCreateContainerGaps(true);
+			layout.setHorizontalGroup( layout.createSequentialGroup() //sets the vertical groups
+					
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING) 
+								.addComponent(tabbedPane)
+								.addComponent(refreshLabel)
+						)
 
-			JTabbedPane tabbedPane = new JTabbedPane(); //creates a tab pane
-			 tabbedPane.addTab("Current", null, this.createForm()); //fills a tab window with current data
-			 tabbedPane.addTab("Short Term", null, this.createFormTwo()); //fills a tab window with short term data
-			 //tabbedPane.addTab("Long Term", null, this.createMultiForm(app.getLongTerm()),"");
-			 
-			this.add(tabbedPane, BorderLayout.CENTER);//adds the tabbed pane to the main window
+			);
+			layout.setVerticalGroup( layout.createSequentialGroup() //sets the vertical groups
+					
+					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE) 
+							.addComponent(tabbedPane)
+					)
+					.addComponent(refreshLabel)
+
+		);
 			
+			
+			//this.add(lbl1);
+			//this.add(tabbedPane, BorderLayout.CENTER);//adds the tabbed pane to the main window
+			this.getContentPane().setLayout(layout);
 		}
+		
+		/*
+		 * Refreshes the User Interface elements defined below
+		 * @param none
+		 * @return none, refreshes UI
+		 * 
+		 */
+		private void refreshPanels(){
+			currentPanel.removeAll();
+			shortPanel.removeAll();
+			
+			createForm();
+			createFormTwo();
+			
+			updateRefreshTime();
+		}
+		
 		/*
 		 * used to fill the location box with preset locations
 		 * @param none
@@ -157,8 +210,6 @@ import java.io.IOException;
 			} else {
 				locBar.addItem("--Remove?--");
 			}
-			//locBar.revalidate();
-			//locBar.setVisible(true);
 			locBar.addActionListener(Jcombo);
 		}
 		
@@ -169,19 +220,19 @@ import java.io.IOException;
 		 */
 		private void updateWeatherView(String cityName){
 			if (cityName.equals("--Remove?--")){
+					int count = 0;
 					JFrame frame = new JFrame();
 					String[] possibilities = new String[app.getMyLocations().length];
 					for (int i = 0; i < app.getMyLocations().length; i ++){
 						String name =  app.getMyLocations()[i].getName();
 						if (!name.equals("Default")){
 							possibilities[i] = name;
+							count ++;
 						}
 					}
 					String response = (String) JOptionPane.showInputDialog(frame, "Pick a location to remove:", "Remove Location",  
-							JOptionPane.QUESTION_MESSAGE, null, possibilities, "Titan");
+							JOptionPane.QUESTION_MESSAGE, null, Arrays.copyOfRange(possibilities, 0, count), "Titan");
 					if (response != null) app.removeLocation(response);
-					//TODO:
-					//Update the mylocations view when location is removed
 					populateMyLocationsBox();
 						
 			 } else if (cityName.equals("--Empty--")){
@@ -194,38 +245,96 @@ import java.io.IOException;
 					}
 					//TODO:
 					///Update the weather view based on 'update' location
-				}
 			}
+		}
 				
-			/*
-			 * Refresh the views when new city is searched
-			 * @param String of city searched for
-			 * @return none, adds city to search Box
-			 */
-			private void searchBoxUsed(String txt){
-				location searchedLoc = new location();
-				searchedLoc.setCityID(1234);
-				searchedLoc.setName(txt);
-				//TODO:
-				//Assign the new location a location object from Omar's database
-				//Verify it was a correct entry
-				JFrame frame = new JFrame();
-				int result = JOptionPane.showConfirmDialog(frame, "Did you mean: " + txt + " Lat:1235 Lon:1234?");
-				if (JOptionPane.YES_OPTION == result) {
-						app.addLocation(searchedLoc);
-						populateMyLocationsBox();
-						//this.initUI();
-				 }
-			}
+		/*
+		 * Refresh the views when new city is searched
+		 * @param String of city searched for
+		 * @return none, adds city to search Box
+		 */
+		private void searchBoxUsed(String txt){
+			location searchedLoc = new location();
+			searchedLoc.setCityID(1234);
+			searchedLoc.setName(txt);
+			//TODO:
+			//Assign the new location a location object from Omar's database
+			//Verify it was a correct entry
+			JFrame frame = new JFrame();
+			int result = JOptionPane.showConfirmDialog(frame, "Did you mean: " + txt + " Lat:1235 Lon:1234?");
+			if (JOptionPane.YES_OPTION == result) {
+					app.addLocation(searchedLoc);
+					populateMyLocationsBox();
+					refreshPanels();
+			 }
+		}
+		
+		/*
+		 * defines a Menu bar with a "File" option, which can be called by "alt + f"
+		 * menu bar contains option for exiting current program
+		 */
+		private JMenuBar createMenubar() {
+			JMenuBar menubar = new JMenuBar(); //creates new menu bar
+			JMenu mnuFile = new JMenu("File"); //creates file option
+			mnuFile.setMnemonic(KeyEvent.VK_F);
+			JMenuItem mniFileExit = new JMenuItem("Exit"); //creates exit button
+			mniFileExit.setMnemonic(KeyEvent.VK_E);
+			mniFileExit.setToolTipText("Exit application"); //sets tool tip
+			mniFileExit.addActionListener(new ActionListener() {
+			 @Override
+			 public void actionPerformed(ActionEvent event) { //when clicked
+			System.exit(0); } //exit program
+			});
+			
+			//Refresh button
+			JMenuItem refresh = new JMenuItem("Refresh");
+			refresh.setMnemonic(KeyEvent.VK_E);
+			updateRefreshTime();
+			refresh.addActionListener(new ActionListener() {
+			 @Override
+			 public void actionPerformed(ActionEvent event) {	
+				 refreshPanels(); 
+			 	}
+			});
+			
+			mnuFile.add(refresh);
+			mnuFile.add(mniFileExit); //adds it to the menubar
+			menubar.add(mnuFile);
+	
+			//Locations -> MyLocations
+			populateMyLocationsBox();
+			locBar.addActionListener(Jcombo);
+			menubar.add(locBar);
+						
+			//Search text box
+			JTextField txtBar = new JTextField("Search Location");
+			txtBar.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent event){
+					searchBoxUsed(((JTextField) event.getSource()).getText());
+				}
+			});
+			menubar.add(txtBar);
+				
+			
+			return menubar;
+		}
+		
+		/*
+		 * used to refresh update time on new weather grab
+		 * @param none
+		 * @return none
+		 */
+		private void updateRefreshTime(){
+			refreshLabel.setText("Last Updated: " + (new Date()).toString());
+		}
 		
 		/*
 		 * used to create Panel for the shorTermForecast Tab
 		 * @param none
-		 * @return JPanel filled with shortTerm data
+		 * @return none
 		 */
-		private JPanel createFormTwo(){
-			
-			JPanel panel = new JPanel();//creates a new JPanel
+		private void createFormTwo(){
 			
 			weatherData[] tmp = new weatherData[10]; //holds weather data objects
 			app.grabShortTerm(); //grabs current weather data info from database
@@ -264,7 +373,7 @@ import java.io.IOException;
 			}
 			
 			//Group layout used to organize GUI
-			GroupLayout layout = new GroupLayout(panel);
+			GroupLayout layout = new GroupLayout(shortPanel);
 			layout.setAutoCreateGaps(true);
 			layout.setAutoCreateContainerGaps(true);
 			layout.setHorizontalGroup( layout.createSequentialGroup() //sets the horizontal groups
@@ -399,69 +508,22 @@ import java.io.IOException;
 							.addComponent(descrip[8])
 							)		
 					);
-			panel.setLayout(layout); //sets the defined layout to the panel
-			return panel; //returns the panel
+			shortPanel.setLayout(layout); //sets the defined layout to the panel
 		}
 		
-		/*
-		 * defines a Menu bar with a "File" option, which can be called by "alt + f"
-		 * menu bar contains option for exiting current program
-		 */
-		private JMenuBar createMenubar() {
-			JMenuBar menubar = new JMenuBar(); //creates new menu bar
-			JMenu mnuFile = new JMenu("File"); //creates file option
-			mnuFile.setMnemonic(KeyEvent.VK_F);
-			JMenuItem mniFileExit = new JMenuItem("Exit"); //creates exit button
-			mniFileExit.setMnemonic(KeyEvent.VK_E);
-			mniFileExit.setToolTipText("Exit application"); //sets tool tip
-			mniFileExit.addActionListener(new ActionListener() {
-			 @Override
-			 public void actionPerformed(ActionEvent event) { //when clicked
-			System.exit(0); } //exit program
-			});
-			mnuFile.add(mniFileExit); //adds it to the menubar
-			menubar.add(mnuFile);
-	
-			//Locations -> MyLocations
-			populateMyLocationsBox();
-			locBar.addActionListener(Jcombo);
-			menubar.add(locBar);
-						
-			//Search text box
-			JTextField txtBar = new JTextField("Search Location");
-			txtBar.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent event){
-					searchBoxUsed(((JTextField) event.getSource()).getText());
-				}
-			});
-			menubar.add(txtBar);
-				
-			//Refresh button
-			JMenu refresh = new JMenu("Refresh");
-			refresh.setMnemonic(KeyEvent.VK_E);
-			refresh.addActionListener(new ActionListener() {
-			 @Override
-			 public void actionPerformed(ActionEvent event) {			 
-			 			}
-			});
-			menubar.add(refresh);
-			return menubar;
-		}
 		
 				
 		/*
 		 * used to add current weather data to a Panel
 		 * @param none
-		 * @return none, creates Panel of current weather data
+		 * @return none
 		 */
-		private JPanel createForm() {
+		private void createForm() {
 			
 			weatherData tmp = new weatherData();
 			app.grab();
 			tmp = app.getCurrent();
 			
-			JPanel panel = new JPanel();
 			JLabel lblcity = new JLabel(tmp.getName() + ", " + tmp.getCount() + ", " + tmp.getLon() + ", " + tmp.getLat() ); //displays location info
 			JLabel lbldescrip = new JLabel("Weather Condition: ");
 			JLabel lbldescrip2 = new JLabel("" +tmp.getCondit());
@@ -491,7 +553,7 @@ import java.io.IOException;
 			
 			
 			//adds control with layout organization
-			GroupLayout layout = new GroupLayout(panel);
+			GroupLayout layout = new GroupLayout(currentPanel);
 			layout.setAutoCreateGaps(true);
 			layout.setAutoCreateContainerGaps(true);
 			layout.setHorizontalGroup( layout.createSequentialGroup() //sets horizontal groups
@@ -573,8 +635,7 @@ import java.io.IOException;
 							)					
 						);
 							
-						panel.setLayout(layout); //sets the layout
-						return panel; //returns the panel 			
+						currentPanel.setLayout(layout); //sets the layout		
 								
 			}
 	}
