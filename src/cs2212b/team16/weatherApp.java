@@ -25,7 +25,8 @@ public class weatherApp {
 	private weatherData[] longTerm; //used to store long term data
 	private weatherData[] shortTerm; //used to store short term data
 	private location[] myLocations;	//used to store users preset locations
-	
+	private location currentLocation;	//Current location for user persistence
+	private location visibleLocation;	//Location that is currently visible on app
 	/*
 	 * instantiates an object of the class
 	 * initiates all the arrays
@@ -46,7 +47,46 @@ public class weatherApp {
 		for (int i = 0; i < 5; i ++){
 			myLocations[i] = new location();
 		}
+		//TODO: populate current location with file current location on startup
+		currentLocation = new location();
+		visibleLocation = currentLocation;
 		
+	}
+	
+	/*
+	 * returns current location data object
+	 * @param no parameters
+	 * @return location object holding current location
+	 */
+	public location getCurrentLocation(){
+		return currentLocation;
+	}
+	
+	/*
+	 * sets current location data object
+	 * @param location object A
+	 * @return none, updates current location
+	 */
+	public void setCurrentLocation(location A){
+		currentLocation = A;
+	}
+	
+	/*
+	 * returns visible location data object
+	 * @param no parameters
+	 * @return location object holding visible location
+	 */
+	public location getVisibleLocation(){
+		return visibleLocation;
+	}
+	
+	/*
+	 * sets visible location data object
+	 * @param location object A
+	 * @return none, updates visible location
+	 */
+	public void setVisibleLocation(location A){
+		visibleLocation = A;
 	}
 	
 	/*

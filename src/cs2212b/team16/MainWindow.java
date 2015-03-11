@@ -17,6 +17,7 @@ import javax.swing.JFrame; //used to create a Jframe
 
 
 
+
 //used to create a menu bar and responses to user Interface
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,6 +27,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+
 
 
 
@@ -65,10 +67,12 @@ import javax.swing.JRadioButton;
 
 
 
+
 //used to organize layout
 import java.awt.Color;
 
 import javax.swing.GroupLayout;
+
 
 
 
@@ -88,6 +92,7 @@ import org.imgscalr.Scalr;
 
 
 
+
 //used to organize border layout
 import java.awt.BorderLayout;
 import java.io.File;
@@ -99,7 +104,7 @@ import java.util.Date;
 		
 		private weatherApp app = new weatherApp();
 		
-		//GUI Initializations to allow dynmaic changes
+		//GUI Initializations to allow dynamic changes
 		private JComboBox<String> locBar = new JComboBox<String>(); //used to list searched locations
 		private JMenuBar menubar;
 		private JLabel refreshLabel = new JLabel();
@@ -135,7 +140,7 @@ import java.util.Date;
 		private void initUI () {
 			
 			this.setTitle("Weather Application"); //sets title of frame 
-			this.setSize(350, 500); //sets size of frame
+			this.setSize(900, 540); //sets size of frame
 			this.setLocationRelativeTo(null);
 			this.setDefaultCloseOperation(EXIT_ON_CLOSE); //initiates exit on close command
 			this.setJMenuBar(this.createMenubar()); 
@@ -145,9 +150,7 @@ import java.util.Date;
 			
 			tabbedPane.addTab("Current", null, currentPanel); //fills a tab window with current data
 			tabbedPane.addTab("Short Term", null, shortPanel); //fills a tab window with short term data
-			//tabbedPane.addTab("Long Term", null, this.createMultiForm(app.getLongTerm()),"");
-			//this.setLayout(new BorderLayout());
-			
+			//tabbedPane.addTab("Long Term", null, this.createMultiForm(app.getLongTerm()),"");			
 			
 			GroupLayout layout = new GroupLayout(this.getContentPane());
 			layout.setAutoCreateGaps(true);
@@ -169,9 +172,6 @@ import java.util.Date;
 
 		);
 			
-			
-			//this.add(lbl1);
-			//this.add(tabbedPane, BorderLayout.CENTER);//adds the tabbed pane to the main window
 			this.getContentPane().setLayout(layout);
 		}
 		
@@ -247,7 +247,8 @@ import java.util.Date;
 					///Update the weather view based on 'update' location
 			}
 		}
-				
+		
+		
 		/*
 		 * Refresh the views when new city is searched
 		 * @param String of city searched for
@@ -263,8 +264,15 @@ import java.util.Date;
 			JFrame frame = new JFrame();
 			int result = JOptionPane.showConfirmDialog(frame, "Did you mean: " + txt + " Lat:1235 Lon:1234?");
 			if (JOptionPane.YES_OPTION == result) {
-					app.addLocation(searchedLoc);
-					populateMyLocationsBox();
+					int changeCurrent = JOptionPane.showConfirmDialog(frame, "Set your current location to " + txt + "?");
+					if (JOptionPane.YES_OPTION == changeCurrent) {
+						app.setCurrentLocation(searchedLoc);
+						app.setVisibleLocation(app.getCurrentLocation());
+					} else {
+						app.addLocation(searchedLoc);
+						app.setVisibleLocation(searchedLoc);
+						populateMyLocationsBox();
+					}
 					refreshPanels();
 			 }
 		}
