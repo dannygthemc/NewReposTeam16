@@ -110,6 +110,7 @@ import java.util.Date;
 		private JTabbedPane tabbedPane = new JTabbedPane(); //creates a tab pane
 		private JPanel currentPanel = new JPanel();
 		private JPanel shortPanel = new JPanel();
+		private JPanel longPanel = new JPanel();
 		private ActionListener Jcombo = new ActionListener() { //updates weatherView when a new item is searched
 			@Override
 			public void actionPerformed(ActionEvent event){
@@ -146,9 +147,10 @@ import java.util.Date;
 			
 			createForm();
 			createFormTwo();
-			
+			createFormThree();
 			tabbedPane.addTab("Current", null, currentPanel); //fills a tab window with current data
 			tabbedPane.addTab("Short Term", null, shortPanel); //fills a tab window with short term data
+			tabbedPane.addTab("Long Term", null, longPanel); //fills a tab window with short term data
 			//tabbedPane.addTab("Long Term", null, this.createMultiForm(app.getLongTerm()),"");
 			//this.setLayout(new BorderLayout());
 			
@@ -191,6 +193,7 @@ import java.util.Date;
 			
 			createForm();
 			createFormTwo();
+			createFormThree();
 			
 			updateRefreshTime();
 		}
@@ -267,8 +270,15 @@ import java.util.Date;
 			JFrame frame = new JFrame();
 			int result = JOptionPane.showConfirmDialog(frame, "Did you mean: " + txt + " Lat:1235 Lon:1234?");
 			if (JOptionPane.YES_OPTION == result) {
-					app.addLocation(searchedLoc);
-					populateMyLocationsBox();
+					int changeCurrent = JOptionPane.showConfirmDialog(frame, "Set your current location to " + txt + "?");
+					if (JOptionPane.YES_OPTION == changeCurrent) {
+						app.setCurrentLocation(searchedLoc);
+						app.setVisibleLocation(app.getCurrentLocation());
+					} else {
+						app.addLocation(searchedLoc);
+						app.setVisibleLocation(searchedLoc);
+						populateMyLocationsBox();
+					}
 					refreshPanels();
 			 }
 		}
@@ -365,11 +375,226 @@ import java.util.Date;
 		private void updateRefreshTime(){
 			refreshLabel.setText("Last Updated: " + (new Date()).toString());
 		}
+		/*
+		 * this method is used to fill a panel with the Long term weather Data
+		 * @param none
+		 * @return none, fills panel with data
+		 */
+		private void createFormThree(){
+			
+			weatherData[] tmp = new weatherData[8]; //holds weather data objects
+			app.grabLongTerm(); //grabs long term weather data info from database
+			tmp = app.getLongTerm(); //grabs weatherData objects now filled with data
+			
+			//used for formatting
+			//JLabel lbl1 = new JLabel("Time: ");
+			JLabel lbl1 = new JLabel("Date: ");
+			JLabel lbl2 = new JLabel("Temp: ");
+			JLabel lbl2A = new JLabel("Min-Temp: ");
+			JLabel lbl2B = new JLabel("Max-Temp: ");
+			JLabel lbl3 = new JLabel("Weather Condition:");
+			
+			JLabel lblcity = new JLabel(tmp[0].getName() + ", " + tmp[0].getCount() + ", " + tmp[0].getLon() + ", " + tmp[0].getLat() ); //displays location info
+			JLabel[] date = new JLabel[7]; //array of dates
+			JLabel[] temp = new JLabel[7]; //array of temperature labels
+			JLabel[] min = new JLabel[7]; //array of min temp labels
+			JLabel[] max = new JLabel[7]; //array of max temp labels
+			JLabel[] descrip = new JLabel[7]; //array of description labels
+			JLabel[] lblPic = new JLabel[7]; //array of picture labels
+			
+			BufferedImage pic = null; //used to temporarily hold pictures
+			JLabel hold; //temporarily hold labels for storage
+			JLabel hold2;
+			JLabel hold3;
+			JLabel hold4;
+			JLabel hold5;
+			JLabel hold6;
+			
+			//fills the arrays with their respective values
+			for(int i =0; i<7; i++){
+				hold = new JLabel("" +tmp[i+1].getTemp()); //holds current temp
+				temp[i] = hold; //puts it in the array
+				hold2 = new JLabel("" +tmp[i+1].getCondit()); //holds current condition
+				descrip[i] = hold2;
+				
+				pic = tmp[i+1].getIcon();
+				pic  = Scalr.resize(pic, 80);
+				hold3 = new JLabel(new ImageIcon(pic)); //holds current pic
+				lblPic[i] = hold3;
+				hold4 = new JLabel("" + tmp[i+1].getMin());//holds current min
+				min[i] = hold4;
+				hold5 = new JLabel("" + tmp[i+1].getMax());//holds current max
+				max[i] = hold5;
+				hold6 = new JLabel("" + tmp[i+1].getSunrise());//timestamp stored in Sunrise, since this variable was not in use for ShorTerm
+				date[i] = hold6;
+			}
+			
+			//Group layout used to organize GUI
+			GroupLayout layout = new GroupLayout(longPanel);
+			layout.setAutoCreateGaps(true);
+			layout.setAutoCreateContainerGaps(true);
+			layout.setHorizontalGroup( layout.createSequentialGroup() //sets the horizontal groups
+						
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING) //shows city data
+								.addComponent(lblcity)
+								.addGap(10)
+								.addComponent(lbl1)
+								.addComponent(lbl2)
+								.addComponent(lbl2A)
+								.addComponent(lbl2B)
+								.addComponent(lbl3)
+								
+						)
+						//the rest of the horizontal groups contain weather Data in 3 hour increments
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+								
+								.addComponent(lblPic[0])
+								.addComponent(date[0])
+								.addComponent(temp[0])
+								.addComponent(min[0])
+								.addComponent(max[0])
+								.addComponent(descrip[0])
+								.addGap(30)
+								.addComponent(lblPic[5])
+								.addComponent(date[5])
+								.addComponent(temp[5])
+								.addComponent(min[5])
+								.addComponent(max[5])
+								.addComponent(descrip[5])
+								
+						)
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+								
+								.addComponent(lblPic[1])
+								.addComponent(date[1])
+								.addComponent(temp[1])
+								.addComponent(min[1])
+								.addComponent(max[1])
+								.addComponent(descrip[1])
+								.addGap(30)
+								.addComponent(lblPic[6])
+								.addComponent(date[6])
+								.addComponent(temp[6])
+								.addComponent(min[6])
+								.addComponent(max[6])
+								.addComponent(descrip[6])
+								
+						)
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+								
+								.addComponent(lblPic[2])
+								.addComponent(date[2])
+								.addComponent(temp[2])
+								.addComponent(min[2])
+								.addComponent(max[2])
+								.addComponent(descrip[2])
+								.addGap(30)
+						)
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+								
+								.addComponent(lblPic[3])
+								.addComponent(date[3])
+								.addComponent(temp[3])
+								.addComponent(min[3])
+								.addComponent(max[3])
+								.addComponent(descrip[3])
+								.addGap(30)
+						)
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+								
+								.addComponent(lblPic[4])
+								.addComponent(date[4])
+								.addComponent(temp[4])
+								.addComponent(min[4])
+								.addComponent(max[4])
+								.addComponent(descrip[4])
+								
+						)
+						
+						);
+			layout.setVerticalGroup( layout.createSequentialGroup() //sets the vertical groups
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)//city is in its own vertical group
+							.addComponent(lblcity)
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //pics aligned vertically
+							.addComponent(lblPic[0])
+							.addComponent(lblPic[1])
+							.addComponent(lblPic[2])
+							.addComponent(lblPic[3])
+							.addComponent(lblPic[4])
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //dates alligned vertically
+							.addComponent(lbl1)
+							.addComponent(date[0])
+							.addComponent(date[1])
+							.addComponent(date[2])
+							.addComponent(date[3])
+							.addComponent(date[4])
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //temps aligned vertically
+							.addComponent(lbl2)
+							.addComponent(temp[0])
+							.addComponent(temp[1])
+							.addComponent(temp[2])
+							.addComponent(temp[3])
+							.addComponent(temp[4])
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE) // min temps aligned vertically
+							.addComponent(lbl2A)
+							.addComponent(min[0])
+							.addComponent(min[1])
+							.addComponent(min[2])
+							.addComponent(min[3])
+							.addComponent(min[4])
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //max temps aligned vertically
+							.addComponent(lbl2B)
+							.addComponent(max[0])
+							.addComponent(max[1])
+							.addComponent(max[2])
+							.addComponent(max[3])
+							.addComponent(max[4])
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //descrips alligned vertically
+							.addComponent(lbl3)
+							.addComponent(descrip[0])
+							.addComponent(descrip[1])
+							.addComponent(descrip[2])
+							.addComponent(descrip[3])
+							.addComponent(descrip[4])
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //this is the start of the second row of weather Data, pics aligned
+							.addComponent(lblPic[5])
+							.addComponent(lblPic[6])
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)//dates aligned
+							.addComponent(date[5])
+							.addComponent(date[6])
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)//temps aligned
+							.addComponent(temp[5])
+							.addComponent(temp[6])
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)//min temps aligned
+							.addComponent(min[5])
+							.addComponent(min[6])
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)//max temps aligned
+							.addComponent(max[5])
+							.addComponent(max[6])
+							)		
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)//descrips aligned
+							.addComponent(descrip[5])
+							.addComponent(descrip[6])
+							)		
+					);
+			longPanel.setLayout(layout); //sets the defined layout to the panel
+		}
 		
 		/*
 		 * used to create Panel for the shorTermForecast Tab
 		 * @param none
-		 * @return none
+		 * @return none, fills panel with data
 		 */
 		private void createFormTwo(){
 			
