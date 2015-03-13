@@ -9,14 +9,15 @@ public class LocSearch {
 	public static void main(String[] args) 
 	{		
 		String file = "C:\\Users\\Omar\\workspace\\WeatherApp\\bin\\city_list.txt"; 
+		
 		String input = "";
 		int selection = 0;
 		System.out.println("------ Welcome to Location Search for WeatherApp------\n" +
 		                   "------ Please wait while database is prepared. -------\n");
 		
 		SearchIndex database = new SearchIndex(file);
-		System.out.println("\nDatabase READY.\n" +
-						   "The database contains " + database.numElements() + " cities to search from.");
+		System.out.println("Database READY.\n" +
+						   "\nThe database contains " + database.numElements() + " cities to search from.");
 		
 		BufferedReader keyboard = new BufferedReader(new InputStreamReader(System.in));
 		
@@ -34,6 +35,7 @@ public class LocSearch {
 			
 			if(input.compareTo("exit") == 0)
 			{
+				System.out.println("GOODBYE!");
 				System.exit(0);
 			}
 			else
@@ -44,7 +46,7 @@ public class LocSearch {
 					System.out.println("Your search returned no results.");
 				else
 				{
-					System.out.println("Your search returned " + results.size() + " results.");
+					System.out.println("\nYour search returned " + results.size() + " results:\n");
 					
 					CityProfile[] cities = new CityProfile[results.size()];
 					CityProfile current; 
@@ -54,14 +56,14 @@ public class LocSearch {
 					for(int i = 0; i < cities.length; i++)
 					{
 						current = cities[i];
-						System.out.println("( " + (i + 1) + ")\t" + 
+						System.out.println("( " + (i + 1) + " )\t" + 
 									     current.getName() + ", " + current.getCode() +
 									     "\tLong: " + current.getLong() + "\tLat: " + current.getLat());
 					}
 										
 					for(;;)
 					{
-						System.out.println("Please select a result using the appropriate number, or type \"exit\" to quit: ");
+						System.out.println("\nPlease select a result using the appropriate number, or type \"exit\" to quit: ");
 						try 
 						{
 							input = keyboard.readLine();
@@ -79,6 +81,7 @@ public class LocSearch {
 						{
 							if(input.compareTo("exit") == 0)
 							{
+								System.out.println("GOODBYE!");
 								System.exit(0);
 							}
 							else
@@ -92,7 +95,7 @@ public class LocSearch {
 					}
 					
 					System.out.println("You have selected: ( " + selection + " )");
-					System.out.println("Displaying information:\n\t" + cities[selection]);
+					System.out.println("Displaying information:\n\t" + cities[selection-1]);
 					
 					System.out.println("Would you like to search another city? Hit Y to continue, or N to quit.");
 					
@@ -104,7 +107,7 @@ public class LocSearch {
 					{
 						System.out.println("Not a valid input.");
 					}
-					if(input.compareTo("y") == 0)
+					if(input.compareTo("n") == 0)
 					{
 						System.out.println("GOODBYE!");
 						System.exit(0);
