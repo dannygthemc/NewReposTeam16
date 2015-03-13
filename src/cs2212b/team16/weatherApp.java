@@ -27,6 +27,7 @@ public class weatherApp {
 	private location[] myLocations;	//used to store users preset locations
 	private location currentLocation;	//Current location for user persistence
 	private location visibleLocation;	//Location that is currently visible on app
+	
 	/*
 	 * instantiates an object of the class
 	 * initiates all the arrays
@@ -35,7 +36,7 @@ public class weatherApp {
 	 */
 	public weatherApp(){
 		current = new weatherData();
-		longTerm = new weatherData[5];	//Covers next 5 days
+		longTerm = new weatherData[8];	//Covers next 5 days
 		for (int i = 0; i < 5; i ++){
 			longTerm[i] = new weatherData();
 		}
@@ -50,45 +51,43 @@ public class weatherApp {
 		//TODO: populate current location with file current location on startup
 		currentLocation = new location();
 		visibleLocation = currentLocation;
-		
 	}
-	
+
 	/*
-	 * returns current location data object
-	 * @param no parameters
-	 * @return location object holding current location
-	 */
+ 	* returns current location data object
+ 	* @param no parameters
+ 	* @return location object holding current location
+ 	*/
 	public location getCurrentLocation(){
 		return currentLocation;
 	}
-	
+
 	/*
-	 * sets current location data object
-	 * @param location object A
-	 * @return none, updates current location
-	 */
+ 	* sets current location data object
+ 	* @param location object A
+ 	* @return none, updates current location
+ 	*/
 	public void setCurrentLocation(location A){
 		currentLocation = A;
 	}
-	
+
 	/*
-	 * returns visible location data object
-	 * @param no parameters
-	 * @return location object holding visible location
-	 */
+ 	* returns visible location data object
+ 	* @param no parameters
+ 	* @return location object holding visible location
+ 	*/
 	public location getVisibleLocation(){
 		return visibleLocation;
 	}
-	
+
 	/*
-	 * sets visible location data object
-	 * @param location object A
-	 * @return none, updates visible location
-	 */
+ 	* sets visible location data object
+ 	* @param location object A
+ 	* @return none, updates visible location
+ 	*/
 	public void setVisibleLocation(location A){
 		visibleLocation = A;
 	}
-	
 	/*
 	 * returns current weather data object
 	 * @param no parameters
@@ -518,5 +517,179 @@ public class weatherApp {
 	   }
 	   
 	   
+	}
+	/*
+	 * this grabs the data for the long term data structure
+	 * @param (none yet) eventually: city id & unites
+	 * @return no returns
+	 */
+	public void grabLongTerm(){
+		
+		URL url = null;
+		try {
+			url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?id=6058560&units=metric"); //need to be able to input the id and the units
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		URLConnection con = null;
+		try {
+			con = url.openConnection();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		InputStream is = null;
+	    try {
+			is =con.getInputStream();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	    BufferedReader br = new BufferedReader(new InputStreamReader(is)); //used to read input from JSON
+	    
+	    String line = null; //holds info grabbed
+	
+	    // read each line
+	    try {
+			while (br.ready()) { //line = br.readLine()) != null
+			    line = br.readLine();
+			    //System.out.println(line);
+				
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    
+	    System.out.println(line);
+	    
+	    line = line.replace('{', ' ');
+	    line = line.replace('}', ' ');
+	    line = line.replace(':', ' ');
+	    line = line.replace(';', ' ');
+	    line = line.replace(',', ' ');
+	    line = line.replace('[', ' ');
+	    
+	    System.out.println(line);
+	    
+	    String[] tokens; //used to hold separate 7 day calls
+	    //StringTokenizer tokens;
+	    tokens = line.split("temp");
+	    
+	    String tmp = null;
+	    int i =0;
+	    
+	   while(i <=7){
+	    	
+	    	tmp = tokens[i];
+	    	System.out.println(tmp);
+	    	i++;
+	    }
+	   
+	   StringTokenizer tokens2; //used to divide up each 3 hour period
+	   float lon = 0; //used to temporarily hold longitude
+	   float lat = 0; //used to temporarily hold latitude
+	   long date = 0; //used to hold date in long form
+	   String count = null; //holds country name
+	   String name = null; //holds city name
+	   float temp = 0; //holds temperature
+	   float minTemp = 0; //holds min temperature
+	   float maxTemp = 0; //holds max temperature
+	   String descrip = ""; //holds weather description
+	   String icon = null; //holds name of weather icon
+	   BufferedImage pic = null; //holds picture of weather icon
+	   
+	   //initialize array of weatherData objects
+	   for(int j = 0; j <=7; j++){
+		   
+		   longTerm[j] = new weatherData();
+	   }
+	   
+	   String hold = null; //holds tokens temporarily
+	   tokens2 = new StringTokenizer(tokens[0],  " \" "  );
+	   
+	   //used to grab the first line of data
+	   //i.e. city, country, coordinates
+	   while(tokens2.hasMoreTokens()){
+		   tmp = tokens2.nextToken();
+		   System.out.println(tmp);
+		   if(tmp.equals("lon")) //grabs longitude data
+	    		lon = Float.parseFloat(tokens2.nextToken());
+	    	if(tmp.equals("lat")) //grabs latitude data
+	    		lat = Float.parseFloat(tokens2.nextToken());
+	    	if(tmp.equals("country")) //grabs country name
+	    		count = (tokens2.nextToken());
+	    	if(tmp.equals("name")) //grabs country name
+	    		name = (tokens2.nextToken());
+	    	if(tmp.equals("dt")) //grabs date of first weather data
+	    		date = Long.parseLong(tokens2.nextToken()); 
+	   }
+	   
+	   Date date2 = new Date(date*1000L); // *1000 is to convert seconds to milliseconds
+	   SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z"); // the format of date
+	   String formattedDate = sdf2.format(date2);
+	   //sets data of the first weatherData object, location data
+	   longTerm[0].setLon(lon);
+	   longTerm[0].setLat(lat);
+	   longTerm[0].setCount(count);
+	   longTerm[0].setName(name);
+	   longTerm[1].setSunrise(formattedDate); //sets date of the first one
+	   
+	   //used to grab data for the next 7 days
+	   for(int k =1; k <=7; k++){
+		   
+		   tokens2 = new StringTokenizer(tokens[k],  " \" "  ); //tokenizes current line of data
+		   descrip = "";
+		   //grabs needed data 
+		   while(tokens2.hasMoreTokens()){
+			   
+			    
+			    tmp = tokens2.nextToken();
+		    	if(tmp.equals("day")) //grabs current temp
+		    		temp = Float.parseFloat(tokens2.nextToken());
+		    	if(tmp.equals("dt")) //grabs date for the next day
+		    		date = Long.parseLong(tokens2.nextToken());
+		    	if(tmp.equals("min")) //grabs min temp
+		    		minTemp = Float.parseFloat(tokens2.nextToken());
+		    	if(tmp.equals("max")) //grabs max temp
+		    		maxTemp = Float.parseFloat(tokens2.nextToken());
+		    	if(tmp.equals("description")){//grabs weather description
+		    		String token = tokens2.nextToken();
+		    		while(token.equals("icon") == false){
+		    			descrip = descrip.concat(token) + " ";
+		    			token = tokens2.nextToken();
+		    		}
+		    		icon = tokens2.nextToken(); //grabs icon type
+		    	}
+		    	
+		   }
+		   
+		   //gets the image for the proper weather description
+		    
+		    try {
+		        URL iconUrl = new URL("http://openweathermap.org/img/w/" + icon + ".png");
+		        pic = ImageIO.read(iconUrl);
+		    } catch (IOException e) {
+		    }
+		    
+		    //sets the values of the long Term weatherData object
+		    longTerm[k].setTemp(temp);
+		    longTerm[k].setMin(minTemp);
+		    longTerm[k].setMax(maxTemp);
+		    longTerm[k].setCondit(descrip);
+		    longTerm[k].setIcon(pic);
+		    
+		    if(k != 7){//as long as we're not on the last day
+		       date2 = new Date(date*1000L); // *1000 is to convert seconds to milliseconds
+		 	   sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z"); // the format of date
+		 	   formattedDate = sdf2.format(date2);
+		 	  longTerm[k+1].setSunrise(formattedDate);
+		    }
+		   
+	   }
 	}
 }
