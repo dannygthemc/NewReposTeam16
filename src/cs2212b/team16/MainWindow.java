@@ -73,9 +73,11 @@ import javax.swing.GroupLayout;
 
 
 
-
-
-
+//used to write to text file
+import java.io.FileReader;
+import java.io.BufferedReader;
+import java.io.FileWriter;
+import java.io.BufferedWriter;
 
 
 
@@ -98,6 +100,8 @@ import java.util.Date;
 	public class MainWindow extends JFrame  {
 		
 		private weatherApp app = new weatherApp();
+		// the text file
+		private File file = new File("savedList.txt");
 		
 		//GUI Initializations to allow dynmaic changes
 		private JComboBox<String> locBar = new JComboBox<String>(); //used to list searched locations
@@ -135,7 +139,7 @@ import java.util.Date;
 		private void initUI () {
 			
 			this.setTitle("Weather Application"); //sets title of frame 
-			this.setSize(350, 500); //sets size of frame
+			this.setSize(900, 540); //sets size of frame
 			this.setLocationRelativeTo(null);
 			this.setDefaultCloseOperation(EXIT_ON_CLOSE); //initiates exit on close command
 			this.setJMenuBar(this.createMenubar()); 
@@ -283,6 +287,39 @@ import java.util.Date;
 			mniFileExit.addActionListener(new ActionListener() {
 			 @Override
 			 public void actionPerformed(ActionEvent event) { //when clicked
+				 cs2212b.team16.location[] myLocation = app.getMyLocations();
+				 
+				 //checks if the file exists
+				 if (!file.exists()){
+					 System.out.println("The file does not exists");
+				 }
+				 
+				 //save current and locations to a text file.
+				 try {
+					
+					 FileWriter fileWriter = new FileWriter(file.getAbsoluteFile());
+					 BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+					 
+					// save current location to first line of text file
+					// append new line
+					//bufferedWriter.write();
+					//bufferedWriter.newLine();
+					
+					//write to text file
+					//append newline character
+					for (int i = 0;i < myLocation.length;i++){
+						bufferedWriter.write(myLocation[i].getName());
+						bufferedWriter.newLine();
+					}
+					
+					// close the file
+					bufferedWriter.close();
+				} catch (IOException e) {
+					// print error if the App is unable to write to text file
+					System.out.println("Error writing to " + file);
+					e.printStackTrace();
+				}
+				 
 			System.exit(0); } //exit program
 			});
 			

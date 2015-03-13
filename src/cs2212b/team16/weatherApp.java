@@ -102,7 +102,7 @@ public class weatherApp {
 		}
 	}
 	/*
-	 * this methop returns the shorTerm data array
+	 * this method returns the shorTerm data array
 	 * @param no parameters
 	 * @return weather Data array
 	 */
