@@ -70,7 +70,7 @@ public class SearchIndex {
 					}
 					catch (NumberFormatException e) //catch the exception and add the token to the name
 					{
-						name += temp; //add the current string to the name
+						name += " " + temp; //add the current string to the name
 					}
 				}
 				
