@@ -1,10 +1,12 @@
-package cs2212b.team16;
+﻿package cs2212b.team16;
 /*
  * @author: Daniel, James, Omar, Long, Angus, Nick
  * this class used to define the GUI for the application
  * Calls the main weatherApp class only
  */
 import javax.swing.JFrame; //used to create a Jframe
+
+
 
 
 
@@ -38,12 +40,15 @@ import javax.swing.JMenuItem;
 
 
 
+
+
 //used to create controls
 import java.awt.Dimension;
 import java.awt.Image;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -53,6 +58,8 @@ import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JRadioButton;
+
+
 
 
 
@@ -81,7 +88,11 @@ import javax.swing.GroupLayout;
 
 
 
+
+
 import org.imgscalr.Scalr;
+
+
 
 
 
@@ -92,9 +103,9 @@ import org.imgscalr.Scalr;
 import java.awt.BorderLayout;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.Date;
-import javax.swing.JCheckBox;
 
 	public class MainWindow extends JFrame  {
 		
@@ -137,14 +148,30 @@ import javax.swing.JCheckBox;
 		private void initUI () {
 			
 			this.setTitle("Weather Application"); //sets title of frame 
-			this.setSize(1000, 600); //sets size of frame
+			this.setSize(350, 500); //sets size of frame
 			this.setLocationRelativeTo(null);
 			this.setDefaultCloseOperation(EXIT_ON_CLOSE); //initiates exit on close command
 			this.setJMenuBar(this.createMenubar()); 
 			
-			createForm();
-			createFormTwo();
-			createFormThree();
+			JFrame error = new JFrame();
+			try {
+				createForm();
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(error, "An error occured");
+				return;
+			}
+			try {
+				createFormTwo();
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(error, "An error occured");
+				return;
+			}
+			try {
+				createFormThree();
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(error, "An error occured");
+				return;
+			}
 			tabbedPane.addTab("Current", null, currentPanel); //fills a tab window with current data
 			tabbedPane.addTab("Short Term", null, shortPanel); //fills a tab window with short term data
 			tabbedPane.addTab("Long Term", null, longPanel); //fills a tab window with short term data
@@ -185,13 +212,29 @@ import javax.swing.JCheckBox;
 		 * 
 		 */
 		private void refreshPanels(){
+			JFrame error = new JFrame();
+			
 			currentPanel.removeAll();
 			shortPanel.removeAll();
-			longPanel.removeAll();
 			
-			createForm();
-			createFormTwo();
-			createFormThree();
+			try {
+				createForm();
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(error, "An error occured");
+				return;
+			}
+			try {
+				createFormTwo();
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(error, "An error occured");
+				return;
+			}
+			try {
+				createFormThree();
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(error, "An error occured");
+				return;
+			}
 			
 			updateRefreshTime();
 		}
@@ -387,10 +430,14 @@ import javax.swing.JCheckBox;
 		 * @param none
 		 * @return none, fills panel with data
 		 */
-		private void createFormThree(){
+		private void createFormThree() throws IOException{
 			
 			weatherData[] tmp = new weatherData[8]; //holds weather data objects
-			app.grabLongTerm(); //grabs long term weather data info from database
+			try {
+				app.grabLongTerm(app.getVisibleLocation().getCityID(), app.getUnits()); //grabs long term weather data info from database
+			} catch (IOException e) {
+				throw new IOException("error");
+			} 
 			tmp = app.getLongTerm(); //grabs weatherData objects now filled with data
 			
 			//used for formatting
@@ -603,10 +650,14 @@ import javax.swing.JCheckBox;
 		 * @param none
 		 * @return none, fills panel with data
 		 */
-		private void createFormTwo(){
+		private void createFormTwo() throws IOException{
 			
 			weatherData[] tmp = new weatherData[10]; //holds weather data objects
-			app.grabShortTerm(); //grabs current weather data info from database
+			try {
+				app.grabShortTerm(app.getVisibleLocation().getCityID(), app.getUnits()); //grabs current weather data info from database
+			} catch (IOException e) {
+				throw new IOException("error");
+			} 
 			tmp = app.getShortTerm(); //grabs weatherData objects now filled with data
 			
 			//used for formatting
@@ -787,10 +838,14 @@ import javax.swing.JCheckBox;
 		 * @param none
 		 * @return none
 		 */
-		private void createForm() {
+		private void createForm() throws IOException {
 			
 			weatherData tmp = new weatherData();
-			app.grab();
+			try {
+				app.grab(app.getVisibleLocation().getCityID(), app.getUnits());
+			} catch (IOException e) {
+				throw new IOException("error");
+			}
 			tmp = app.getCurrent();
 			
 			JLabel lblcity = new JLabel(tmp.getName() + ", " + tmp.getCount() + ", " + tmp.getLon() + ", " + tmp.getLat() ); //displays location info
