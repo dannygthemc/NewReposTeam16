@@ -94,6 +94,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
+import javax.swing.JCheckBox;
 
 	public class MainWindow extends JFrame  {
 		
@@ -136,7 +137,7 @@ import java.util.Date;
 		private void initUI () {
 			
 			this.setTitle("Weather Application"); //sets title of frame 
-			this.setSize(350, 500); //sets size of frame
+			this.setSize(1000, 600); //sets size of frame
 			this.setLocationRelativeTo(null);
 			this.setDefaultCloseOperation(EXIT_ON_CLOSE); //initiates exit on close command
 			this.setJMenuBar(this.createMenubar()); 
@@ -186,6 +187,7 @@ import java.util.Date;
 		private void refreshPanels(){
 			currentPanel.removeAll();
 			shortPanel.removeAll();
+			longPanel.removeAll();
 			
 			createForm();
 			createFormTwo();
@@ -264,17 +266,27 @@ import java.util.Date;
 			//Assign the new location a location object from Omar's database
 			//Verify it was a correct entry
 			JFrame frame = new JFrame();
-			int result = JOptionPane.showConfirmDialog(frame, "Did you mean: " + txt + " Lat:1235 Lon:1234?");
-			if (JOptionPane.YES_OPTION == result) {
-					int changeCurrent = JOptionPane.showConfirmDialog(frame, "Set your current location to " + txt + "?");
+	
+			String [] possibilities = new String[5];
+			possibilities[0] = "Lodon Placeholder";
+			possibilities[1] = "Toronto Placeholder";
+			possibilities[2] = "Montreal Placeholder";
+			possibilities[3] = "Sydney Placeholder";
+			possibilities[4] = "Newcastle Placeholder";
+			String response = (String) JOptionPane.showInputDialog(frame, "Which " + txt + " did you mean?", "Search Location",  
+					JOptionPane.QUESTION_MESSAGE, null, possibilities, "Titan");
+			//int result = JOptionPane.showConfirmDialog(frame, "Did you mean: " + txt + " Lat:1235 Lon:1234?");
+			if (response != null) {
+					/*int changeCurrent = JOptionPane.showConfirmDialog(frame, "Set your current location to " + txt + "?");
 					if (JOptionPane.YES_OPTION == changeCurrent) {
 						app.setCurrentLocation(searchedLoc);
 						app.setVisibleLocation(app.getCurrentLocation());
 					} else {
-						app.addLocation(searchedLoc);
-						app.setVisibleLocation(searchedLoc);
-						populateMyLocationsBox();
-					}
+						
+					}*/
+					app.addLocation(searchedLoc);
+					app.setVisibleLocation(searchedLoc);
+					populateMyLocationsBox();
 					refreshPanels();
 			 }
 		}
@@ -296,6 +308,26 @@ import java.util.Date;
 			System.exit(0); } //exit program
 			});
 			
+			//Reset StartUp Location
+			JMenuItem reset = new JMenuItem("Reset Current");
+			reset.setMnemonic(KeyEvent.VK_E);
+			reset.addActionListener(new ActionListener() {
+			 @Override
+			 public void actionPerformed(ActionEvent event) {
+				 JFrame frame = new JFrame();
+				 String response = (String) JOptionPane.showInputDialog(frame, "Enter the city name of the new current location:", "Reset Current Location",  
+							JOptionPane.QUESTION_MESSAGE, null, null, " ");
+				 if (response != null){
+					 //TODO: populate the searched location
+					 location searchedLoc = new location();
+					 app.setCurrentLocation(searchedLoc);
+					 app.setVisibleLocation(app.getCurrentLocation());
+					 refreshPanels();
+				 }
+			 }
+			 	
+			});
+			
 			//Refresh button
 			JMenuItem refresh = new JMenuItem("Refresh");
 			refresh.setMnemonic(KeyEvent.VK_E);
@@ -306,11 +338,23 @@ import java.util.Date;
 				 refreshPanels(); 
 			 	}
 			});
-			
+			mnuFile.add(reset);
 			mnuFile.add(refresh);
 			mnuFile.add(mniFileExit); //adds it to the menubar
 			menubar.add(mnuFile);
-	
+			
+			//oF/oC check box
+			JCheckBox degree = new JCheckBox();
+			degree.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent event){
+					
+				}
+			});
+			menubar.add(degree);
+			JLabel degLabel = new JLabel("°F");
+			
+			
 			//Locations -> MyLocations
 			populateMyLocationsBox();
 			locBar.addActionListener(Jcombo);
