@@ -13,7 +13,6 @@ public class SearchIndex {
 	private ConcurrentHashMap<String, ArrayList<CityProfile>> database;
 	private int count; 
 	
-	
 	/* Constructor */
 	
 	public SearchIndex(String fileName)
@@ -80,6 +79,15 @@ public class SearchIndex {
 				city = new CityProfile(id, name, longitude, latitude, code); //create new city object
 				
 				insert(city); //add the new object to the HashMap
+				
+				/* Reset all values before next iteration */ 
+				
+				id = 0;
+				longitude = 0.0;
+				latitude = 0.0;
+				name = "";
+				code = null; 
+				endOfName = false;
 			}
 		} 
 		catch(FileNotFoundException e)
