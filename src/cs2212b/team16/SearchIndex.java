@@ -1,3 +1,4 @@
+package cs2212b.team16;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -12,7 +13,6 @@ public class SearchIndex {
 	
 	private ConcurrentHashMap<String, ArrayList<CityProfile>> database;
 	private int count; 
-	
 	
 	/* Constructor */
 	
@@ -80,6 +80,15 @@ public class SearchIndex {
 				city = new CityProfile(id, name, longitude, latitude, code); //create new city object
 				
 				insert(city); //add the new object to the HashMap
+				
+				/* Reset all values before next iteration */ 
+				
+				id = 0;
+				longitude = 0.0;
+				latitude = 0.0;
+				name = "";
+				code = null; 
+				endOfName = false;
 			}
 		} 
 		catch(FileNotFoundException e)
