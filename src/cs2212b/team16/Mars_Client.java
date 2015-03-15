@@ -53,7 +53,7 @@ public class Mars_Client {
 	    try {
 			while (br.ready()) { //line = br.readLine()) != null
 			    line = br.readLine();
-			    //System.out.println(line);
+			   // System.out.println(line);
 				
 			}
 		} catch (IOException e) {
@@ -70,7 +70,7 @@ public class Mars_Client {
 	    
 	    StringTokenizer tokens;
 	    tokens = new StringTokenizer(line,  " \" "  ); //seperates data into tokens, seperate by a space
-	    
+	    System.out.println(line);
 	    
 	    /*---------------------Below is different from normal weather------------*/
 	    
@@ -81,7 +81,7 @@ public class Mars_Client {
 	    float humidity = 0; //holds humidity
 	    float pressure = 0; //holds air pressure
 	    float windSpeed = 0; //holds wind speed
-	    float windDir = 0; //holds direction of wind 
+	    String windDir = ""; //holds direction of wind 
 	    
 	    
 	  //as long as there are more tokens left, checks for the data needed
@@ -94,16 +94,39 @@ public class Mars_Client {
 	    		String token = tokens.nextToken();
 	    		description = description.concat(token);
 	    	}
-	    	if(tmp.equals("temp")) //grabs current temp
+	    	if(tmp.equals("min_temp")) //grabs current temp
 	    		temp = Float.parseFloat(tokens.nextToken());
 	    	if(tmp.equals("pressure")) //grabs current air pressure
 	    		pressure = Float.parseFloat(tokens.nextToken());
-	    	if(tmp.equals("humidity")) //grabs current humidity level
-	    		humidity = Float.parseFloat(tokens.nextToken());
-	    	if(tmp.equals("speed")) //grabs current wind Speed
-	    		windSpeed = Float.parseFloat(tokens.nextToken());
-	    	if(tmp.equals("deg")) //grabs current wind Direction
-	    		windDir = Float.parseFloat(tokens.nextToken());
+	    	if(tmp.equals("abs_humidity")){ //grabs current humidity level
+	    		if ((tokens.nextElement()).toString().compareTo("null")==0){
+	    			humidity = 0.0f;
+	    			tokens.nextToken();
+	    		}
+	    		else{
+	    			humidity = Float.parseFloat(tokens.nextToken());
+	    		}
+	    	}
+	    	if(tmp.equals("wind_speed")){ //grabs current wind speed
+	    		if ((tokens.nextElement()).toString().compareTo("null")==0){
+	    			windSpeed = 0.0f;
+	    			tokens.nextToken();
+	    		}
+	    		else{
+	    			windSpeed = Float.parseFloat(tokens.nextToken());
+	    		}
+	    		
+	    	}
+	    	if(tmp.equals("wind_direction")){ //grabs current wind Direction
+	    		if ((tokens.nextElement()).toString().compareTo("--")==0){
+	    			windDir = "N/A";
+	    			tokens.nextToken();
+	    		}
+	    		else{
+	    			windDir = tokens.nextToken();
+	    		}
+	    		
+	    	}
 	    	
 	    }
 	    
