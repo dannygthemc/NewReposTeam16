@@ -353,7 +353,8 @@ import javax.swing.JCheckBox;
 			});
 			menubar.add(degree);
 			JLabel degLabel = new JLabel("°F");
-			
+			menubar.add(degLabel);
+			menubar.add(new JLabel("   "));
 			
 			//Locations -> MyLocations
 			populateMyLocationsBox();
