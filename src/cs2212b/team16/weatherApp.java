@@ -27,6 +27,7 @@ public class weatherApp {
 	private location[] myLocations;	//used to store users preset locations
 	private location currentLocation;	//Current location for user persistence
 	private location visibleLocation;	//Location that is currently visible on app
+	private String units;
 	
 	/*
 	 * instantiates an object of the class
@@ -35,6 +36,7 @@ public class weatherApp {
 	 * @return no returns
 	 */
 	public weatherApp(){
+		
 		current = new weatherData();
 		longTerm = new weatherData[8];	//Covers next 5 days
 		for (int i = 0; i < 5; i ++){
@@ -51,6 +53,17 @@ public class weatherApp {
 		//TODO: populate current location with file current location on startup
 		currentLocation = new location();
 		visibleLocation = currentLocation;
+		visibleLocation.setCityID(6058560);
+		units = "metric";
+	}
+	
+	/*
+	 * returns current units
+	 * @param none
+	 * @return String units
+	 */
+	public String getUnits(){
+		return units;
 	}
 
 	/*
@@ -141,7 +154,7 @@ public class weatherApp {
 		}
 	}
 	/*
-	 * this methop returns the shorTerm data array
+	 * this method returns the shorTerm data array
 	 * @param no parameters
 	 * @return weather Data array
 	 */
@@ -201,30 +214,28 @@ public class weatherApp {
 	 * @return no returns
 	 */
 
-	public void grab(){
+	public void grab(int cityId, String units) throws MalformedURLException, IOException{
 			
+			String Id = Integer.toString(cityId);
 			URL url = null; //used to hold the desired URL address
 			try {
-				url = new URL("http://api.openweathermap.org/data/2.5/weather?id=6058560&units=metric"); //need to be able to input the id and the units
+				url = new URL("http://api.openweathermap.org/data/2.5/weather?id=" + Id + "&units=" + units); //need to be able to input the id and the units
 			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new MalformedURLException("improper URL");
 			}
 			
 			URLConnection con = null;//used to establish a connection to the desired address
 			try {
 				con = url.openConnection();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new IOException("could not connect");
 			}
 			
 			InputStream is = null; //used to read from the connection
 		    try {
 				is =con.getInputStream();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new IOException("could not create stream");
 			}
 			
 		    BufferedReader br = new BufferedReader(new InputStreamReader(is)); //used to read input from JSON
@@ -235,7 +246,6 @@ public class weatherApp {
 		    try {
 				while (br.ready()) { //line = br.readLine()) != null
 				    line = br.readLine();
-				    //System.out.println(line);
 					
 				}
 			} catch (IOException e) {
@@ -243,7 +253,6 @@ public class weatherApp {
 				e.printStackTrace();
 			}
 		    
-		    System.out.println(line);//used for debugging
 		    
 		    //formats the string for easy parsing
 		    line = line.replace('{', ' ');
@@ -278,7 +287,6 @@ public class weatherApp {
 		    while(tokens.hasMoreTokens()){
 		    	
 		    	tmp = tokens.nextToken();
-		    	System.out.println(tmp);
 		    	
 		    	
 		    	if(tmp.equals("lon")) //grabs longitude data
@@ -323,17 +331,12 @@ public class weatherApp {
 		    Date date = new Date(sunrise*1000L); // *1000 is to convert seconds to milliseconds
 		    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z"); // the format of date
 		    String formattedSunrise = sdf.format(date);
-		    System.out.println(formattedSunrise); //used for debugging
 		    
 		    //the following formats a date time out of the unix time provided by the JSON
 		    Date date2 = new Date(sunset*1000L); // *1000 is to convert seconds to milliseconds
 		    SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z"); // the format of date
 		    String formattedSunset = sdf2.format(date2);
-		    System.out.println(formattedSunset);
 		    
-		    //used for debugging
-		    System.out.println(description);
-		    System.out.println(minTemp);
 		    
 		    //gets the image for the proper weather description
 		    BufferedImage pic = null;
@@ -349,33 +352,31 @@ public class weatherApp {
 	
 	/*
 	 * this grabs the data for the short term data structure
-	 * @param (none yet) eventually: city id & unites
+	 * @param city id & units
 	 * @return no returns
 	 */
-	public void grabShortTerm(){
+	public void grabShortTerm(int cityId, String units) throws MalformedURLException, IOException{
 		
+		String Id = Integer.toString(cityId);
 		URL url = null; //used to hold desired URL
 		try {
-			url = new URL("http://api.openweathermap.org/data/2.5/forecast?id=6058560&units=metric"); //need to be able to input the id and the units
+			url = new URL("http://api.openweathermap.org/data/2.5/forecast?id=" + Id + "&units=" + units); //need to be able to input the id and the units
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new MalformedURLException("malformed URL");
 		}
 		
 		URLConnection con = null; //used to establish connection
 		try {
 			con = url.openConnection();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new IOException("could not connect");
 		}
 		
 		InputStream is = null; //used to read from connection
 	    try {
 			is =con.getInputStream();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new IOException("could not create Stream");
 		}
 		
 	    BufferedReader br = new BufferedReader(new InputStreamReader(is)); //used to read input from JSON
@@ -386,7 +387,6 @@ public class weatherApp {
 	    try {
 			while (br.ready()) { //line = br.readLine()) != null
 			    line = br.readLine();
-			    //System.out.println(line);
 				
 			}
 		} catch (IOException e) {
@@ -394,7 +394,6 @@ public class weatherApp {
 			e.printStackTrace();
 		}
 	    
-	    System.out.println(line);
 	    
 	    //formats the string for easy parsing
 	    line = line.replace('{', ' ');
@@ -404,7 +403,6 @@ public class weatherApp {
 	    line = line.replace(',', ' ');
 	    line = line.replace('[', ' ');
 	    
-	    System.out.println(line);//used for debugging
 	    
 	    String[] tokens; //used to hold separate, 3 hour weather calls
 	    //StringTokenizer tokens;
@@ -418,7 +416,6 @@ public class weatherApp {
 	   while(i <=9){
 	    	
 	    	tmp = tokens[i];
-	    	System.out.println(tmp);
 	    	i++;
 	    }
 	   
@@ -448,7 +445,6 @@ public class weatherApp {
 	   //i.e. city, country, coordinates
 	   while(tokens2.hasMoreTokens()){
 		   tmp = tokens2.nextToken();
-		   System.out.println(tmp);
 		   if(tmp.equals("lon")) //grabs longitude data
 	    		lon = Float.parseFloat(tokens2.nextToken());
 	    	if(tmp.equals("lat")) //grabs latitude data
@@ -520,33 +516,31 @@ public class weatherApp {
 	}
 	/*
 	 * this grabs the data for the long term data structure
-	 * @param (none yet) eventually: city id & unites
+	 * @param city id & units
 	 * @return no returns
 	 */
-	public void grabLongTerm(){
+	public void grabLongTerm(int cityId, String units)throws MalformedURLException, IOException{
 		
+		String Id = Integer.toString(cityId);
 		URL url = null;
 		try {
-			url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?id=6058560&units=metric"); //need to be able to input the id and the units
+			url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?id=" + Id + "&units=" + units); //need to be able to input the id and the units
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new MalformedURLException("malformed URL");
 		}
 		
 		URLConnection con = null;
 		try {
 			con = url.openConnection();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new IOException("could not connect");
 		}
 		
 		InputStream is = null;
 	    try {
 			is =con.getInputStream();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new IOException("could not creat stream");
 		}
 		
 	    BufferedReader br = new BufferedReader(new InputStreamReader(is)); //used to read input from JSON
@@ -557,7 +551,6 @@ public class weatherApp {
 	    try {
 			while (br.ready()) { //line = br.readLine()) != null
 			    line = br.readLine();
-			    //System.out.println(line);
 				
 			}
 		} catch (IOException e) {
@@ -565,7 +558,6 @@ public class weatherApp {
 			e.printStackTrace();
 		}
 	    
-	    System.out.println(line);
 	    
 	    line = line.replace('{', ' ');
 	    line = line.replace('}', ' ');
@@ -574,7 +566,6 @@ public class weatherApp {
 	    line = line.replace(',', ' ');
 	    line = line.replace('[', ' ');
 	    
-	    System.out.println(line);
 	    
 	    String[] tokens; //used to hold separate 7 day calls
 	    //StringTokenizer tokens;
@@ -586,7 +577,6 @@ public class weatherApp {
 	   while(i <=7){
 	    	
 	    	tmp = tokens[i];
-	    	System.out.println(tmp);
 	    	i++;
 	    }
 	   
@@ -616,7 +606,6 @@ public class weatherApp {
 	   //i.e. city, country, coordinates
 	   while(tokens2.hasMoreTokens()){
 		   tmp = tokens2.nextToken();
-		   System.out.println(tmp);
 		   if(tmp.equals("lon")) //grabs longitude data
 	    		lon = Float.parseFloat(tokens2.nextToken());
 	    	if(tmp.equals("lat")) //grabs latitude data

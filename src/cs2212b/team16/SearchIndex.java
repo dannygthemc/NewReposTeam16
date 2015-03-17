@@ -11,7 +11,7 @@ public class SearchIndex {
 
 	/* Attributes */
 	
-	private ConcurrentHashMap<String, ArrayList<CityProfile>> database;
+	private ConcurrentHashMap<String, ArrayList<location>> database;
 	private int count; 
 	
 	/* Constructor */
@@ -20,7 +20,7 @@ public class SearchIndex {
 	{
 		/* Initialize data structure to hold the names and number of entries */
 		
-		this.database = new ConcurrentHashMap<String, ArrayList<CityProfile>>();
+		this.database = new ConcurrentHashMap<String, ArrayList<location>>();
 		
 		/* Declare and/or initialize variables that will assist in parsing individual lines
 		 * and words in the text file. 
@@ -38,7 +38,7 @@ public class SearchIndex {
 		String name = "";
 		String code = null; 
 		
-		CityProfile city;
+		location city;
 		
 		/* Begin reading file */
 		try 
@@ -77,8 +77,11 @@ public class SearchIndex {
 				
 				code = tokenizer.nextToken(); //Get the country code
 				
-				city = new CityProfile(id, name, longitude, latitude, code); //create new city object
-				
+				city = new location();
+				city.setCityID(id); //CityProfile(id, name, longitude, latitude, code); //create new city object
+				city.setLatitude((int)latitude);
+				city.setLongitude((int)longitude);
+				city.setName(name);
 				insert(city); //add the new object to the HashMap
 				
 				/* Reset all values before next iteration */ 
@@ -112,10 +115,10 @@ public class SearchIndex {
 	/* Search method queries the database for a certain city name
 	 * and returns an ArrayList containing the results in that HashMap position 
 	 */
-	public ArrayList<CityProfile> search(String cityName)
+	public ArrayList<location> search(String cityName)
 	{  
 		//String searchWord = cityName.toLowerCase();
-		ArrayList<CityProfile> results = this.database.get(cityName.toLowerCase());
+		ArrayList<location> results = this.database.get(cityName.toLowerCase());
 		
 		//System.out.println("RESULTS: " + results);
 		//System.out.println(this.database.isEmpty());
@@ -132,13 +135,13 @@ public class SearchIndex {
 	 * object into the database. If the position in the HashMap is unoccupied, a new list 
 	 * is created, inserted, and the element then added to it.  
 	 */
-	private void insert(CityProfile city)
+	private void insert(location city)
 	{
 		String key = city.getName().toLowerCase();
-		ArrayList<CityProfile> list = this.database.get(key);
+		ArrayList<location> list = this.database.get(key);
 		
 		if(list == null)
-			this.database.put(key, list = new ArrayList<CityProfile>());
+			this.database.put(key, list = new ArrayList<location>());
 		
 		list.add(city);
 		this.count++;

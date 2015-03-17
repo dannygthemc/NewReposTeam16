@@ -17,6 +17,9 @@ import javax.swing.JFrame; //used to create a Jframe
 
 
 
+
+
+
 //used to create a menu bar and responses to user Interface
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -38,12 +41,16 @@ import javax.swing.JMenuItem;
 
 
 
+
+
+
 //used to create controls
 import java.awt.Dimension;
 import java.awt.Image;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -53,6 +60,9 @@ import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JRadioButton;
+
+
+
 
 
 
@@ -81,7 +91,13 @@ import javax.swing.GroupLayout;
 
 
 
+
+
+
 import org.imgscalr.Scalr;
+
+
+
 
 
 
@@ -92,13 +108,15 @@ import org.imgscalr.Scalr;
 import java.awt.BorderLayout;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import javax.swing.JCheckBox;
 
 	public class MainWindow extends JFrame  {
 		
 		private weatherApp app = new weatherApp();
+		private SearchIndex dataBase = new SearchIndex("city_list.txt");
 		
 		//GUI Initializations to allow dynmaic changes
 		private JComboBox<String> locBar = new JComboBox<String>(); //used to list searched locations
@@ -142,9 +160,25 @@ import javax.swing.JCheckBox;
 			this.setDefaultCloseOperation(EXIT_ON_CLOSE); //initiates exit on close command
 			this.setJMenuBar(this.createMenubar()); 
 			
-			createForm();
-			createFormTwo();
-			createFormThree();
+			JFrame error = new JFrame();
+			try {
+				createForm();
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(error, "An error occured");
+				return;
+			}
+			try {
+				createFormTwo();
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(error, "An error occured");
+				return;
+			}
+			try {
+				createFormThree();
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(error, "An error occured");
+				return;
+			}
 			tabbedPane.addTab("Current", null, currentPanel); //fills a tab window with current data
 			tabbedPane.addTab("Short Term", null, shortPanel); //fills a tab window with short term data
 			tabbedPane.addTab("Long Term", null, longPanel); //fills a tab window with short term data
@@ -185,13 +219,29 @@ import javax.swing.JCheckBox;
 		 * 
 		 */
 		private void refreshPanels(){
+			JFrame error = new JFrame();
+			
 			currentPanel.removeAll();
 			shortPanel.removeAll();
-			longPanel.removeAll();
 			
-			createForm();
-			createFormTwo();
-			createFormThree();
+			try {
+				createForm();
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(error, "An error occured");
+				return;
+			}
+			try {
+				createFormTwo();
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(error, "An error occured");
+				return;
+			}
+			try {
+				createFormThree();
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(error, "An error occured");
+				return;
+			}
 			
 			updateRefreshTime();
 		}
@@ -248,8 +298,8 @@ import javax.swing.JCheckBox;
 						if (app.getMyLocations()[i].getName().equals(cityName));
 							update = app.getMyLocations()[i];
 					}
-					//TODO:
-					///Update the weather view based on 'update' location
+					app.setVisibleLocation(update);
+					refreshPanels();
 			}
 		}
 				
@@ -259,36 +309,27 @@ import javax.swing.JCheckBox;
 		 * @return none, adds city to search Box
 		 */
 		private void searchBoxUsed(String txt){
-			location searchedLoc = new location();
-			searchedLoc.setCityID(1234);
-			searchedLoc.setName(txt);
-			//TODO:
-			//Assign the new location a location object from Omar's database
-			//Verify it was a correct entry
 			JFrame frame = new JFrame();
-	
-			String [] possibilities = new String[5];
-			possibilities[0] = "Lodon Placeholder";
-			possibilities[1] = "Toronto Placeholder";
-			possibilities[2] = "Montreal Placeholder";
-			possibilities[3] = "Sydney Placeholder";
-			possibilities[4] = "Newcastle Placeholder";
-			String response = (String) JOptionPane.showInputDialog(frame, "Which " + txt + " did you mean?", "Search Location",  
-					JOptionPane.QUESTION_MESSAGE, null, possibilities, "Titan");
-			//int result = JOptionPane.showConfirmDialog(frame, "Did you mean: " + txt + " Lat:1235 Lon:1234?");
-			if (response != null) {
-					/*int changeCurrent = JOptionPane.showConfirmDialog(frame, "Set your current location to " + txt + "?");
-					if (JOptionPane.YES_OPTION == changeCurrent) {
-						app.setCurrentLocation(searchedLoc);
-						app.setVisibleLocation(app.getCurrentLocation());
-					} else {
-						
-					}*/
-					app.addLocation(searchedLoc);
-					app.setVisibleLocation(searchedLoc);
-					populateMyLocationsBox();
-					refreshPanels();
-			 }
+			ArrayList<location> simLoc = dataBase.search(txt);
+			if (simLoc == null) JOptionPane.showMessageDialog(frame, "'" + txt + "' not found.");
+			else {
+				String [] possibilities = new String[simLoc.size()];
+				
+				for (int i = 0; i <  simLoc.size(); i ++){
+					possibilities[i] = i - 1 + ". " + simLoc.get(i).getName();
+				}
+				
+				String response = (String) JOptionPane.showInputDialog(frame, "Which " + txt + " did you mean?", "Search Location",  
+						JOptionPane.QUESTION_MESSAGE, null, possibilities, "Titan");
+			
+				if (response != null) {
+						location searchedLoc = simLoc.get(Integer.parseInt(response.substring(0, 2)) - 1);
+						app.addLocation(searchedLoc);
+						app.setVisibleLocation(searchedLoc);
+						populateMyLocationsBox();
+						refreshPanels();
+				 }
+			}
 		}
 		
 		/*
@@ -318,11 +359,25 @@ import javax.swing.JCheckBox;
 				 String response = (String) JOptionPane.showInputDialog(frame, "Enter the city name of the new current location:", "Reset Current Location",  
 							JOptionPane.QUESTION_MESSAGE, null, null, " ");
 				 if (response != null){
-					 //TODO: populate the searched location
-					 location searchedLoc = new location();
-					 app.setCurrentLocation(searchedLoc);
-					 app.setVisibleLocation(app.getCurrentLocation());
-					 refreshPanels();
+					 ArrayList<location> simLoc = dataBase.search(response);
+					 if (simLoc == null) JOptionPane.showMessageDialog(frame, "'" + response + "' not found.");
+					 else {
+						String [] possibilities = new String[simLoc.size()];
+						
+						for (int i = 0; i <  simLoc.size(); i ++){
+							possibilities[i] = i - 1 + ". " + simLoc.get(i).getName();
+						}
+						
+						String response2 = (String) JOptionPane.showInputDialog(frame, "Which " + response + " did you mean?", "Current Location",  
+								JOptionPane.QUESTION_MESSAGE, null, possibilities, "Titan");
+					
+						if (response != null) {
+								location searchedLoc = simLoc.get(Integer.parseInt(response2.substring(0, 2)) - 1);
+								app.setCurrentLocation(searchedLoc);
+								app.setVisibleLocation(searchedLoc);
+								refreshPanels();
+						 }
+					 }
 				 }
 			 }
 			 	
@@ -388,10 +443,14 @@ import javax.swing.JCheckBox;
 		 * @param none
 		 * @return none, fills panel with data
 		 */
-		private void createFormThree(){
+		private void createFormThree() throws IOException{
 			
 			weatherData[] tmp = new weatherData[8]; //holds weather data objects
-			app.grabLongTerm(); //grabs long term weather data info from database
+			try {
+				app.grabLongTerm(app.getVisibleLocation().getCityID(), app.getUnits()); //grabs long term weather data info from database
+			} catch (IOException e) {
+				throw new IOException("error");
+			} 
 			tmp = app.getLongTerm(); //grabs weatherData objects now filled with data
 			
 			//used for formatting
@@ -604,10 +663,14 @@ import javax.swing.JCheckBox;
 		 * @param none
 		 * @return none, fills panel with data
 		 */
-		private void createFormTwo(){
+		private void createFormTwo() throws IOException{
 			
 			weatherData[] tmp = new weatherData[10]; //holds weather data objects
-			app.grabShortTerm(); //grabs current weather data info from database
+			try {
+				app.grabShortTerm(app.getVisibleLocation().getCityID(), app.getUnits()); //grabs current weather data info from database
+			} catch (IOException e) {
+				throw new IOException("error");
+			} 
 			tmp = app.getShortTerm(); //grabs weatherData objects now filled with data
 			
 			//used for formatting
@@ -788,10 +851,14 @@ import javax.swing.JCheckBox;
 		 * @param none
 		 * @return none
 		 */
-		private void createForm() {
+		private void createForm() throws IOException {
 			
 			weatherData tmp = new weatherData();
-			app.grab();
+			try {
+				app.grab(app.getVisibleLocation().getCityID(), app.getUnits());
+			} catch (IOException e) {
+				throw new IOException("error");
+			}
 			tmp = app.getCurrent();
 			
 			JLabel lblcity = new JLabel(tmp.getName() + ", " + tmp.getCount() + ", " + tmp.getLon() + ", " + tmp.getLat() ); //displays location info
