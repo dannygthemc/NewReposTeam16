@@ -148,7 +148,7 @@ import java.util.Date;
 		private void initUI () {
 			
 			this.setTitle("Weather Application"); //sets title of frame 
-			this.setSize(350, 500); //sets size of frame
+			this.setSize(980, 570); //sets size of frame
 			this.setLocationRelativeTo(null);
 			this.setDefaultCloseOperation(EXIT_ON_CLOSE); //initiates exit on close command
 			this.setJMenuBar(this.createMenubar()); 
