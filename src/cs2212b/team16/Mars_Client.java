@@ -78,6 +78,7 @@ public class Mars_Client {
 	    String tmp = null;
 	    String description = "";//holds weather description
 	    float temp = 0; //holds current temperature
+	    float maxTemp = 0;
 	    float humidity = 0; //holds humidity
 	    float pressure = 0; //holds air pressure
 	    float windSpeed = 0; //holds wind speed
@@ -96,6 +97,8 @@ public class Mars_Client {
 	    	}
 	    	if(tmp.equals("min_temp")) //grabs current temp
 	    		temp = Float.parseFloat(tokens.nextToken());
+	    	if (tmp.equals("max_temp"))
+	    		maxTemp = Float.parseFloat(tokens.nextToken());
 	    	if(tmp.equals("pressure")) //grabs current air pressure
 	    		pressure = Float.parseFloat(tokens.nextToken());
 	    	if(tmp.equals("abs_humidity")){ //grabs current humidity level
@@ -130,7 +133,8 @@ public class Mars_Client {
 	    	
 	    }
 	    
-	    System.out.println("Temperature: " + temp);
+	    System.out.println("Min Temperature: " + temp);
+	    System.out.println("Max Temperature: " + maxTemp);
 	    System.out.println("Wind Speed: " + windSpeed);
 	    System.out.println("Wind Direction: " + windDir);
 	    System.out.println("Air Pressure: " + pressure);
