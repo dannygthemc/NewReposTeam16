@@ -203,7 +203,7 @@ public class weatherApp {
 		if (j < myLocations.length) myLocations[j] = A;
 		else {
 			location[] temp = new location[myLocations.length + 1];
-			for (int i = 0; i < temp.length; i ++){
+			for (int i = 0; i < temp.length - 1; i ++){
 				temp[i] = myLocations[i];
 			}
 			temp[myLocations.length] = A;

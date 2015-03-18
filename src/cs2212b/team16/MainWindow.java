@@ -288,8 +288,8 @@ import java.util.Date;
 			for (int i = 0; i < app.getMyLocations().length; i ++){
 				location tempLoc = app.getMyLocations()[i];
 				if (tempLoc.getCityID() != 0){
-					locBar.addItem(tempLoc.getName() + ", " + tempLoc.getCountryCode() + " Lat: " + tempLoc.getLatitude() 
-							+ " Long: " + tempLoc.getLongitude() );
+					String val = tempLoc.getName() + ", " + tempLoc.getCountryCode() + " Lat: " + tempLoc.getLatitude() + " Long: " + tempLoc.getLongitude();
+					//locBar.addItem("cool");
 				} 
 			}
 			if (locBar.getItemCount() == 0){
@@ -306,10 +306,6 @@ import java.util.Date;
 		 * @return none, updates weatherView
 		 */
 		private void updateWeatherView(String cityName){
-			/*
-			 * possibilities[i] = i + 1 + ". " + simLoc.get(i).getName() + ", " + simLoc.get(i).getCountryCode() + " Lat: " 
-							+ simLoc.get(i).getLatitude() + " Long: " + simLoc.get(i).getLongitude();
-			 */
 			
 			if (cityName.equals("--Remove?--")){
 					int count = 0;
@@ -371,7 +367,7 @@ import java.util.Date;
 							+ simLoc.get(i).getLatitude() + " Long: " + simLoc.get(i).getLongitude();
 				}
 				
-				String response = (String) JOptionPane.showInputDialog(frame, "Which " + txt + " did you mean?", "Search Location",  
+				String response = (String) JOptionPane.showInputDialog(frame, "Which '" + txt + "' did you mean?", "Search Location",  
 						JOptionPane.QUESTION_MESSAGE, null, possibilities, "Titan");
 			
 				if (response != null) {
@@ -1093,7 +1089,7 @@ import java.util.Date;
 			//used to set picture
 			File sourceimage = new File("mars picture.jpg");
 			BufferedImage pic = ImageIO.read(sourceimage);
-			//pic  = Scalr.resize(pic, 80);
+			pic  = Scalr.resize(pic, 80);
 			JLabel lblPic = new JLabel(new ImageIcon(pic)); //holds picture
 			
 			
