@@ -4,7 +4,14 @@ package cs2212b.team16;
  * this class used to define the GUI for the application
  * Calls the main weatherApp class only
  */
+import javax.imageio.ImageIO;
 import javax.swing.JFrame; //used to create a Jframe
+
+
+
+
+
+
 
 
 
@@ -29,6 +36,12 @@ import java.awt.image.BufferedImage;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+
+
+
+
+
+
 
 
 
@@ -75,6 +88,12 @@ import javax.swing.JRadioButton;
 
 
 
+
+
+
+
+
+
 //used to organize layout
 import java.awt.Color;
 
@@ -94,7 +113,19 @@ import javax.swing.GroupLayout;
 
 
 
+
+
+
+
+
+
 import org.imgscalr.Scalr;
+
+
+
+
+
+
 
 
 
@@ -123,9 +154,10 @@ import java.util.Date;
 		private JMenuBar menubar;
 		private JLabel refreshLabel = new JLabel();
 		private JTabbedPane tabbedPane = new JTabbedPane(); //creates a tab pane
-		private JPanel currentPanel = new JPanel();
-		private JPanel shortPanel = new JPanel();
-		private JPanel longPanel = new JPanel();
+		private JPanel currentPanel = new JPanel(); //used to display current data
+		private JPanel shortPanel = new JPanel(); //used to display short data
+		private JPanel longPanel = new JPanel(); //used to display long data
+		private JPanel marsPanel = new JPanel(); //used to display mars data
 		private ActionListener Jcombo = new ActionListener() { //updates weatherView when a new item is searched
 			@Override
 			public void actionPerformed(ActionEvent event){
@@ -160,31 +192,12 @@ import java.util.Date;
 			this.setDefaultCloseOperation(EXIT_ON_CLOSE); //initiates exit on close command
 			this.setJMenuBar(this.createMenubar()); 
 			
-			JFrame error = new JFrame();
-			try {
-				createForm();
-			} catch (IOException e) {
-				JOptionPane.showMessageDialog(error, "An error occured");
-				return;
-			}
-			try {
-				createFormTwo();
-			} catch (IOException e) {
-				JOptionPane.showMessageDialog(error, "An error occured");
-				return;
-			}
-			try {
-				createFormThree();
-			} catch (IOException e) {
-				JOptionPane.showMessageDialog(error, "An error occured");
-				return;
-			}
+			createFormCalls();
+			
 			tabbedPane.addTab("Current", null, currentPanel); //fills a tab window with current data
 			tabbedPane.addTab("Short Term", null, shortPanel); //fills a tab window with short term data
 			tabbedPane.addTab("Long Term", null, longPanel); //fills a tab window with short term data
-			//tabbedPane.addTab("Long Term", null, this.createMultiForm(app.getLongTerm()),"");
-			//this.setLayout(new BorderLayout());
-			
+			tabbedPane.addTab("Mars Weather", null, marsPanel); //fills a tab window with short term data
 			
 			GroupLayout layout = new GroupLayout(this.getContentPane());
 			layout.setAutoCreateGaps(true);
@@ -219,12 +232,25 @@ import java.util.Date;
 		 * 
 		 */
 		private void refreshPanels(){
-			JFrame error = new JFrame();
+			
 			
 			currentPanel.removeAll();
 			shortPanel.removeAll();
 			longPanel.removeAll();
+			marsPanel.removeAll();
 			
+			createFormCalls();
+			
+			updateRefreshTime();
+		}
+		
+		/*
+		 * Makes calls to populate tab information
+		 * @param none
+		 * @return none, pulls weather data
+		 */
+		private void createFormCalls(){
+			JFrame error = new JFrame();
 			try {
 				createForm();
 			} catch (IOException e) {
@@ -243,8 +269,12 @@ import java.util.Date;
 				JOptionPane.showMessageDialog(error, "An error occured");
 				return;
 			}
-			
-			updateRefreshTime();
+			try {
+				createFormMars();
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(error, "An error occured");
+				return;
+			}
 		}
 		
 		/*
@@ -433,11 +463,17 @@ import java.util.Date;
 			degree.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent event){
-					
+					if(((JCheckBox) event.getSource()).isSelected()){
+						app.setUnits("imperial");
+					}
+					else{
+						app.setUnits("metric");
+					}
+					refreshPanels();
 				}
 			});
 			menubar.add(degree);
-			JLabel degLabel = new JLabel("°F");
+			JLabel degLabel = new JLabel("oF");
 			menubar.add(degLabel);
 			menubar.add(new JLabel("   "));
 			
@@ -876,6 +912,8 @@ import java.util.Date;
 		
 		
 				
+		
+		
 		/*
 		 * used to add current weather data to a Panel
 		 * @param none
@@ -1003,6 +1041,140 @@ import java.util.Date;
 						);
 							
 						currentPanel.setLayout(layout); //sets the layout		
+								
+			}
+		/*
+		 * used to add Mars weather data to a Panel
+		 * @param none
+		 * @return none
+		 */
+		private void createFormMars() throws IOException {
+			
+			weatherData tmp = new weatherData();
+			try {
+				app.grabMars(app.getUnits());
+			} catch (IOException e) {
+				throw new IOException("error");
+			}
+			tmp = app.getMars();
+			
+			JLabel lblcity = new JLabel("Mars Weather"); //displays location info
+			JLabel lbldescrip = new JLabel("Weather Condition: ");
+			JLabel lbldescrip2 = new JLabel("" +tmp.getCondit());
+			JLabel lblmin = new JLabel("Min Temp: "); //label for min
+			JLabel lblmin2 = new JLabel("" + tmp.getMin()); //actual min
+			JLabel lblmax = new JLabel("Max Temp: " ); //label for max
+			JLabel lblmax2 = new JLabel("" + tmp.getMax()); //actual max
+			JLabel lblspeed = new JLabel("Wind Speed: "); //label for speed
+			JLabel lblspeed2 = new JLabel("" + tmp.getSpeed()); //actual speed
+			JLabel lbldir = new JLabel("Wind Direction: "); //label for dir 
+			JLabel lbldir2 = new JLabel();
+			if(tmp.getDir() == 99){ //accounts for erroneous input
+				lbldir2 = new JLabel("N/A"); //print N/A
+			}
+			else{
+				lbldir2 = new JLabel("" + tmp.getDir()); //actual dir
+			}
+			JLabel lblpress = new JLabel("Air Pressure: "); //label for pressure
+			JLabel lblpress2 = new JLabel("" + tmp.getPress()); //actual pressure
+			JLabel lblhumid = new JLabel("Humidity: "); //label for humid
+			JLabel lblhumid2 = new JLabel();
+			if(tmp.getHumid() == 99){ //accounts for erroneous input
+				lblhumid2 = new JLabel("N/A"); //print N/A
+			}
+			else{
+				lblhumid2 = new JLabel("" + tmp.getHumid()); //actual humdid
+			}
+			JLabel lblrise = new JLabel("Sunrise Time: "); //label for sunrise
+			JLabel lblrise2 = new JLabel("" + tmp.getSunrise()); //actual sunrise
+			JLabel lblset = new JLabel("Sunset Time: "); //label for susnet
+			JLabel lblset2 = new JLabel("" + tmp.getSunset()); //actual sunset
+			
+			//used to set picture
+			File sourceimage = new File("mars picture.jpg");
+			BufferedImage pic = ImageIO.read(sourceimage);
+			//pic  = Scalr.resize(pic, 80);
+			JLabel lblPic = new JLabel(new ImageIcon(pic)); //holds picture
+			
+			
+			//adds control with layout organization
+			GroupLayout layout = new GroupLayout(marsPanel);
+			layout.setAutoCreateGaps(true);
+			layout.setAutoCreateContainerGaps(true);
+			layout.setHorizontalGroup( layout.createSequentialGroup() //sets horizontal groups
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING) //holds all the identifier labels
+							.addComponent(lblcity)
+							.addComponent(lblPic)
+							.addComponent(lbldescrip)
+							.addComponent(lblmin)
+							.addComponent(lblmax)
+							.addComponent(lblspeed)
+							.addComponent(lbldir)
+							.addComponent(lblpress)
+							.addComponent(lblhumid)
+							.addComponent(lblrise)
+							.addComponent(lblset)
+							
+							)
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING) //sets wetaher Data labels
+							
+							.addComponent(lbldescrip2)
+							.addComponent(lblmin2)
+							.addComponent(lblmax2)
+							.addComponent(lblspeed2)
+							.addComponent(lbldir2)
+							.addComponent(lblpress2)
+							.addComponent(lblhumid2)
+							.addComponent(lblrise2)
+							.addComponent(lblset2)
+							)
+						 );
+			layout.setVerticalGroup( layout.createSequentialGroup() //sets verticsal groups
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //city is on its own
+							.addComponent(lblcity)
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //pic is on its own
+							.addComponent(lblPic)
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //the rest have the identifier, followed by the actual data
+							.addComponent(lbldescrip)
+							.addComponent(lbldescrip2)
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(lblmin)
+							.addComponent(lblmin2)
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(lblmax)
+							.addComponent(lblmax2)
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(lblspeed)
+							.addComponent(lblspeed2)
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(lbldir)
+							.addComponent(lbldir2)
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(lblpress)
+							.addComponent(lblpress2)
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(lblhumid)
+							.addComponent(lblhumid2)
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(lblrise)
+							.addComponent(lblrise2)
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(lblset)
+							.addComponent(lblset2)
+							)					
+						);
+							
+						marsPanel.setLayout(layout); //sets the layout		
 								
 			}
 	}
