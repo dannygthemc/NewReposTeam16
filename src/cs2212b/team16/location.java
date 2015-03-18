@@ -15,6 +15,8 @@ public class location {
 	private int longitude;
 	private String name;
 	private int cityID;
+	private String countryCode;
+	
 	
 	/**
 	 * Constructor for the location class
@@ -24,6 +26,23 @@ public class location {
 		longitude = 0;
 		name = "Default";
 		cityID = 0;
+		countryCode = "Default";
+	}
+	
+	/**
+	 * getCountryCode function returns the user's stored country code
+	 * @return country code value
+	 */
+	public String getCountryCode(){
+		return countryCode;
+	}
+	
+	/**
+	 * setCountryCode function returns the user's stored country code
+	 * @return country code value
+	 */
+	public void setCountryCode(String countryCode){
+		this.countryCode = countryCode;
 	}
 	
 	/**

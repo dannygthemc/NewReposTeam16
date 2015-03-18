@@ -196,9 +196,9 @@ public class weatherApp {
 	 * @param String A, representing location
 	 * @return no returns
 	 */
-	public void removeLocation(String A){
+	public void removeLocation(String name, String code){
 		int i = 0;
-		while (myLocations[i].getName() != A) i ++;
+		while (!myLocations[i].getName().equals(name) && !myLocations[i].getCountryCode().equals(code)) i ++;
 		while (i < myLocations.length - 1){
 			myLocations[i] = myLocations[i + 1];
 			i ++;

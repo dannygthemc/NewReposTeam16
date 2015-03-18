@@ -116,7 +116,7 @@ import java.util.Date;
 	public class MainWindow extends JFrame  {
 		
 		private weatherApp app = new weatherApp();
-		private SearchIndex dataBase = new SearchIndex("city_list.txt");
+		private SearchIndex dataBase = new SearchIndex();
 		
 		//GUI Initializations to allow dynmaic changes
 		private JComboBox<String> locBar = new JComboBox<String>(); //used to list searched locations
@@ -161,7 +161,7 @@ import java.util.Date;
 			this.setJMenuBar(this.createMenubar()); 
 			
 			JFrame error = new JFrame();
-			try {
+			/*try {
 				createForm();
 			} catch (IOException e) {
 				JOptionPane.showMessageDialog(error, "An error occured");
@@ -178,7 +178,7 @@ import java.util.Date;
 			} catch (IOException e) {
 				JOptionPane.showMessageDialog(error, "An error occured");
 				return;
-			}
+			}*/
 			tabbedPane.addTab("Current", null, currentPanel); //fills a tab window with current data
 			tabbedPane.addTab("Short Term", null, shortPanel); //fills a tab window with short term data
 			tabbedPane.addTab("Long Term", null, longPanel); //fills a tab window with short term data
@@ -223,8 +223,9 @@ import java.util.Date;
 			
 			currentPanel.removeAll();
 			shortPanel.removeAll();
+			longPanel.removeAll();
 			
-			try {
+			/*try {
 				createForm();
 			} catch (IOException e) {
 				JOptionPane.showMessageDialog(error, "An error occured");
@@ -241,7 +242,7 @@ import java.util.Date;
 			} catch (IOException e) {
 				JOptionPane.showMessageDialog(error, "An error occured");
 				return;
-			}
+			}*/
 			
 			updateRefreshTime();
 		}
@@ -257,7 +258,8 @@ import java.util.Date;
 			for (int i = 0; i < app.getMyLocations().length; i ++){
 				location tempLoc = app.getMyLocations()[i];
 				if (tempLoc.getCityID() != 0){
-					locBar.addItem(tempLoc.getName());
+					locBar.addItem(tempLoc.getName() + ", " + tempLoc.getCountryCode() + " Lat: " + tempLoc.getLatitude() 
+							+ " Long: " + tempLoc.getLongitude() );
 				} 
 			}
 			if (locBar.getItemCount() == 0){
@@ -274,28 +276,40 @@ import java.util.Date;
 		 * @return none, updates weatherView
 		 */
 		private void updateWeatherView(String cityName){
+			/*
+			 * possibilities[i] = i + 1 + ". " + simLoc.get(i).getName() + ", " + simLoc.get(i).getCountryCode() + " Lat: " 
+							+ simLoc.get(i).getLatitude() + " Long: " + simLoc.get(i).getLongitude();
+			 */
+			
 			if (cityName.equals("--Remove?--")){
 					int count = 0;
 					JFrame frame = new JFrame();
 					String[] possibilities = new String[app.getMyLocations().length];
 					for (int i = 0; i < app.getMyLocations().length; i ++){
-						String name =  app.getMyLocations()[i].getName();
-						if (!name.equals("Default")){
-							possibilities[i] = name;
+						location loc =  app.getMyLocations()[i];
+						if (!loc.getName().equals("Default")){
+							possibilities[i] = loc.getName() + ", " + loc.getCountryCode() + " Lat: " + loc.getLatitude()
+									+ " Long: " + loc.getLongitude();
 							count ++;
 						}
 					}
 					String response = (String) JOptionPane.showInputDialog(frame, "Pick a location to remove:", "Remove Location",  
 							JOptionPane.QUESTION_MESSAGE, null, Arrays.copyOfRange(possibilities, 0, count), "Titan");
-					if (response != null) app.removeLocation(response);
+					if (response != null){
+						String countryCode = response.substring(response.indexOf(',') + 2, response.indexOf(',') + 5);
+						cityName = response.substring(0, response.indexOf(','));
+						app.removeLocation(cityName, countryCode);
+					}
 					populateMyLocationsBox();
 						
 			 } else if (cityName.equals("--Empty--")){
 						//Do nothing
 			} else {
 					location update = new location();
+					String countryCode = cityName.substring(cityName.indexOf(',') + 2, cityName.indexOf(',') + 5);
+					cityName = cityName.substring(0, cityName.indexOf(','));
 					for (int i = 0; i < app.getMyLocations().length; i ++){
-						if (app.getMyLocations()[i].getName().equals(cityName));
+						if (app.getMyLocations()[i].getName().equals(cityName) && app.getMyLocations()[i].getCountryCode().equals(countryCode));
 							update = app.getMyLocations()[i];
 					}
 					app.setVisibleLocation(update);
@@ -312,18 +326,26 @@ import java.util.Date;
 			JFrame frame = new JFrame();
 			ArrayList<location> simLoc = dataBase.search(txt);
 			if (simLoc == null) JOptionPane.showMessageDialog(frame, "'" + txt + "' not found.");
+			else if (simLoc.size() == 1){
+				location searchedLoc = simLoc.get(0);
+				app.addLocation(searchedLoc);
+				app.setVisibleLocation(searchedLoc);
+				populateMyLocationsBox();
+				refreshPanels();
+			}
 			else {
 				String [] possibilities = new String[simLoc.size()];
 				
 				for (int i = 0; i <  simLoc.size(); i ++){
-					possibilities[i] = i - 1 + ". " + simLoc.get(i).getName();
+					possibilities[i] = i + 1 + ". " + simLoc.get(i).getName() + ", " + simLoc.get(i).getCountryCode() + " Lat: " 
+							+ simLoc.get(i).getLatitude() + " Long: " + simLoc.get(i).getLongitude();
 				}
 				
 				String response = (String) JOptionPane.showInputDialog(frame, "Which " + txt + " did you mean?", "Search Location",  
 						JOptionPane.QUESTION_MESSAGE, null, possibilities, "Titan");
 			
 				if (response != null) {
-						location searchedLoc = simLoc.get(Integer.parseInt(response.substring(0, 2)) - 1);
+						location searchedLoc = simLoc.get(Integer.parseInt(response.substring(0, response.indexOf('.'))) - 1);
 						app.addLocation(searchedLoc);
 						app.setVisibleLocation(searchedLoc);
 						populateMyLocationsBox();
@@ -361,18 +383,26 @@ import java.util.Date;
 				 if (response != null){
 					 ArrayList<location> simLoc = dataBase.search(response);
 					 if (simLoc == null) JOptionPane.showMessageDialog(frame, "'" + response + "' not found.");
+					 else if (simLoc.size() == 1){
+							location searchedLoc = simLoc.get(0);
+							app.addLocation(searchedLoc);
+							app.setVisibleLocation(searchedLoc);
+							populateMyLocationsBox();
+							refreshPanels();
+						}
 					 else {
 						String [] possibilities = new String[simLoc.size()];
 						
 						for (int i = 0; i <  simLoc.size(); i ++){
-							possibilities[i] = i - 1 + ". " + simLoc.get(i).getName();
+							possibilities[i] = i + 1 + ". " + simLoc.get(i).getName() + ", " + simLoc.get(i).getCountryCode() + " Lat: " 
+									+ simLoc.get(i).getLatitude() + " Long: " + simLoc.get(i).getLongitude();
 						}
 						
 						String response2 = (String) JOptionPane.showInputDialog(frame, "Which " + response + " did you mean?", "Current Location",  
 								JOptionPane.QUESTION_MESSAGE, null, possibilities, "Titan");
 					
 						if (response != null) {
-								location searchedLoc = simLoc.get(Integer.parseInt(response2.substring(0, 2)) - 1);
+								location searchedLoc = simLoc.get(Integer.parseInt(response2.substring(0, response.indexOf('.'))) - 1);
 								app.setCurrentLocation(searchedLoc);
 								app.setVisibleLocation(searchedLoc);
 								refreshPanels();
