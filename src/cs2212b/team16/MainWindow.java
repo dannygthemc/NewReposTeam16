@@ -161,7 +161,7 @@ import java.util.Date;
 			this.setJMenuBar(this.createMenubar()); 
 			
 			JFrame error = new JFrame();
-			/*try {
+			try {
 				createForm();
 			} catch (IOException e) {
 				JOptionPane.showMessageDialog(error, "An error occured");
@@ -178,7 +178,7 @@ import java.util.Date;
 			} catch (IOException e) {
 				JOptionPane.showMessageDialog(error, "An error occured");
 				return;
-			}*/
+			}
 			tabbedPane.addTab("Current", null, currentPanel); //fills a tab window with current data
 			tabbedPane.addTab("Short Term", null, shortPanel); //fills a tab window with short term data
 			tabbedPane.addTab("Long Term", null, longPanel); //fills a tab window with short term data
@@ -225,7 +225,7 @@ import java.util.Date;
 			shortPanel.removeAll();
 			longPanel.removeAll();
 			
-			/*try {
+			try {
 				createForm();
 			} catch (IOException e) {
 				JOptionPane.showMessageDialog(error, "An error occured");
@@ -242,7 +242,7 @@ import java.util.Date;
 			} catch (IOException e) {
 				JOptionPane.showMessageDialog(error, "An error occured");
 				return;
-			}*/
+			}
 			
 			updateRefreshTime();
 		}
