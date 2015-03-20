@@ -20,6 +20,7 @@ import javax.swing.JFrame; //used to create a Jframe
 
 
 
+
 //used to create a menu bar and responses to user Interface
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -113,6 +114,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
+import java.awt.Font;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+
 	public class MainWindow extends JFrame  {
 		
 		private weatherApp app = new weatherApp();
@@ -122,6 +129,7 @@ import java.util.Date;
 		private JComboBox<String> locBar = new JComboBox<String>(); //used to list searched locations
 		private JMenuBar menubar;
 		private JLabel refreshLabel = new JLabel();
+		private JLabel bgLabel = new JLabel();	//background image
 		private JTabbedPane tabbedPane = new JTabbedPane(); //creates a tab pane
 		private JPanel currentPanel = new JPanel();
 		private JPanel shortPanel = new JPanel();
@@ -210,6 +218,8 @@ import java.util.Date;
 			//this.add(lbl1);
 			//this.add(tabbedPane, BorderLayout.CENTER);//adds the tabbed pane to the main window
 			this.getContentPane().setLayout(layout);
+			
+			//currentPanel.setBackground(Color.YELLOW);
 		}
 		
 		/*
@@ -677,12 +687,13 @@ import java.util.Date;
 			JLabel lbl1 = new JLabel("Time: ");
 			JLabel lbl2 = new JLabel("Temp: ");
 			JLabel lbl3 = new JLabel("Weather Condition:");
-			
+						
 			JLabel lblcity = new JLabel(tmp[0].getName() + ", " + tmp[0].getCount() + ", " + tmp[0].getLon() + ", " + tmp[0].getLat() ); //displays location info
 			JLabel[] temp = new JLabel[9]; //array of temperature labels
 			JLabel[] time = new JLabel[9]; //array of time stamps
 			JLabel[] descrip = new JLabel[9]; //array of description labels
 			JLabel[] lblPic = new JLabel[9]; //array of picture labels
+
 			
 			BufferedImage pic = null; //used to temporarily hold pictures
 			JLabel hold; //temporarily hold labels for storage
@@ -703,6 +714,9 @@ import java.util.Date;
 				lblPic[i] = hold3;
 				hold4 = new JLabel(tmp[i+1].getSunrise());//timestamp stored in Sunrise, since this variable was not in use for ShorTerm
 				time[i] = hold4;
+				
+				time[i].setBackground(Color.RED);
+				time[i].setOpaque(true);
 			}
 			
 			//Group layout used to organize GUI
@@ -861,68 +875,123 @@ import java.util.Date;
 			}
 			tmp = app.getCurrent();
 			
-			JLabel lblcity = new JLabel(tmp.getName() + ", " + tmp.getCount() + ", " + tmp.getLon() + ", " + tmp.getLat() ); //displays location info
+			JLabel lblcity = new JLabel(tmp.getName() + ", " + tmp.getCount() + ", " + tmp.getLon() + ", " + tmp.getLat()); //displays location info
+			lblcity.setForeground(Color.WHITE);
+			lblcity.setFont(new Font("Lucida Console", Font.PLAIN, 40));
 			JLabel lbldescrip = new JLabel("Weather Condition: ");
+			lbldescrip.setForeground(Color.WHITE);
+			lbldescrip.setFont(new Font("Courier New", Font.BOLD, 18));
 			JLabel lbldescrip2 = new JLabel("" +tmp.getCondit());
+			lbldescrip2.setForeground(Color.WHITE);
+			lbldescrip2.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
 			JLabel lbltemp = new JLabel("Temp:  "); //label for temp
+			lbltemp.setForeground(Color.WHITE);
+			lbltemp.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
 			JLabel lbltemp2 = new JLabel("" + tmp.getTemp()); //actual temp
+			lbltemp2.setForeground(Color.WHITE);
+			lbltemp2.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
 			JLabel lblmin = new JLabel("Min Temp: "); //label for min
+			lblmin.setForeground(Color.WHITE);
+			lblmin.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
 			JLabel lblmin2 = new JLabel("" + tmp.getMin()); //actual min
+			lblmin2.setForeground(Color.WHITE);
+			lblmin2.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
 			JLabel lblmax = new JLabel("Max Temp: " ); //label for max
+			lblmax.setForeground(Color.WHITE);
+			lblmax.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
 			JLabel lblmax2 = new JLabel("" + tmp.getMax()); //actual max
+			lblmax2.setForeground(Color.WHITE);
+			lblmax2.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
 			JLabel lblspeed = new JLabel("Wind Speed: "); //label for speed
+			lblspeed.setForeground(Color.WHITE);
+			lblspeed.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
 			JLabel lblspeed2 = new JLabel("" + tmp.getSpeed()); //actual speed
+			lblspeed2.setForeground(Color.WHITE);
+			lblspeed2.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
 			JLabel lbldir = new JLabel("Wind Direction: "); //label for dir 
+			lbldir.setForeground(Color.WHITE);
+			lbldir.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
 			JLabel lbldir2 = new JLabel("" + tmp.getDir()); //actual dir
+			lbldir2.setForeground(Color.WHITE);
+			lbldir2.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
 			JLabel lblpress = new JLabel("Air Pressure: "); //label for pressure
+			lblpress.setForeground(Color.WHITE);
+			lblpress.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
 			JLabel lblpress2 = new JLabel("" + tmp.getPress()); //actual pressure
+			lblpress2.setForeground(Color.WHITE);
+			lblpress2.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
 			JLabel lblhumid = new JLabel("Humidity: "); //label for humid
-			JLabel lblhumid2 = new JLabel("" + tmp.getHumid()); //actual humdi
+			lblhumid.setForeground(Color.WHITE);
+			lblhumid.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
+			JLabel lblhumid2 = new JLabel("" + tmp.getHumid()); //actual humid
+			lblhumid2.setForeground(Color.WHITE);
+			lblhumid2.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
 			JLabel lblrise = new JLabel("Sunrise Time: "); //label for sunrise
+			lblrise.setForeground(Color.WHITE);
+			lblrise.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
 			JLabel lblrise2 = new JLabel("" + tmp.getSunrise()); //actual sunrise
+			lblrise2.setForeground(Color.WHITE);
+			lblrise2.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
 			JLabel lblset = new JLabel("Sunset Time: "); //label for susnet
+			lblset.setForeground(Color.WHITE);
+			lblset.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
 			JLabel lblset2 = new JLabel("" + tmp.getSunset()); //actual sunset
+			lblset2.setForeground(Color.WHITE);
+			lblset2.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
 			
 			//used to set picture
 			BufferedImage pic = tmp.getIcon();
 			pic  = Scalr.resize(pic, 80);
 			JLabel lblPic = new JLabel(new ImageIcon(pic)); //holds picture
 			
+			setBgColours(tmp);
 			
 			//adds control with layout organization
 			GroupLayout layout = new GroupLayout(currentPanel);
+			currentPanel.setLayout(layout);
 			layout.setAutoCreateGaps(true);
 			layout.setAutoCreateContainerGaps(true);
 			layout.setHorizontalGroup( layout.createSequentialGroup() //sets horizontal groups
-						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING) //holds all the identifier labels
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER) //holds all the identifier labels
+							//.addGap(currentPanel.getWidth()/2)
 							.addComponent(lblcity)
 							.addComponent(lblPic)
-							.addComponent(lbldescrip)
-							.addComponent(lbltemp)
-							.addComponent(lblmin)
-							.addComponent(lblmax)
-							.addComponent(lblspeed)
-							.addComponent(lbldir)
-							.addComponent(lblpress)
-							.addComponent(lblhumid)
-							.addComponent(lblrise)
-							.addComponent(lblset)
-							
+							.addGroup(layout.createSequentialGroup()
+							.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+									.addComponent(lbldescrip)
+									.addComponent(lbltemp)
+									.addComponent(lblmin)
+									.addComponent(lblmax)
+									.addComponent(lblspeed)
+									.addComponent(lbldir)
+									.addComponent(lblpress)
+									.addComponent(lblhumid)
+									.addComponent(lblrise)
+									.addComponent(lblset)
 							)
-						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING) //sets wetaher Data labels
+//							)
 							
-							.addComponent(lbldescrip2)
-							.addComponent(lbltemp2)
-							.addComponent(lblmin2)
-							.addComponent(lblmax2)
-							.addComponent(lblspeed2)
-							.addComponent(lbldir2)
-							.addComponent(lblpress2)
-							.addComponent(lblhumid2)
-							.addComponent(lblrise2)
-							.addComponent(lblset2)
+							.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING) //sets wetaher Data labels
+							//.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+									.addComponent(lbldescrip2)
+									.addComponent(lbltemp2)
+									.addComponent(lblmin2)
+									.addComponent(lblmax2)
+									.addComponent(lblspeed2)
+									.addComponent(lbldir2)
+									.addComponent(lblpress2)
+									.addComponent(lblhumid2)
+									.addComponent(lblrise2)
+									.addComponent(lblset2)
 							)
-						 );
+						)
+					)
+							
+/*						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER) //holds all the identifier labels
+							.addComponent(lblcity)
+							)*/
+				);
+			
 			layout.setVerticalGroup( layout.createSequentialGroup() //sets verticsal groups
 					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //city is on its own
 							.addComponent(lblcity)
@@ -972,7 +1041,279 @@ import java.util.Date;
 							)					
 						);
 							
-						currentPanel.setLayout(layout); //sets the layout		
+						//currentPanel.setLayout(layout); //sets the layout		
 								
 			}
+		
+		public void setBgColours(weatherData tmp) {
+			//Sets background colours to a gradient effect based on current weather
+			switch(tmp.getCondit()) {
+				case "sky is clear ":	//currentPanel.setBackground(new Color(255,215,0));
+				case "clear sky ":
+					currentPanel = new JPanel(){
+						@Override
+						protected void paintComponent(Graphics g) {
+							super.paintComponent(g);
+							Graphics2D g2d = (Graphics2D) g;
+							g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+							int w = getWidth();
+							int h = getHeight();
+							//For Few Clouds
+//							Color color1 = new Color(160, 255, 0);
+//							Color color2 = new Color(9, 173, 33);
+							//For Scattered Clouds
+//							Color color1 = new Color(30, 255, 90);
+//							Color color2 = new Color(45, 110, 35);
+							//For Broken Clouds
+//							Color color1 = new Color(30, 255, 150);
+//							Color color2 = new Color(40, 150, 130);
+							//For Shower Rain
+//							Color color1 = new Color(0,255,255);
+//							Color color2 = new Color(30, 130, 160);
+							//For Rain
+//							Color color1 = new Color(0, 166, 255);
+//							Color color2 = new Color(30, 50, 160);
+							//For Thunderstorm
+//							Color color1 = new Color(0, 95, 255);
+//							Color color2 = new Color(60, 30, 160);
+							//For Snow
+//							Color color1 = new Color(95, 215, 220);
+//							Color color2 = new Color(30, 110, 120);
+							//For Mist
+//							Color color1 = new Color(200, 210, 210);
+//							Color color2 = new Color(85, 110, 100);
+							//For Default
+//							Color color1 = new Color(160, 120, 240);
+//							Color color2 = new Color(40, 10, 90);
+							//For Clear
+							Color color1 = new Color(255, 215,0);
+							Color color2 = new Color(255, 111, 0);
+							GradientPaint gp = new GradientPaint(0, 0, color1, 0, h, color2);
+							g2d.setPaint(gp);
+							g2d.fillRect(0, 0, w, h);
+						}
+					};
+							break;
+				//case "01n": currentPanel.setBackground(new Color(138,43,226));
+						//	break; 
+				case "few clouds ":	//currentPanel.setBackground(new Color(255,140,0));
+					currentPanel = new JPanel(){
+						@Override
+						protected void paintComponent(Graphics g) {
+							super.paintComponent(g);
+							Graphics2D g2d = (Graphics2D) g;
+							g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+							int w = getWidth();
+							int h = getHeight();
+							Color color1 = new Color(160, 255, 0);
+							Color color2 = new Color(9, 173, 33);
+							GradientPaint gp = new GradientPaint(0, 0, color1, 0, h, color2);
+							g2d.setPaint(gp);
+							g2d.fillRect(0, 0, w, h);
+						}
+					};
+							break;
+				//case "02n":	currentPanel.setBackground(new Color(75,0,130));
+						//	break;
+				case "scattered clouds ":	//currentPanel.setBackground(new Color(135,206,250));
+					currentPanel = new JPanel(){
+						@Override
+						protected void paintComponent(Graphics g) {
+							super.paintComponent(g);
+							Graphics2D g2d = (Graphics2D) g;
+							g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+							int w = getWidth();
+							int h = getHeight();
+							Color color1 = new Color(30, 255, 90);
+							Color color2 = new Color(45, 110, 35);
+							GradientPaint gp = new GradientPaint(0, 0, color1, 0, h, color2);
+							g2d.setPaint(gp);
+							g2d.fillRect(0, 0, w, h);
+						}
+					};
+							break;
+				//case "03n":	currentPanel.setBackground(new Color(72,61,139));
+					//		break;
+				case "broken clouds ":	//currentPanel.setBackground(new Color(64,224,208));
+				case "overcast clouds ":
+				currentPanel = new JPanel(){
+					@Override
+					protected void paintComponent(Graphics g) {
+						super.paintComponent(g);
+						Graphics2D g2d = (Graphics2D) g;
+						g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+						int w = getWidth();
+						int h = getHeight();
+						Color color1 = new Color(0, 166, 255);
+						Color color2 = new Color(30, 50, 160);
+//						Color color1 = new Color(30, 255, 150);
+//						Color color2 = new Color(40, 150, 130);
+						GradientPaint gp = new GradientPaint(0, 0, color1, 0, h, color2);
+						g2d.setPaint(gp);
+						g2d.fillRect(0, 0, w, h);
+					}
+				};
+							break;
+				//case "04n":	currentPanel.setBackground(new Color(106,90,205));
+						//	break;
+				case "shower rain ":	//currentPanel.setBackground(new Color(100,149,237));
+				case "light intensity drizzle ":
+				case "drizzle ":
+				case "heavy intensity drizzle ":
+				case "light intensity drizzle rain ":
+				case "drizzle rain ":
+				case "heavy intensity drizzle rain ":
+				case "shower rain and drizzle ":
+				case "heavy shower rain and drizzle ":
+				case "shower drizzle ":
+				case "light intensity shower rain ":
+				case "heavy intensity shower rain ":
+				case "ragged shower rain ":
+					currentPanel = new JPanel(){
+						@Override
+						protected void paintComponent(Graphics g) {
+							super.paintComponent(g);
+							Graphics2D g2d = (Graphics2D) g;
+							g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+							int w = getWidth();
+							int h = getHeight();
+							Color color1 = new Color(0,255,255);
+							Color color2 = new Color(30, 130, 160);
+							GradientPaint gp = new GradientPaint(0, 0, color1, 0, h, color2);
+							g2d.setPaint(gp);
+							g2d.fillRect(0, 0, w, h);
+						}
+					};
+							break;
+				//case "09n":	currentPanel.setBackground(new Color(0,0,205));
+					//		break;
+				case "rain ":	//currentPanel.setBackground(new Color(30,144,255));
+				case "light rain ":
+				case "moderate rain ":
+				case "heavy intensity rain ":
+				case "very heavy rain ":
+				case "extreme rain ":
+					currentPanel = new JPanel(){
+						@Override
+						protected void paintComponent(Graphics g) {
+							super.paintComponent(g);
+							Graphics2D g2d = (Graphics2D) g;
+							g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+							int w = getWidth();
+							int h = getHeight();
+							Color color1 = new Color(0, 166, 255);
+							Color color2 = new Color(30, 50, 160);
+							GradientPaint gp = new GradientPaint(0, 0, color1, 0, h, color2);
+							g2d.setPaint(gp);
+							g2d.fillRect(0, 0, w, h);
+						}
+					};
+							break;
+				//case "10n":	currentPanel.setBackground(new Color(0,0,128));
+					//		break;
+				case "thunderstorm ":	//currentPanel.setBackground(new Color(70,130,180));
+				case "thunderstorm with light rain ":
+				case "thunderstorm with rain ":
+				case "thunderstorm with heavy rain ":
+				case "light thunderstorm ":
+				case "heavy thunderstorm ":
+				case "ragged thunderstorm ":
+				case "thunderstorm with light drizzle ":
+				case "thunderstorm with drizzle ":
+				case "thunderstorm with heavy drizzle ":
+					currentPanel = new JPanel(){
+						@Override
+						protected void paintComponent(Graphics g) {
+							super.paintComponent(g);
+							Graphics2D g2d = (Graphics2D) g;
+							g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+							int w = getWidth();
+							int h = getHeight();
+							Color color1 = new Color(0, 95, 255);
+							Color color2 = new Color(60, 30, 160);
+							GradientPaint gp = new GradientPaint(0, 0, color1, 0, h, color2);
+							g2d.setPaint(gp);
+							g2d.fillRect(0, 0, w, h);
+						}
+					};
+							break;
+				//case "11n":	currentPanel.setBackground(new Color(25,25,112));
+						//	break;
+				case "snow ":	//currentPanel.setBackground(new Color(176,224,230));
+				case "freezing rain ":
+				case "light snow ":
+				case "heavy snow ":
+				case "sleet ":
+				case "shower sleet ":
+				case "light rain and snow ":
+				case "rain and snow ":
+				case "light shower snow ":
+				case "shower snow ":
+				case "heavy shower snow ":
+					currentPanel = new JPanel(){
+						@Override
+						protected void paintComponent(Graphics g) {
+							super.paintComponent(g);
+							Graphics2D g2d = (Graphics2D) g;
+							g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+							int w = getWidth();
+							int h = getHeight();
+							Color color1 = new Color(145, 245, 245);
+							Color color2 = new Color(75, 150, 160);
+							GradientPaint gp = new GradientPaint(0, 0, color1, 0, h, color2);
+							g2d.setPaint(gp);
+							g2d.fillRect(0, 0, w, h);
+						}
+					};
+							break;
+				//case "13n":	currentPanel.setBackground(new Color(0,128,128));
+					//		break;
+				case "mist ":	//currentPanel.setBackground(new Color(127,255,212));
+				case "smoke ":
+				case "haze ":
+				case "sand, dust whirls ":
+				case "fog ":
+				case "sand ":
+				case "dust ":
+				case "volcanic ash ":
+				case "squalls ":
+				case "tornado ":
+					currentPanel = new JPanel(){
+						@Override
+						protected void paintComponent(Graphics g) {
+							super.paintComponent(g);
+							Graphics2D g2d = (Graphics2D) g;
+							g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+							int w = getWidth();
+							int h = getHeight();
+							Color color1 = new Color(200, 210, 210);
+							Color color2 = new Color(85, 110, 100);
+							GradientPaint gp = new GradientPaint(0, 0, color1, 0, h, color2);
+							g2d.setPaint(gp);
+							g2d.fillRect(0, 0, w, h);
+						}
+					};
+							break;
+				//case "50n":	currentPanel.setBackground(new Color(147,112,219));
+					//		break;
+				default:	//currentPanel.setBackground(new Color(50,205,50));
+					currentPanel = new JPanel(){
+						@Override
+						protected void paintComponent(Graphics g) {
+							super.paintComponent(g);
+							Graphics2D g2d = (Graphics2D) g;
+							g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+							int w = getWidth();
+							int h = getHeight();
+							Color color1 = new Color(160, 120, 240);
+							Color color2 = new Color(40, 10, 90);
+							GradientPaint gp = new GradientPaint(0, 0, color1, 0, h, color2);
+							g2d.setPaint(gp);
+							g2d.fillRect(0, 0, w, h);
+						}
+					};
+							break;
+			}
+		}
+		
 	}
