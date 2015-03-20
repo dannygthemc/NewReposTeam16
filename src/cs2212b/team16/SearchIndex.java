@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.StringTokenizer;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
+import java.io.InputStreamReader;
 
 public class SearchIndex {
 
@@ -16,7 +17,7 @@ public class SearchIndex {
 	
 	/* Constructor */
 	
-	public SearchIndex(String fileName)
+	public SearchIndex()
 	{
 		/* Initialize data structure to hold the names and number of entries */
 		
@@ -43,7 +44,7 @@ public class SearchIndex {
 		/* Begin reading file */
 		try 
 		{
-			reader = new BufferedReader(new FileReader(fileName));
+			reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("city_list.txt")));
 			reader.readLine();
 			
 			while((line = reader.readLine()) != null) //loop through lines in the file
@@ -71,7 +72,11 @@ public class SearchIndex {
 					}
 					catch (NumberFormatException e) //catch the exception and add the token to the name
 					{
-						name += temp; //add the current string to the name
+						if (name.length() > 0 ) {
+							name += " " + temp; //add the current string to the name
+						} else {
+							name += temp; //add the current string to the name
+						}
 					}
 				}
 				
@@ -82,8 +87,8 @@ public class SearchIndex {
 				city.setLatitude((int)latitude);
 				city.setLongitude((int)longitude);
 				city.setName(name);
+				city.setCountryCode(code);
 				insert(city); //add the new object to the HashMap
-				
 				/* Reset all values before next iteration */ 
 				
 				id = 0;
@@ -117,6 +122,7 @@ public class SearchIndex {
 	 */
 	public ArrayList<location> search(String cityName)
 	{  
+
 		//String searchWord = cityName.toLowerCase();
 		ArrayList<location> results = this.database.get(cityName.toLowerCase());
 		

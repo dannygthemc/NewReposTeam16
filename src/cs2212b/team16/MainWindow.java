@@ -4,6 +4,7 @@ package cs2212b.team16;
  * this class used to define the GUI for the application
  * Calls the main weatherApp class only
  */
+import javax.imageio.ImageIO;
 import javax.swing.JFrame; //used to create a Jframe
 
 
@@ -30,6 +31,12 @@ import java.awt.image.BufferedImage;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+
+
+
+
+
+
 
 
 
@@ -76,6 +83,12 @@ import javax.swing.JRadioButton;
 
 
 
+
+
+
+
+
+
 //used to organize layout
 import java.awt.Color;
 
@@ -95,7 +108,19 @@ import javax.swing.GroupLayout;
 
 
 
+
+
+
+
+
+
 import org.imgscalr.Scalr;
+
+
+
+
+
+
 
 
 
@@ -123,7 +148,7 @@ import java.awt.RenderingHints;
 	public class MainWindow extends JFrame  {
 		
 		private weatherApp app = new weatherApp();
-		private SearchIndex dataBase = new SearchIndex("city_list.txt");
+		private SearchIndex dataBase = new SearchIndex();
 		
 		//GUI Initializations to allow dynmaic changes
 		private JComboBox<String> locBar = new JComboBox<String>(); //used to list searched locations
@@ -131,9 +156,10 @@ import java.awt.RenderingHints;
 		private JLabel refreshLabel = new JLabel();
 		private JLabel bgLabel = new JLabel();	//background image
 		private JTabbedPane tabbedPane = new JTabbedPane(); //creates a tab pane
-		private JPanel currentPanel = new JPanel();
-		private JPanel shortPanel = new JPanel();
-		private JPanel longPanel = new JPanel();
+		private JPanel currentPanel = new JPanel(); //used to display current data
+		private JPanel shortPanel = new JPanel(); //used to display short data
+		private JPanel longPanel = new JPanel(); //used to display long data
+		private JPanel marsPanel = new JPanel(); //used to display mars data
 		private ActionListener Jcombo = new ActionListener() { //updates weatherView when a new item is searched
 			@Override
 			public void actionPerformed(ActionEvent event){
@@ -168,31 +194,12 @@ import java.awt.RenderingHints;
 			this.setDefaultCloseOperation(EXIT_ON_CLOSE); //initiates exit on close command
 			this.setJMenuBar(this.createMenubar()); 
 			
-			JFrame error = new JFrame();
-			try {
-				createForm();
-			} catch (IOException e) {
-				JOptionPane.showMessageDialog(error, "An error occured");
-				return;
-			}
-			try {
-				createFormTwo();
-			} catch (IOException e) {
-				JOptionPane.showMessageDialog(error, "An error occured");
-				return;
-			}
-			try {
-				createFormThree();
-			} catch (IOException e) {
-				JOptionPane.showMessageDialog(error, "An error occured");
-				return;
-			}
+			createFormCalls();
+			
 			tabbedPane.addTab("Current", null, currentPanel); //fills a tab window with current data
 			tabbedPane.addTab("Short Term", null, shortPanel); //fills a tab window with short term data
 			tabbedPane.addTab("Long Term", null, longPanel); //fills a tab window with short term data
-			//tabbedPane.addTab("Long Term", null, this.createMultiForm(app.getLongTerm()),"");
-			//this.setLayout(new BorderLayout());
-			
+			tabbedPane.addTab("Mars Weather", null, marsPanel); //fills a tab window with short term data
 			
 			GroupLayout layout = new GroupLayout(this.getContentPane());
 			layout.setAutoCreateGaps(true);
@@ -229,11 +236,25 @@ import java.awt.RenderingHints;
 		 * 
 		 */
 		private void refreshPanels(){
-			JFrame error = new JFrame();
+			
 			
 			currentPanel.removeAll();
 			shortPanel.removeAll();
+			longPanel.removeAll();
+			marsPanel.removeAll();
 			
+			createFormCalls();
+			
+			updateRefreshTime();
+		}
+		
+		/*
+		 * Makes calls to populate tab information
+		 * @param none
+		 * @return none, pulls weather data
+		 */
+		private void createFormCalls(){
+			JFrame error = new JFrame();
 			try {
 				createForm();
 			} catch (IOException e) {
@@ -252,8 +273,12 @@ import java.awt.RenderingHints;
 				JOptionPane.showMessageDialog(error, "An error occured");
 				return;
 			}
-			
-			updateRefreshTime();
+			try {
+				createFormMars();
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(error, "An error occured");
+				return;
+			}
 		}
 		
 		/*
@@ -267,7 +292,8 @@ import java.awt.RenderingHints;
 			for (int i = 0; i < app.getMyLocations().length; i ++){
 				location tempLoc = app.getMyLocations()[i];
 				if (tempLoc.getCityID() != 0){
-					locBar.addItem(tempLoc.getName());
+					String val = tempLoc.getName() + ", " + tempLoc.getCountryCode() + " Lat: " + tempLoc.getLatitude() + " Long: " + tempLoc.getLongitude();
+					//locBar.addItem("cool");
 				} 
 			}
 			if (locBar.getItemCount() == 0){
@@ -284,28 +310,36 @@ import java.awt.RenderingHints;
 		 * @return none, updates weatherView
 		 */
 		private void updateWeatherView(String cityName){
+			
 			if (cityName.equals("--Remove?--")){
 					int count = 0;
 					JFrame frame = new JFrame();
 					String[] possibilities = new String[app.getMyLocations().length];
 					for (int i = 0; i < app.getMyLocations().length; i ++){
-						String name =  app.getMyLocations()[i].getName();
-						if (!name.equals("Default")){
-							possibilities[i] = name;
+						location loc =  app.getMyLocations()[i];
+						if (!loc.getName().equals("Default")){
+							possibilities[i] = loc.getName() + ", " + loc.getCountryCode() + " Lat: " + loc.getLatitude()
+									+ " Long: " + loc.getLongitude();
 							count ++;
 						}
 					}
 					String response = (String) JOptionPane.showInputDialog(frame, "Pick a location to remove:", "Remove Location",  
 							JOptionPane.QUESTION_MESSAGE, null, Arrays.copyOfRange(possibilities, 0, count), "Titan");
-					if (response != null) app.removeLocation(response);
+					if (response != null){
+						String countryCode = response.substring(response.indexOf(',') + 2, response.indexOf(',') + 5);
+						cityName = response.substring(0, response.indexOf(','));
+						app.removeLocation(cityName, countryCode);
+					}
 					populateMyLocationsBox();
 						
 			 } else if (cityName.equals("--Empty--")){
 						//Do nothing
 			} else {
 					location update = new location();
+					String countryCode = cityName.substring(cityName.indexOf(',') + 2, cityName.indexOf(',') + 5);
+					cityName = cityName.substring(0, cityName.indexOf(','));
 					for (int i = 0; i < app.getMyLocations().length; i ++){
-						if (app.getMyLocations()[i].getName().equals(cityName));
+						if (app.getMyLocations()[i].getName().equals(cityName) && app.getMyLocations()[i].getCountryCode().equals(countryCode));
 							update = app.getMyLocations()[i];
 					}
 					app.setVisibleLocation(update);
@@ -322,18 +356,26 @@ import java.awt.RenderingHints;
 			JFrame frame = new JFrame();
 			ArrayList<location> simLoc = dataBase.search(txt);
 			if (simLoc == null) JOptionPane.showMessageDialog(frame, "'" + txt + "' not found.");
+			else if (simLoc.size() == 1){
+				location searchedLoc = simLoc.get(0);
+				app.addLocation(searchedLoc);
+				app.setVisibleLocation(searchedLoc);
+				populateMyLocationsBox();
+				refreshPanels();
+			}
 			else {
 				String [] possibilities = new String[simLoc.size()];
 				
 				for (int i = 0; i <  simLoc.size(); i ++){
-					possibilities[i] = i - 1 + ". " + simLoc.get(i).getName();
+					possibilities[i] = i + 1 + ". " + simLoc.get(i).getName() + ", " + simLoc.get(i).getCountryCode() + " Lat: " 
+							+ simLoc.get(i).getLatitude() + " Long: " + simLoc.get(i).getLongitude();
 				}
 				
-				String response = (String) JOptionPane.showInputDialog(frame, "Which " + txt + " did you mean?", "Search Location",  
+				String response = (String) JOptionPane.showInputDialog(frame, "Which '" + txt + "' did you mean?", "Search Location",  
 						JOptionPane.QUESTION_MESSAGE, null, possibilities, "Titan");
 			
 				if (response != null) {
-						location searchedLoc = simLoc.get(Integer.parseInt(response.substring(0, 2)) - 1);
+						location searchedLoc = simLoc.get(Integer.parseInt(response.substring(0, response.indexOf('.'))) - 1);
 						app.addLocation(searchedLoc);
 						app.setVisibleLocation(searchedLoc);
 						populateMyLocationsBox();
@@ -371,18 +413,26 @@ import java.awt.RenderingHints;
 				 if (response != null){
 					 ArrayList<location> simLoc = dataBase.search(response);
 					 if (simLoc == null) JOptionPane.showMessageDialog(frame, "'" + response + "' not found.");
+					 else if (simLoc.size() == 1){
+							location searchedLoc = simLoc.get(0);
+							app.addLocation(searchedLoc);
+							app.setVisibleLocation(searchedLoc);
+							populateMyLocationsBox();
+							refreshPanels();
+						}
 					 else {
 						String [] possibilities = new String[simLoc.size()];
 						
 						for (int i = 0; i <  simLoc.size(); i ++){
-							possibilities[i] = i - 1 + ". " + simLoc.get(i).getName();
+							possibilities[i] = i + 1 + ". " + simLoc.get(i).getName() + ", " + simLoc.get(i).getCountryCode() + " Lat: " 
+									+ simLoc.get(i).getLatitude() + " Long: " + simLoc.get(i).getLongitude();
 						}
 						
 						String response2 = (String) JOptionPane.showInputDialog(frame, "Which " + response + " did you mean?", "Current Location",  
 								JOptionPane.QUESTION_MESSAGE, null, possibilities, "Titan");
 					
 						if (response != null) {
-								location searchedLoc = simLoc.get(Integer.parseInt(response2.substring(0, 2)) - 1);
+								location searchedLoc = simLoc.get(Integer.parseInt(response2.substring(0, response.indexOf('.'))) - 1);
 								app.setCurrentLocation(searchedLoc);
 								app.setVisibleLocation(searchedLoc);
 								refreshPanels();
@@ -413,11 +463,17 @@ import java.awt.RenderingHints;
 			degree.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent event){
-					
+					if(((JCheckBox) event.getSource()).isSelected()){
+						app.setUnits("imperial");
+					}
+					else{
+						app.setUnits("metric");
+					}
+					refreshPanels();
 				}
 			});
 			menubar.add(degree);
-			JLabel degLabel = new JLabel("°F");
+			JLabel degLabel = new JLabel("oF");
 			menubar.add(degLabel);
 			menubar.add(new JLabel("   "));
 			
@@ -860,6 +916,8 @@ import java.awt.RenderingHints;
 		
 		
 				
+		
+		
 		/*
 		 * used to add current weather data to a Panel
 		 * @param none
@@ -1144,10 +1202,8 @@ import java.awt.RenderingHints;
 						g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 						int w = getWidth();
 						int h = getHeight();
-						Color color1 = new Color(0, 166, 255);
-						Color color2 = new Color(30, 50, 160);
-//						Color color1 = new Color(30, 255, 150);
-//						Color color2 = new Color(40, 150, 130);
+						Color color1 = new Color(30, 255, 150);
+						Color color2 = new Color(40, 150, 130);
 						GradientPaint gp = new GradientPaint(0, 0, color1, 0, h, color2);
 						g2d.setPaint(gp);
 						g2d.fillRect(0, 0, w, h);
@@ -1316,4 +1372,138 @@ import java.awt.RenderingHints;
 			}
 		}
 		
+		/*
+		 * used to add Mars weather data to a Panel
+		 * @param none
+		 * @return none
+		 */
+		private void createFormMars() throws IOException {
+			
+			weatherData tmp = new weatherData();
+			try {
+				app.grabMars(app.getUnits());
+			} catch (IOException e) {
+				throw new IOException("error");
+			}
+			tmp = app.getMars();
+			
+			JLabel lblcity = new JLabel("Mars Weather"); //displays location info
+			JLabel lbldescrip = new JLabel("Weather Condition: ");
+			JLabel lbldescrip2 = new JLabel("" +tmp.getCondit());
+			JLabel lblmin = new JLabel("Min Temp: "); //label for min
+			JLabel lblmin2 = new JLabel("" + tmp.getMin()); //actual min
+			JLabel lblmax = new JLabel("Max Temp: " ); //label for max
+			JLabel lblmax2 = new JLabel("" + tmp.getMax()); //actual max
+			JLabel lblspeed = new JLabel("Wind Speed: "); //label for speed
+			JLabel lblspeed2 = new JLabel("" + tmp.getSpeed()); //actual speed
+			JLabel lbldir = new JLabel("Wind Direction: "); //label for dir 
+			JLabel lbldir2 = new JLabel();
+			if(tmp.getDir() == 99){ //accounts for erroneous input
+				lbldir2 = new JLabel("N/A"); //print N/A
+			}
+			else{
+				lbldir2 = new JLabel("" + tmp.getDir()); //actual dir
+			}
+			JLabel lblpress = new JLabel("Air Pressure: "); //label for pressure
+			JLabel lblpress2 = new JLabel("" + tmp.getPress()); //actual pressure
+			JLabel lblhumid = new JLabel("Humidity: "); //label for humid
+			JLabel lblhumid2 = new JLabel();
+			if(tmp.getHumid() == 99){ //accounts for erroneous input
+				lblhumid2 = new JLabel("N/A"); //print N/A
+			}
+			else{
+				lblhumid2 = new JLabel("" + tmp.getHumid()); //actual humdid
+			}
+			JLabel lblrise = new JLabel("Sunrise Time: "); //label for sunrise
+			JLabel lblrise2 = new JLabel("" + tmp.getSunrise()); //actual sunrise
+			JLabel lblset = new JLabel("Sunset Time: "); //label for susnet
+			JLabel lblset2 = new JLabel("" + tmp.getSunset()); //actual sunset
+			
+			//used to set picture
+			File sourceimage = new File("mars picture.jpg");
+			BufferedImage pic = ImageIO.read(sourceimage);
+			pic  = Scalr.resize(pic, 80);
+			JLabel lblPic = new JLabel(new ImageIcon(pic)); //holds picture
+			
+			
+			//adds control with layout organization
+			GroupLayout layout = new GroupLayout(marsPanel);
+			layout.setAutoCreateGaps(true);
+			layout.setAutoCreateContainerGaps(true);
+			layout.setHorizontalGroup( layout.createSequentialGroup() //sets horizontal groups
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING) //holds all the identifier labels
+							.addComponent(lblcity)
+							.addComponent(lblPic)
+							.addComponent(lbldescrip)
+							.addComponent(lblmin)
+							.addComponent(lblmax)
+							.addComponent(lblspeed)
+							.addComponent(lbldir)
+							.addComponent(lblpress)
+							.addComponent(lblhumid)
+							.addComponent(lblrise)
+							.addComponent(lblset)
+							
+							)
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING) //sets wetaher Data labels
+							
+							.addComponent(lbldescrip2)
+							.addComponent(lblmin2)
+							.addComponent(lblmax2)
+							.addComponent(lblspeed2)
+							.addComponent(lbldir2)
+							.addComponent(lblpress2)
+							.addComponent(lblhumid2)
+							.addComponent(lblrise2)
+							.addComponent(lblset2)
+							)
+						 );
+			layout.setVerticalGroup( layout.createSequentialGroup() //sets verticsal groups
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //city is on its own
+							.addComponent(lblcity)
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //pic is on its own
+							.addComponent(lblPic)
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //the rest have the identifier, followed by the actual data
+							.addComponent(lbldescrip)
+							.addComponent(lbldescrip2)
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(lblmin)
+							.addComponent(lblmin2)
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(lblmax)
+							.addComponent(lblmax2)
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(lblspeed)
+							.addComponent(lblspeed2)
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(lbldir)
+							.addComponent(lbldir2)
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(lblpress)
+							.addComponent(lblpress2)
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(lblhumid)
+							.addComponent(lblhumid2)
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(lblrise)
+							.addComponent(lblrise2)
+							)
+					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(lblset)
+							.addComponent(lblset2)
+							)					
+						);
+							
+						marsPanel.setLayout(layout); //sets the layout		
+								
+			}
 	}

@@ -21,9 +21,11 @@ import javax.imageio.ImageIO;
 
 
 public class weatherApp {
+	
 	private weatherData current; //used to store current location data
 	private weatherData[] longTerm; //used to store long term data
 	private weatherData[] shortTerm; //used to store short term data
+	private weatherData mars; //used to store Mars weather Data
 	private location[] myLocations;	//used to store users preset locations
 	private location currentLocation;	//Current location for user persistence
 	private location visibleLocation;	//Location that is currently visible on app
@@ -38,6 +40,7 @@ public class weatherApp {
 	public weatherApp(){
 		
 		current = new weatherData();
+		mars = new weatherData();
 		longTerm = new weatherData[8];	//Covers next 5 days
 		for (int i = 0; i < 5; i ++){
 			longTerm[i] = new weatherData();
@@ -65,7 +68,24 @@ public class weatherApp {
 	public String getUnits(){
 		return units;
 	}
-
+	
+	/*
+	 * sets the units String
+	 * @param String 
+	 * @return none
+	 */
+	public void setUnits(String type){
+		units = type;
+	}
+	
+	/*
+ 	* returns mars location data object
+ 	* @param no parameters
+ 	* @return location object holding mars Data
+ 	*/
+	public weatherData getMars(){
+		return mars;
+	}
 	/*
  	* returns current location data object
  	* @param no parameters
@@ -183,7 +203,7 @@ public class weatherApp {
 		if (j < myLocations.length) myLocations[j] = A;
 		else {
 			location[] temp = new location[myLocations.length + 1];
-			for (int i = 0; i < temp.length; i ++){
+			for (int i = 0; i < temp.length - 1; i ++){
 				temp[i] = myLocations[i];
 			}
 			temp[myLocations.length] = A;
@@ -196,9 +216,9 @@ public class weatherApp {
 	 * @param String A, representing location
 	 * @return no returns
 	 */
-	public void removeLocation(String A){
+	public void removeLocation(String name, String code){
 		int i = 0;
-		while (myLocations[i].getName() != A) i ++;
+		while (!myLocations[i].getName().equals(name) && !myLocations[i].getCountryCode().equals(code)) i ++;
 		while (i < myLocations.length - 1){
 			myLocations[i] = myLocations[i + 1];
 			i ++;
@@ -680,5 +700,151 @@ public class weatherApp {
 		    }
 		   
 	   }
+	}
+	
+	/*
+	 * this method grabs and formats the data for the Mars weather structure
+	 * @param String to define unit type
+	 * @return none, fills AMrs object
+	 */
+	public void grabMars(String units) throws IOException{
+		
+		URL url = null;
+		try {
+			url = new URL("http://marsweather.ingenology.com/v1/latest/?format=json"); //need to be able to input the id and the units
+		} catch (MalformedURLException e) {
+			throw new MalformedURLException("malformed URL");
+		}
+		
+		URLConnection con = null;
+		try {
+			con = url.openConnection();
+		} catch (IOException e) {
+			throw new IOException("could not connect");
+		}
+		
+		InputStream is = null;
+	    try {
+			is =con.getInputStream();
+		} catch (IOException e) {
+			throw new IOException("could not creat stream");
+		}
+		
+	    BufferedReader br = new BufferedReader(new InputStreamReader(is)); //used to read input from JSON
+	    
+	    String line = null; //holds info grabbed
+	
+	    // read each line and write to System.out
+	    try {
+			while (br.ready()) { //line = br.readLine()) != null
+			    line = br.readLine();
+			   // System.out.println(line);
+				
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    	    
+	    //removes all useless symbols
+	    line = line.replace('{', ' ');
+	    line = line.replace('}', ' ');
+	    line = line.replace(':', ' ');
+	    line = line.replace(';', ' ');
+	    line = line.replace(',', ' ');
+	    
+	    StringTokenizer tokens;
+	    tokens = new StringTokenizer(line,  " \" "  ); //separates data into tokens, seperate by a space
+	    
+	    //All variables are the same as normal weather, but some weren't needed
+	    String tmp = null;
+	    String description = "";//holds weather description
+	    float humidity = 0; //holds humidity
+	    float pressure = 0; //holds air pressure
+	    float windSpeed = 0; //holds wind speed
+	    float minTemp = 0; //holds min temp
+	    float maxTemp = 0; //holds max temp
+	    String sunrise = ""; //holds sunrise time
+	    String sunset = ""; //holds sunset time
+	    String windDir = ""; //holds direction of wind 
+	    
+	    
+	  //as long as there are more tokens left, checks for the data needed
+	    while(tokens.hasMoreTokens()){ 
+	    	tmp = tokens.nextToken();
+	    	
+	    	//atmo_opacity is used instead of description
+	    	if(tmp.equals("atmo_opacity")){//grabs mars weather description
+	    		String token = tokens.nextToken();
+	    		while(token.equals("season") == false){
+	    			description = description.concat(token) + " ";
+	    			token = tokens.nextToken();
+	    		}
+	    	}
+	    	
+	    	if(units.equals("imperial")){ //if we're looking for imperial
+	    		if(tmp.equals("min_temp_fahrenheit")) //grabs min
+		    		minTemp = Float.parseFloat(tokens.nextToken());
+	    		if(tmp.equals("max_temp_fahrenheit")) //grabs max
+		    		maxTemp = Float.parseFloat(tokens.nextToken());
+	    	}
+	    	else{ //otherwise, celsius
+	    		if(tmp.equals("min_temp")) //grabs min
+		    		minTemp = Float.parseFloat(tokens.nextToken());
+	    		if(tmp.equals("max_temp")) //grabs max
+		    		maxTemp = Float.parseFloat(tokens.nextToken());
+	    	}
+	    	
+	    	if(tmp.equals("sunrise")) //grabs sunrise time
+	    		sunrise = tokens.nextToken();
+	    	if(tmp.equals("sunset")) //grabs sunset time
+	    		sunset = tokens.nextToken();
+	    	if(tmp.equals("pressure")) //grabs current air pressure
+	    		pressure = Float.parseFloat(tokens.nextToken());
+	    	if(tmp.equals("abs_humidity")){ //grabs current humidity level
+	    		if ((tokens.nextElement()).toString().compareTo("null")==0){
+	    			humidity = 99f;
+	    		}
+	    		else{
+	    			humidity = Float.parseFloat(tokens.nextToken());
+	    		}
+	    	}
+	    	if(tmp.equals("wind_speed")){ //grabs current wind speed
+	    		if ((tokens.nextElement()).toString().compareTo("null")==0){
+	    			windSpeed = 0.0f;
+	    		}
+	    		else{
+	    			windSpeed = Float.parseFloat(tokens.nextToken());
+	    		}
+	    		
+	    	}
+	    	if(tmp.equals("wind_direction")){ //grabs current wind Direction
+	    		String tmp2 = tokens.nextToken();
+	    		if (tmp2.compareTo("--") == 0){
+	    			windDir = "N/A";
+	    		}
+	    		else{
+	    			windDir = tmp2;
+	    		}
+	    		
+	    	}
+	    	
+	    }
+	    
+	   mars.setCondit(description);
+	   mars.setMin(minTemp);
+	   mars.setMax(maxTemp);
+	   mars.setSpeed(windSpeed);
+	   if(windDir.equals("N/A")){
+		   mars.setDir(99);
+	   }
+	   else{
+		   mars.setDir(Float.parseFloat(windDir));
+	   }
+	   mars.setPress(pressure);
+	   mars.setHumid(humidity);
+	   mars.setSunrise(sunrise);
+	   mars.setSunset(sunset);
+	    
 	}
 }
