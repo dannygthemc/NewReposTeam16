@@ -7,9 +7,15 @@ package cs2212b.team16;
  */
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -18,6 +24,7 @@ import java.util.Date;
 import java.util.StringTokenizer;
 
 import javax.imageio.ImageIO;
+
 
 
 public class weatherApp {
@@ -29,7 +36,7 @@ public class weatherApp {
 	private location[] myLocations;	//used to store users preset locations
 	private location currentLocation;	//Current location for user persistence
 	private location visibleLocation;	//Location that is currently visible on app
-	private String units;
+	private String units; //used to keep track of type of unit being used
 	
 	/*
 	 * instantiates an object of the class
@@ -56,9 +63,55 @@ public class weatherApp {
 		//TODO: populate current location with file current location on startup
 		currentLocation = new location();
 		visibleLocation = currentLocation;
-		visibleLocation.setCityID(6058560);
+		//visibleLocation.setCityID(6058560);
 		units = "metric";
 	}
+	
+	/*
+	 * this method is used to store the location at the end of the program run
+	 * @param none
+	 * @return none, stores last 'current location'
+	 */
+	public void storePref() throws IOException{
+		
+		File store = new File("prefFile.txt");
+		if(store.exists() == true){
+			store.delete();
+		}
+		store.createNewFile();
+		
+		ObjectOutputStream out = null;
+
+			out = new ObjectOutputStream(
+						  new FileOutputStream(store));
+		
+		  
+		 out.writeObject(currentLocation); //write the person to the file
+		  
+		 out.close();
+		  
+	  }
+	
+	/*
+	 * this method is used to load the location stored at the end of the last program run
+	 * @param none
+	 * @return location	 
+	 */
+	public location loadPref() throws ClassNotFoundException, IOException{
+		
+		File store = new File("prefFile.txt");
+		ObjectInputStream in = null;
+
+			in = new ObjectInputStream(
+					  new FileInputStream(store));
+		
+		  
+		  location obj = (location)in.readObject(); //write the person to the file
+		  
+		  in.close();
+		  return obj;
+		  
+	  }
 	
 	/*
 	 * returns current units

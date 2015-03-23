@@ -1,5 +1,7 @@
 package cs2212b.team16;
 
+import java.io.Serializable;
+
 /**
  * location.java stores values for the user's location
  * @author Daniel Gilbert
@@ -10,7 +12,11 @@ package cs2212b.team16;
  * @author Nicholas Teixeira
  *
  */
-public class location {
+public class location implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private int latitude;
 	private int longitude;
 	private String name;
