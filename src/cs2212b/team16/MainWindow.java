@@ -285,12 +285,15 @@ import java.util.Date;
 						//Do nothing
 			} else {
 					location update = new location();
-					String countryCode = cityName.substring(cityName.indexOf(',') + 2, cityName.indexOf(',') + 5);
+					String countryCode = cityName.substring(cityName.indexOf(',') + 2, cityName.indexOf(',') + 4);
 					cityName = cityName.substring(0, cityName.indexOf(','));
 					for (int i = 0; i < app.getMyLocations().length; i ++){
-						if (app.getMyLocations()[i].getName().equals(cityName) && app.getMyLocations()[i].getCountryCode().equals(countryCode));
+						String checkName = app.getMyLocations()[i].getName();
+						String checkCode = app.getMyLocations()[i].getCountryCode();
+						if (checkName.equals(cityName) && checkCode.equals(countryCode)){
 							update = app.getMyLocations()[i];
 							break;
+						}
 					}
 					app.setVisibleLocation(update);
 					refreshPanels();
@@ -372,8 +375,8 @@ import java.util.Date;
 					if (simLoc == null) JOptionPane.showMessageDialog(frame, "'" + txt + "' not found.");
 					else if (simLoc.size() == 1){
 						location searchedLoc = simLoc.get(0);
-						app.addLocation(searchedLoc);
 						app.setCurrentLocation(searchedLoc);
+						app.setVisibleLocation(searchedLoc);
 						locBar.removeActionListener(Jcombo);
 						populateMyLocationsBox();
 						refreshPanels();
@@ -391,8 +394,8 @@ import java.util.Date;
 					
 						if (response != null) {
 								location searchedLoc = simLoc.get(Integer.parseInt(response.substring(0, response.indexOf('.'))) - 1);
-								app.addLocation(searchedLoc);
 								app.setCurrentLocation(searchedLoc);
+								app.setVisibleLocation(searchedLoc);
 								locBar.removeActionListener(Jcombo);
 								populateMyLocationsBox();
 								refreshPanels();
@@ -515,7 +518,7 @@ private void createFormThree() throws IOException{
 			JLabel hold6;
 			
 			//fills the arrays with their respective values
-			for(int i =0; i<7; i++){
+			for(int i =0; i<5; i++){
 				hold = new JLabel("" +tmp[i+1].getTemp()); //holds current temp
 				temp[i] = hold; //puts it in the array
 				hold2 = new JLabel("" +tmp[i+1].getCondit()); //holds current condition
@@ -559,12 +562,12 @@ private void createFormThree() throws IOException{
 								.addComponent(max[0])
 								.addComponent(descrip[0])
 								.addGap(30)
-								.addComponent(lblPic[5])
+								/*.addComponent(lblPic[5])
 								.addComponent(date[5])
 								.addComponent(temp[5])
 								.addComponent(min[5])
 								.addComponent(max[5])
-								.addComponent(descrip[5])
+								.addComponent(descrip[5])*/
 								
 						)
 						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -576,12 +579,12 @@ private void createFormThree() throws IOException{
 								.addComponent(max[1])
 								.addComponent(descrip[1])
 								.addGap(30)
-								.addComponent(lblPic[6])
+								/*.addComponent(lblPic[6])
 								.addComponent(date[6])
 								.addComponent(temp[6])
 								.addComponent(min[6])
 								.addComponent(max[6])
-								.addComponent(descrip[6])
+								.addComponent(descrip[6])*/
 								
 						)
 						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -667,7 +670,7 @@ private void createFormThree() throws IOException{
 							.addComponent(descrip[3])
 							.addComponent(descrip[4])
 							)
-					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //this is the start of the second row of weather Data, pics aligned
+					/*.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //this is the start of the second row of weather Data, pics aligned
 							.addComponent(lblPic[5])
 							.addComponent(lblPic[6])
 							)
@@ -690,7 +693,7 @@ private void createFormThree() throws IOException{
 					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)//descrips aligned
 							.addComponent(descrip[5])
 							.addComponent(descrip[6])
-							)		
+							)	*/	
 					);
 			longPanel.setLayout(layout); //sets the defined layout to the panel
 		}
