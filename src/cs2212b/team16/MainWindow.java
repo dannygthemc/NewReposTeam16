@@ -235,13 +235,13 @@ import java.util.Date;
 		 * @return none, fills location box
 		 */
 		private void populateMyLocationsBox(){
-			locBar.removeActionListener(Jcombo);
+			//locBar.removeActionListener(Jcombo);
 			locBar.removeAllItems();
 			for (int i = 0; i < app.getMyLocations().length; i ++){
 				location tempLoc = app.getMyLocations()[i];
 				if (tempLoc.getCityID() != 0){
 					String val = tempLoc.getName() + ", " + tempLoc.getCountryCode() + " Lat: " + tempLoc.getLatitude() + " Long: " + tempLoc.getLongitude();
-					//locBar.addItem("cool");
+					locBar.addItem(val);
 				} 
 			}
 			if (locBar.getItemCount() == 0){
@@ -278,6 +278,7 @@ import java.util.Date;
 						cityName = response.substring(0, response.indexOf(','));
 						app.removeLocation(cityName, countryCode);
 					}
+					locBar.removeActionListener(Jcombo);
 					populateMyLocationsBox();
 						
 			 } else if (cityName.equals("--Empty--")){
@@ -289,6 +290,7 @@ import java.util.Date;
 					for (int i = 0; i < app.getMyLocations().length; i ++){
 						if (app.getMyLocations()[i].getName().equals(cityName) && app.getMyLocations()[i].getCountryCode().equals(countryCode));
 							update = app.getMyLocations()[i];
+							break;
 					}
 					app.setVisibleLocation(update);
 					refreshPanels();
@@ -308,6 +310,7 @@ import java.util.Date;
 				location searchedLoc = simLoc.get(0);
 				app.addLocation(searchedLoc);
 				app.setVisibleLocation(searchedLoc);
+				locBar.removeActionListener(Jcombo);
 				populateMyLocationsBox();
 				refreshPanels();
 			}
@@ -326,6 +329,7 @@ import java.util.Date;
 						location searchedLoc = simLoc.get(Integer.parseInt(response.substring(0, response.indexOf('.'))) - 1);
 						app.addLocation(searchedLoc);
 						app.setVisibleLocation(searchedLoc);
+						locBar.removeActionListener(Jcombo);
 						populateMyLocationsBox();
 						refreshPanels();
 				 }
@@ -350,6 +354,7 @@ import java.util.Date;
 				 try {
 					app.storePref();
 				} catch (Exception e) {
+					JFrame error = new JFrame();
 					JOptionPane.showMessageDialog(error, "An error occured");
 				}
 				 System.exit(0); } //exit program
@@ -369,6 +374,7 @@ import java.util.Date;
 						location searchedLoc = simLoc.get(0);
 						app.addLocation(searchedLoc);
 						app.setCurrentLocation(searchedLoc);
+						locBar.removeActionListener(Jcombo);
 						populateMyLocationsBox();
 						refreshPanels();
 					}
@@ -387,6 +393,7 @@ import java.util.Date;
 								location searchedLoc = simLoc.get(Integer.parseInt(response.substring(0, response.indexOf('.'))) - 1);
 								app.addLocation(searchedLoc);
 								app.setCurrentLocation(searchedLoc);
+								locBar.removeActionListener(Jcombo);
 								populateMyLocationsBox();
 								refreshPanels();
 						 }
@@ -401,7 +408,6 @@ import java.util.Date;
 			 @Override
 			 public void actionPerformed(ActionEvent event) {
 				 app.setVisibleLocation(app.getCurrentLocation());
-				 createFormCalls();
 				 refreshPanels();
 			 }
 				 
@@ -443,8 +449,8 @@ import java.util.Date;
 			menubar.add(new JLabel("   "));
 			
 			//Locations -> MyLocations
+			locBar.removeActionListener(Jcombo);
 			populateMyLocationsBox();
-			locBar.addActionListener(Jcombo);
 			menubar.add(locBar);
 						
 			//Search text box
