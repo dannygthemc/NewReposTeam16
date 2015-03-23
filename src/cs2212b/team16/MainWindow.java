@@ -368,7 +368,7 @@ import java.util.Date;
 					else if (simLoc.size() == 1){
 						location searchedLoc = simLoc.get(0);
 						app.addLocation(searchedLoc);
-						app.setVisibleLocation(searchedLoc);
+						app.setCurrentLocation(searchedLoc);
 						populateMyLocationsBox();
 						refreshPanels();
 					}
