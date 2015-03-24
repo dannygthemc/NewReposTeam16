@@ -1,4 +1,6 @@
 package cs2212b.team16;
+
+
 import javax.swing.SwingUtilities;
 
 /**
@@ -11,6 +13,7 @@ import javax.swing.SwingUtilities;
  * @author Nicholas Teixeira
  *
  */
+
 public class App {
 	
 	public static void main(String[] args) {

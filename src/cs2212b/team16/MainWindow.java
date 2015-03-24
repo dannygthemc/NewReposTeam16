@@ -1,4 +1,7 @@
 package cs2212b.team16;
+
+
+
 /*
  * @author: Daniel, James, Omar, Long, Angus, Nick
  * this class used to define the GUI for the application
@@ -6,24 +9,6 @@ package cs2212b.team16;
  */
 import javax.imageio.ImageIO;
 import javax.swing.JFrame; //used to create a Jframe
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -40,28 +25,9 @@ import javax.swing.JMenuItem;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //used to create controls
-import java.awt.Dimension;
-import java.awt.Image;
+import java.awt.*;
 
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -70,27 +36,6 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-import javax.swing.JButton;
-import javax.swing.ButtonGroup;
-import javax.swing.JRadioButton;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -99,48 +44,15 @@ import java.awt.Color;
 
 import javax.swing.GroupLayout;
 
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import org.imgscalr.Scalr;
 
+import cs2212b.team16.SearchIndex;
+import cs2212b.team16.location;
+import cs2212b.team16.weatherApp;
+import cs2212b.team16.weatherData;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-//used to organize border layout
-import java.awt.BorderLayout;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -150,12 +62,30 @@ import java.util.Date;
 		private weatherApp app = new weatherApp();
 		private SearchIndex dataBase = new SearchIndex();
 		
-		//GUI Initializations to allow dynmaic changes
+		//GUI Initializations to allow dynamic changes
 		private JComboBox<String> locBar = new JComboBox<String>(); //used to list searched locations
 		private JMenuBar menubar;
 		private JLabel refreshLabel = new JLabel();
 		private JTabbedPane tabbedPane = new JTabbedPane(); //creates a tab pane
-		private JPanel currentPanel = new JPanel(); //used to display current data
+		
+		public Color color1 = new Color(160, 120, 240); //Top gradient color
+		public Color color2 = new Color(40, 10, 90); //Bottom gradient color
+		
+		private JPanel currentPanel = new JPanel(){ //used to display current data
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				Graphics2D g2d = (Graphics2D) g;
+				g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+				int w = getWidth();
+				int h = getHeight();
+//				Color color1 = new Color(30, 255, 90);
+//				Color color2 = new Color(45, 110, 35);
+				GradientPaint gp = new GradientPaint(0, 0, color1, 0, h, color2);
+				g2d.setPaint(gp);
+				g2d.fillRect(0, 0, w, h);
+			}
+		};
 		private JPanel shortPanel = new JPanel(); //used to display short data
 		private JPanel longPanel = new JPanel(); //used to display long data
 		private JPanel marsPanel = new JPanel(); //used to display mars data
@@ -187,6 +117,27 @@ import java.util.Date;
 		 */
 		private void initUI () {
 			
+			JFrame error = new JFrame();
+			JFrame tmp = new JFrame();
+			tmp.setSize(50, 50);
+			String select = "";
+			if(new File("prefFile.txt").exists() == false){ //if this is the first run
+				select = JOptionPane.showInputDialog(tmp, "It appears this is your first run. "
+						+ "Enter the city name of your current location:"); //prompts user for their current location
+				searchBoxUsed(select); //used the search function
+				app.setCurrentLocation(app.getVisibleLocation()); //sets the current location
+			}
+			else{ //if it's been run before
+				location tmpLoc = new location();
+				try {
+					tmpLoc = app.loadPref(); //load the location from memory
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(error, "An error occured");
+				}
+				app.setCurrentLocation(tmpLoc); //and set it as the current location
+				app.setVisibleLocation(tmpLoc);
+				
+			}
 			this.setTitle("Weather Application"); //sets title of frame 
 			this.setSize(1000, 600); //sets size of frame
 			this.setLocationRelativeTo(null);
@@ -284,13 +235,13 @@ import java.util.Date;
 		 * @return none, fills location box
 		 */
 		private void populateMyLocationsBox(){
-			locBar.removeActionListener(Jcombo);
+			//locBar.removeActionListener(Jcombo);
 			locBar.removeAllItems();
 			for (int i = 0; i < app.getMyLocations().length; i ++){
 				location tempLoc = app.getMyLocations()[i];
 				if (tempLoc.getCityID() != 0){
 					String val = tempLoc.getName() + ", " + tempLoc.getCountryCode() + " Lat: " + tempLoc.getLatitude() + " Long: " + tempLoc.getLongitude();
-					//locBar.addItem("cool");
+					locBar.addItem(val);
 				} 
 			}
 			if (locBar.getItemCount() == 0){
@@ -327,17 +278,22 @@ import java.util.Date;
 						cityName = response.substring(0, response.indexOf(','));
 						app.removeLocation(cityName, countryCode);
 					}
+					locBar.removeActionListener(Jcombo);
 					populateMyLocationsBox();
 						
 			 } else if (cityName.equals("--Empty--")){
 						//Do nothing
 			} else {
 					location update = new location();
-					String countryCode = cityName.substring(cityName.indexOf(',') + 2, cityName.indexOf(',') + 5);
+					String countryCode = cityName.substring(cityName.indexOf(',') + 2, cityName.indexOf(',') + 4);
 					cityName = cityName.substring(0, cityName.indexOf(','));
 					for (int i = 0; i < app.getMyLocations().length; i ++){
-						if (app.getMyLocations()[i].getName().equals(cityName) && app.getMyLocations()[i].getCountryCode().equals(countryCode));
+						String checkName = app.getMyLocations()[i].getName();
+						String checkCode = app.getMyLocations()[i].getCountryCode();
+						if (checkName.equals(cityName) && checkCode.equals(countryCode)){
 							update = app.getMyLocations()[i];
+							break;
+						}
 					}
 					app.setVisibleLocation(update);
 					refreshPanels();
@@ -357,6 +313,7 @@ import java.util.Date;
 				location searchedLoc = simLoc.get(0);
 				app.addLocation(searchedLoc);
 				app.setVisibleLocation(searchedLoc);
+				locBar.removeActionListener(Jcombo);
 				populateMyLocationsBox();
 				refreshPanels();
 			}
@@ -375,6 +332,7 @@ import java.util.Date;
 						location searchedLoc = simLoc.get(Integer.parseInt(response.substring(0, response.indexOf('.'))) - 1);
 						app.addLocation(searchedLoc);
 						app.setVisibleLocation(searchedLoc);
+						locBar.removeActionListener(Jcombo);
 						populateMyLocationsBox();
 						refreshPanels();
 				 }
@@ -386,6 +344,7 @@ import java.util.Date;
 		 * menu bar contains option for exiting current program
 		 */
 		private JMenuBar createMenubar() {
+			JFrame error = new JFrame();
 			JMenuBar menubar = new JMenuBar(); //creates new menu bar
 			JMenu mnuFile = new JMenu("File"); //creates file option
 			mnuFile.setMnemonic(KeyEvent.VK_F);
@@ -395,33 +354,34 @@ import java.util.Date;
 			mniFileExit.addActionListener(new ActionListener() {
 			 @Override
 			 public void actionPerformed(ActionEvent event) { //when clicked
-				 
-				 
-				 
-				 
-			System.exit(0); } //exit program
+				 try {
+					app.storePref();
+				} catch (Exception e) {
+					JFrame error = new JFrame();
+					JOptionPane.showMessageDialog(error, "An error occured");
+				}
+				 System.exit(0); } //exit program
 			});
 			
 			//Reset StartUp Location
 			JMenuItem reset = new JMenuItem("Reset Current");
-			reset.setMnemonic(KeyEvent.VK_E);
+			reset.setMnemonic(KeyEvent.VK_R);
 			reset.addActionListener(new ActionListener() {
 			 @Override
 			 public void actionPerformed(ActionEvent event) {
-				 JFrame frame = new JFrame();
-				 String response = (String) JOptionPane.showInputDialog(frame, "Enter the city name of the new current location:", "Reset Current Location",  
-							JOptionPane.QUESTION_MESSAGE, null, null, " ");
-				 if (response != null){
-					 ArrayList<location> simLoc = dataBase.search(response);
-					 if (simLoc == null) JOptionPane.showMessageDialog(frame, "'" + response + "' not found.");
-					 else if (simLoc.size() == 1){
-							location searchedLoc = simLoc.get(0);
-							app.addLocation(searchedLoc);
-							app.setVisibleLocation(searchedLoc);
-							populateMyLocationsBox();
-							refreshPanels();
-						}
-					 else {
+				    JFrame frame = new JFrame();
+				    String txt = JOptionPane.showInputDialog(frame, "Enter the city name of your new current location:"); //prompts user for their current location
+					ArrayList<location> simLoc = dataBase.search(txt);
+					if (simLoc == null) JOptionPane.showMessageDialog(frame, "'" + txt + "' not found.");
+					else if (simLoc.size() == 1){
+						location searchedLoc = simLoc.get(0);
+						app.setCurrentLocation(searchedLoc);
+						app.setVisibleLocation(searchedLoc);
+						locBar.removeActionListener(Jcombo);
+						populateMyLocationsBox();
+						refreshPanels();
+					}
+					else {
 						String [] possibilities = new String[simLoc.size()];
 						
 						for (int i = 0; i <  simLoc.size(); i ++){
@@ -429,24 +389,36 @@ import java.util.Date;
 									+ simLoc.get(i).getLatitude() + " Long: " + simLoc.get(i).getLongitude();
 						}
 						
-						String response2 = (String) JOptionPane.showInputDialog(frame, "Which " + response + " did you mean?", "Current Location",  
+						String response = (String) JOptionPane.showInputDialog(frame, "Which '" + txt + "' did you mean?", "Search Location",  
 								JOptionPane.QUESTION_MESSAGE, null, possibilities, "Titan");
 					
 						if (response != null) {
-								location searchedLoc = simLoc.get(Integer.parseInt(response2.substring(0, response.indexOf('.'))) - 1);
+								location searchedLoc = simLoc.get(Integer.parseInt(response.substring(0, response.indexOf('.'))) - 1);
 								app.setCurrentLocation(searchedLoc);
 								app.setVisibleLocation(searchedLoc);
+								locBar.removeActionListener(Jcombo);
+								populateMyLocationsBox();
 								refreshPanels();
 						 }
-					 }
+					}
 				 }
-			 }
 			 	
 			});
 			
+			JMenuItem switchTo = new JMenuItem("Switch to Current");
+			switchTo.setMnemonic(KeyEvent.VK_S);
+			switchTo.addActionListener(new ActionListener() {
+			 @Override
+			 public void actionPerformed(ActionEvent event) {
+				 app.setVisibleLocation(app.getCurrentLocation());
+				 refreshPanels();
+			 }
+				 
+			 });
+			
 			//Refresh button
 			JMenuItem refresh = new JMenuItem("Refresh");
-			refresh.setMnemonic(KeyEvent.VK_E);
+			refresh.setMnemonic(KeyEvent.VK_F);
 			updateRefreshTime();
 			refresh.addActionListener(new ActionListener() {
 			 @Override
@@ -454,6 +426,7 @@ import java.util.Date;
 				 refreshPanels(); 
 			 	}
 			});
+			mnuFile.add(switchTo);
 			mnuFile.add(reset);
 			mnuFile.add(refresh);
 			mnuFile.add(mniFileExit); //adds it to the menubar
@@ -479,8 +452,8 @@ import java.util.Date;
 			menubar.add(new JLabel("   "));
 			
 			//Locations -> MyLocations
+			locBar.removeActionListener(Jcombo);
 			populateMyLocationsBox();
-			locBar.addActionListener(Jcombo);
 			menubar.add(locBar);
 						
 			//Search text box
@@ -510,7 +483,7 @@ import java.util.Date;
 		 * @param none
 		 * @return none, fills panel with data
 		 */
-		private void createFormThree() throws IOException{
+private void createFormThree() throws IOException{
 			
 			weatherData[] tmp = new weatherData[8]; //holds weather data objects
 			try {
@@ -545,7 +518,7 @@ import java.util.Date;
 			JLabel hold6;
 			
 			//fills the arrays with their respective values
-			for(int i =0; i<7; i++){
+			for(int i =0; i<5; i++){
 				hold = new JLabel("" +tmp[i+1].getTemp()); //holds current temp
 				temp[i] = hold; //puts it in the array
 				hold2 = new JLabel("" +tmp[i+1].getCondit()); //holds current condition
@@ -589,12 +562,12 @@ import java.util.Date;
 								.addComponent(max[0])
 								.addComponent(descrip[0])
 								.addGap(30)
-								.addComponent(lblPic[5])
+								/*.addComponent(lblPic[5])
 								.addComponent(date[5])
 								.addComponent(temp[5])
 								.addComponent(min[5])
 								.addComponent(max[5])
-								.addComponent(descrip[5])
+								.addComponent(descrip[5])*/
 								
 						)
 						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -606,12 +579,12 @@ import java.util.Date;
 								.addComponent(max[1])
 								.addComponent(descrip[1])
 								.addGap(30)
-								.addComponent(lblPic[6])
+								/*.addComponent(lblPic[6])
 								.addComponent(date[6])
 								.addComponent(temp[6])
 								.addComponent(min[6])
 								.addComponent(max[6])
-								.addComponent(descrip[6])
+								.addComponent(descrip[6])*/
 								
 						)
 						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -697,7 +670,7 @@ import java.util.Date;
 							.addComponent(descrip[3])
 							.addComponent(descrip[4])
 							)
-					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //this is the start of the second row of weather Data, pics aligned
+					/*.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //this is the start of the second row of weather Data, pics aligned
 							.addComponent(lblPic[5])
 							.addComponent(lblPic[6])
 							)
@@ -720,7 +693,7 @@ import java.util.Date;
 					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)//descrips aligned
 							.addComponent(descrip[5])
 							.addComponent(descrip[6])
-							)		
+							)	*/	
 					);
 			longPanel.setLayout(layout); //sets the defined layout to the panel
 		}
@@ -744,12 +717,13 @@ import java.util.Date;
 			JLabel lbl1 = new JLabel("Time: ");
 			JLabel lbl2 = new JLabel("Temp: ");
 			JLabel lbl3 = new JLabel("Weather Condition:");
-			
+						
 			JLabel lblcity = new JLabel(tmp[0].getName() + ", " + tmp[0].getCount() + ", " + tmp[0].getLon() + ", " + tmp[0].getLat() ); //displays location info
 			JLabel[] temp = new JLabel[9]; //array of temperature labels
 			JLabel[] time = new JLabel[9]; //array of time stamps
 			JLabel[] descrip = new JLabel[9]; //array of description labels
 			JLabel[] lblPic = new JLabel[9]; //array of picture labels
+
 			
 			BufferedImage pic = null; //used to temporarily hold pictures
 			JLabel hold; //temporarily hold labels for storage
@@ -770,6 +744,9 @@ import java.util.Date;
 				lblPic[i] = hold3;
 				hold4 = new JLabel(tmp[i+1].getSunrise());//timestamp stored in Sunrise, since this variable was not in use for ShorTerm
 				time[i] = hold4;
+				
+				time[i].setBackground(Color.RED);
+				time[i].setOpaque(true);
 			}
 			
 			//Group layout used to organize GUI
@@ -928,70 +905,128 @@ import java.util.Date;
 			} catch (IOException e) {
 				throw new IOException("error");
 			}
+			
 			tmp = app.getCurrent();
 			
-			JLabel lblcity = new JLabel(tmp.getName() + ", " + tmp.getCount() + ", " + tmp.getLon() + ", " + tmp.getLat() ); //displays location info
+			JLabel lblcity = new JLabel(tmp.getName() + ", " + tmp.getCount() + ", " + tmp.getLon() + ", " + tmp.getLat()); //displays location info
+			lblcity.setForeground(Color.WHITE);
+			lblcity.setFont(new Font("Lucida Console", Font.PLAIN, 40));
 			JLabel lbldescrip = new JLabel("Weather Condition: ");
+			lbldescrip.setForeground(Color.WHITE);
+			lbldescrip.setFont(new Font("Courier New", Font.BOLD, 18));
 			JLabel lbldescrip2 = new JLabel("" +tmp.getCondit());
+			
+			lbldescrip2.setForeground(Color.WHITE);
+			lbldescrip2.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
 			JLabel lbltemp = new JLabel("Temp:  "); //label for temp
+			lbltemp.setForeground(Color.WHITE);
+			lbltemp.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
 			JLabel lbltemp2 = new JLabel("" + tmp.getTemp()); //actual temp
+			lbltemp2.setForeground(Color.WHITE);
+			lbltemp2.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
 			JLabel lblmin = new JLabel("Min Temp: "); //label for min
+			lblmin.setForeground(Color.WHITE);
+			lblmin.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
 			JLabel lblmin2 = new JLabel("" + tmp.getMin()); //actual min
+			lblmin2.setForeground(Color.WHITE);
+			lblmin2.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
 			JLabel lblmax = new JLabel("Max Temp: " ); //label for max
+			lblmax.setForeground(Color.WHITE);
+			lblmax.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
 			JLabel lblmax2 = new JLabel("" + tmp.getMax()); //actual max
+			lblmax2.setForeground(Color.WHITE);
+			lblmax2.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
 			JLabel lblspeed = new JLabel("Wind Speed: "); //label for speed
+			lblspeed.setForeground(Color.WHITE);
+			lblspeed.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
 			JLabel lblspeed2 = new JLabel("" + tmp.getSpeed()); //actual speed
+			lblspeed2.setForeground(Color.WHITE);
+			lblspeed2.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
 			JLabel lbldir = new JLabel("Wind Direction: "); //label for dir 
+			lbldir.setForeground(Color.WHITE);
+			lbldir.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
 			JLabel lbldir2 = new JLabel("" + tmp.getDir()); //actual dir
+			lbldir2.setForeground(Color.WHITE);
+			lbldir2.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
 			JLabel lblpress = new JLabel("Air Pressure: "); //label for pressure
+			lblpress.setForeground(Color.WHITE);
+			lblpress.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
 			JLabel lblpress2 = new JLabel("" + tmp.getPress()); //actual pressure
+			lblpress2.setForeground(Color.WHITE);
+			lblpress2.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
 			JLabel lblhumid = new JLabel("Humidity: "); //label for humid
-			JLabel lblhumid2 = new JLabel("" + tmp.getHumid()); //actual humdi
+			lblhumid.setForeground(Color.WHITE);
+			lblhumid.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
+			JLabel lblhumid2 = new JLabel("" + tmp.getHumid()); //actual humid
+			lblhumid2.setForeground(Color.WHITE);
+			lblhumid2.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
 			JLabel lblrise = new JLabel("Sunrise Time: "); //label for sunrise
+			lblrise.setForeground(Color.WHITE);
+			lblrise.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
 			JLabel lblrise2 = new JLabel("" + tmp.getSunrise()); //actual sunrise
+			lblrise2.setForeground(Color.WHITE);
+			lblrise2.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
 			JLabel lblset = new JLabel("Sunset Time: "); //label for susnet
+			lblset.setForeground(Color.WHITE);
+			lblset.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
 			JLabel lblset2 = new JLabel("" + tmp.getSunset()); //actual sunset
+			lblset2.setForeground(Color.WHITE);
+			lblset2.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, lbldescrip.getFont().getSize()));
 			
 			//used to set picture
 			BufferedImage pic = tmp.getIcon();
 			pic  = Scalr.resize(pic, 80);
 			JLabel lblPic = new JLabel(new ImageIcon(pic)); //holds picture
 			
+			//Set the colours for the background gradient
+			setBgColours(tmp);
 			
 			//adds control with layout organization
 			GroupLayout layout = new GroupLayout(currentPanel);
+			currentPanel.setLayout(layout);
 			layout.setAutoCreateGaps(true);
 			layout.setAutoCreateContainerGaps(true);
 			layout.setHorizontalGroup( layout.createSequentialGroup() //sets horizontal groups
-						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING) //holds all the identifier labels
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER) //holds all the identifier labels
+							//.addGap(currentPanel.getWidth()/2)
 							.addComponent(lblcity)
 							.addComponent(lblPic)
-							.addComponent(lbldescrip)
-							.addComponent(lbltemp)
-							.addComponent(lblmin)
-							.addComponent(lblmax)
-							.addComponent(lblspeed)
-							.addComponent(lbldir)
-							.addComponent(lblpress)
-							.addComponent(lblhumid)
-							.addComponent(lblrise)
-							.addComponent(lblset)
-							
+							.addGroup(layout.createSequentialGroup()
+							.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+									.addComponent(lbldescrip)
+									.addComponent(lbltemp)
+									.addComponent(lblmin)
+									.addComponent(lblmax)
+									.addComponent(lblspeed)
+									.addComponent(lbldir)
+									.addComponent(lblpress)
+									.addComponent(lblhumid)
+									.addComponent(lblrise)
+									.addComponent(lblset)
 							)
-						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING) //sets wetaher Data labels
+//							)
 							
-							.addComponent(lbldescrip2)
-							.addComponent(lbltemp2)
-							.addComponent(lblmin2)
-							.addComponent(lblmax2)
-							.addComponent(lblspeed2)
-							.addComponent(lbldir2)
-							.addComponent(lblpress2)
-							.addComponent(lblhumid2)
-							.addComponent(lblrise2)
-							.addComponent(lblset2)
+							.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING) //sets wetaher Data labels
+							//.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+									.addComponent(lbldescrip2)
+									.addComponent(lbltemp2)
+									.addComponent(lblmin2)
+									.addComponent(lblmax2)
+									.addComponent(lblspeed2)
+									.addComponent(lbldir2)
+									.addComponent(lblpress2)
+									.addComponent(lblhumid2)
+									.addComponent(lblrise2)
+									.addComponent(lblset2)
 							)
-						 );
+						)
+					)
+							
+/*						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER) //holds all the identifier labels
+							.addComponent(lblcity)
+							)*/
+				);
+			
 			layout.setVerticalGroup( layout.createSequentialGroup() //sets verticsal groups
 					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //city is on its own
 							.addComponent(lblcity)
@@ -1041,9 +1076,135 @@ import java.util.Date;
 							)					
 						);
 							
-						currentPanel.setLayout(layout); //sets the layout		
-								
+						//currentPanel.setLayout(layout); //sets the layout		
+			currentPanel.validate();
+			currentPanel.repaint();
 			}
+		
+		//Sets background colours to a gradient effect based on current weather		
+		public void setBgColours(weatherData tmp) {
+			//currentPanel.removeAll();
+			switch(tmp.getCondit()) {
+				case "sky is clear ":
+				case "clear sky ":
+							//For Clear
+//							Color color1 = new Color(255, 215,0);
+//							Color color2 = new Color(255, 111, 0);
+							//For Few Clouds
+//							Color color1 = new Color(160, 255, 0);
+//							Color color2 = new Color(9, 173, 33);
+							//For Scattered Clouds
+//							Color color1 = new Color(30, 255, 90);
+//							Color color2 = new Color(45, 110, 35);
+							//For Broken Clouds
+//							Color color1 = new Color(30, 255, 150);
+//							Color color2 = new Color(40, 150, 130);
+							//For Shower Rain
+//							Color color1 = new Color(0,255,255);
+//							Color color2 = new Color(30, 130, 160);
+							//For Rain
+//							Color color1 = new Color(0, 166, 255);
+//							Color color2 = new Color(30, 50, 160);
+							//For Thunderstorm
+//							Color color1 = new Color(0, 95, 255);
+//							Color color2 = new Color(60, 30, 160);
+							//For Snow
+//							Color color1 = new Color(95, 215, 220);
+//							Color color2 = new Color(30, 110, 120);
+							//For Mist
+//							Color color1 = new Color(200, 210, 210);
+//							Color color2 = new Color(85, 110, 100);
+							//For Default
+//							Color color1 = new Color(160, 120, 240);
+//							Color color2 = new Color(40, 10, 90);
+							color1 = new Color(255, 215,0);
+							color2 = new Color(255, 111, 0);
+							break;
+				case "few clouds ":
+							color1 = new Color(160, 255, 0);
+							color2 = new Color(9, 173, 33);
+							break;
+				case "scattered clouds ":
+							color1 = new Color(30, 255, 90);
+							color2 = new Color(45, 110, 35);
+							break;
+				case "broken clouds ":
+				case "overcast clouds ":
+							color1 = new Color(30, 255, 150);
+							color2 = new Color(40, 150, 130);
+							break;
+				case "shower rain ":
+				case "light intensity drizzle ":
+				case "drizzle ":
+				case "heavy intensity drizzle ":
+				case "light intensity drizzle rain ":
+				case "drizzle rain ":
+				case "heavy intensity drizzle rain ":
+				case "shower rain and drizzle ":
+				case "heavy shower rain and drizzle ":
+				case "shower drizzle ":
+				case "light intensity shower rain ":
+				case "heavy intensity shower rain ":
+				case "ragged shower rain ":
+							color1 = new Color(0,255,255);
+							color2 = new Color(30, 130, 160);
+							break;
+				case "rain ":
+				case "light rain ":
+				case "moderate rain ":
+				case "heavy intensity rain ":
+				case "very heavy rain ":
+				case "extreme rain ":
+							color1 = new Color(0, 166, 255);
+							color2 = new Color(30, 50, 160);
+							break;
+				case "thunderstorm ":
+				case "thunderstorm with light rain ":
+				case "thunderstorm with rain ":
+				case "thunderstorm with heavy rain ":
+				case "light thunderstorm ":
+				case "heavy thunderstorm ":
+				case "ragged thunderstorm ":
+				case "thunderstorm with light drizzle ":
+				case "thunderstorm with drizzle ":
+				case "thunderstorm with heavy drizzle ":
+							color1 = new Color(0, 95, 255);
+							color2 = new Color(60, 30, 160);
+							break;
+				case "snow ":
+				case "freezing rain ":
+				case "light snow ":
+				case "heavy snow ":
+				case "sleet ":
+				case "shower sleet ":
+				case "light rain and snow ":
+				case "rain and snow ":
+				case "light shower snow ":
+				case "shower snow ":
+				case "heavy shower snow ":
+							color1 = new Color(145, 245, 245);
+							color2 = new Color(75, 150, 160);
+							break;
+				case "mist ":
+				case "smoke ":
+				case "haze ":
+				case "sand, dust whirls ":
+				case "fog ":
+				case "sand ":
+				case "dust ":
+				case "volcanic ash ":
+				case "squalls ":
+				case "tornado ":
+							color1 = new Color(200, 210, 210);
+							color2 = new Color(85, 110, 100);
+							break;
+				default:
+							color1 = new Color(160, 120, 240);
+							color2 = new Color(40, 10, 90);
+							break;
+			}
+		}
+		
 		/*
 		 * used to add Mars weather data to a Panel
 		 * @param none
