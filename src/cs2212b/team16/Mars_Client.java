@@ -111,7 +111,7 @@ public class Mars_Client {
 	    		}
 	    	}
 	    	if(tmp.equals("wind_speed")){ //grabs current wind speed
-	    		if ((tokens.nextElement()).toString().compareTo("null")==0){
+	    		if ((tokens.nextElement()).toString().compareTo("null")==0){ //checks if wind speed is equal to null
 	    			windSpeed = 0.0f;
 	    			tokens.nextToken();
 	    		}
@@ -121,7 +121,7 @@ public class Mars_Client {
 	    		
 	    	}
 	    	if(tmp.equals("wind_direction")){ //grabs current wind Direction
-	    		if ((tokens.nextElement()).toString().compareTo("--")==0){
+	    		if ((tokens.nextElement()).toString().compareTo("--")==0){ //checks if the wind direction is null
 	    			windDir = "N/A";
 	    			tokens.nextToken();
 	    		}
