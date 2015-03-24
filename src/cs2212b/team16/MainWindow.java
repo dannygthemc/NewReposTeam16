@@ -1228,8 +1228,17 @@ private void createFormThree() throws IOException{
 			JLabel lblmax = new JLabel("Max Temp: " ); //label for max
 			JLabel lblmax2 = new JLabel("" + tmp.getMax()); //actual max
 			JLabel lblspeed = new JLabel("Wind Speed: "); //label for speed
-			JLabel lblspeed2 = new JLabel("" + tmp.getSpeed()); //actual speed
+			//considers whether the wind speed is null in the JSON
+			JLabel lblspeed2 = new JLabel();
+			if(tmp.getSpeed()==99){
+				lblspeed2 = new JLabel("N/A");
+			}
+			else{
+				lblspeed2 = new JLabel("" + tmp.getSpeed()); 
+			}
+			//JLabel lblspeed2 = new JLabel("" + tmp.getSpeed()); //actual speed
 			JLabel lbldir = new JLabel("Wind Direction: "); //label for dir 
+			//considers whether the wind direction is null in the JSON
 			JLabel lbldir2 = new JLabel();
 			if(tmp.getDir() == 99){ //accounts for erroneous input
 				lbldir2 = new JLabel("N/A"); //print N/A
