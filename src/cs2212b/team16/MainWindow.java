@@ -1231,7 +1231,7 @@ private void createFormThree() throws IOException{
 			//considers whether the wind speed is null in the JSON
 			JLabel lblspeed2 = new JLabel();
 			if(tmp.getSpeed()==99){
-				lblspeed2 = new JLabel("N/A");
+				lblspeed2 = new JLabel("Null");
 			}
 			else{
 				lblspeed2 = new JLabel("" + tmp.getSpeed()); 
@@ -1241,7 +1241,7 @@ private void createFormThree() throws IOException{
 			//considers whether the wind direction is null in the JSON
 			JLabel lbldir2 = new JLabel();
 			if(tmp.getDir() == 99){ //accounts for erroneous input
-				lbldir2 = new JLabel("N/A"); //print N/A
+				lbldir2 = new JLabel("Null"); //print N/A
 			}
 			else{
 				lbldir2 = new JLabel("" + tmp.getDir()); //actual dir
@@ -1251,7 +1251,7 @@ private void createFormThree() throws IOException{
 			JLabel lblhumid = new JLabel("Humidity: "); //label for humid
 			JLabel lblhumid2 = new JLabel();
 			if(tmp.getHumid() == 99){ //accounts for erroneous input
-				lblhumid2 = new JLabel("N/A"); //print N/A
+				lblhumid2 = new JLabel("Null"); //print N/A
 			}
 			else{
 				lblhumid2 = new JLabel("" + tmp.getHumid()); //actual humdid
