@@ -552,7 +552,7 @@ private void createFormThree() throws IOException{
 			JLabel hold6;
 			
 			//fills the arrays with their respective values
-			for(int i =0; i<7; i++){
+			for(int i =0; i<5; i++){
 				hold = new JLabel("" +tmp[i+1].getTemp()); //holds current temp
 				temp[i] = hold; //puts it in the array
 				hold2 = new JLabel("" +tmp[i+1].getCondit()); //holds current condition
@@ -596,12 +596,12 @@ private void createFormThree() throws IOException{
 								.addComponent(max[0])
 								.addComponent(descrip[0])
 								.addGap(30)
-								.addComponent(lblPic[5])
+								/*.addComponent(lblPic[5])
 								.addComponent(date[5])
 								.addComponent(temp[5])
 								.addComponent(min[5])
 								.addComponent(max[5])
-								.addComponent(descrip[5])
+								.addComponent(descrip[5])*/
 								
 						)
 						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -613,12 +613,12 @@ private void createFormThree() throws IOException{
 								.addComponent(max[1])
 								.addComponent(descrip[1])
 								.addGap(30)
-								.addComponent(lblPic[6])
+								/*.addComponent(lblPic[6])
 								.addComponent(date[6])
 								.addComponent(temp[6])
 								.addComponent(min[6])
 								.addComponent(max[6])
-								.addComponent(descrip[6])
+								.addComponent(descrip[6])*/
 								
 						)
 						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -704,7 +704,7 @@ private void createFormThree() throws IOException{
 							.addComponent(descrip[3])
 							.addComponent(descrip[4])
 							)
-					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //this is the start of the second row of weather Data, pics aligned
+					/*.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //this is the start of the second row of weather Data, pics aligned
 							.addComponent(lblPic[5])
 							.addComponent(lblPic[6])
 							)
@@ -727,7 +727,7 @@ private void createFormThree() throws IOException{
 					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)//descrips aligned
 							.addComponent(descrip[5])
 							.addComponent(descrip[6])
-							)		
+							)	*/	
 					);
 			longPanel.setLayout(layout); //sets the defined layout to the panel
 		}

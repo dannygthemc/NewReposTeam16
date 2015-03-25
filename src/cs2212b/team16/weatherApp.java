@@ -780,7 +780,7 @@ public class weatherApp {
 	    try {
 			is =con.getInputStream();
 		} catch (IOException e) {
-			throw new IOException("could not create stream");
+			throw new IOException("could not creat stream");
 		}
 		
 	    BufferedReader br = new BufferedReader(new InputStreamReader(is)); //used to read input from JSON
@@ -864,7 +864,7 @@ public class weatherApp {
 	    	}
 	    	if(tmp.equals("wind_speed")){ //grabs current wind speed
 	    		if ((tokens.nextElement()).toString().compareTo("null")==0){
-	    			windSpeed = 99f;
+	    			windSpeed = 0.0f;
 	    		}
 	    		else{
 	    			windSpeed = Float.parseFloat(tokens.nextToken());
