@@ -330,10 +330,20 @@ import java.util.Date;
 			
 				if (response != null) {
 						location searchedLoc = simLoc.get(Integer.parseInt(response.substring(0, response.indexOf('.'))) - 1);
-						app.addLocation(searchedLoc);
+						String[] temp = response.split(" ");
+						int length = app.getMyLocations().length;
+						boolean add = true;
+						for (int i = 0; i < length; i ++){
+							location checkLoc = app.getMyLocations()[i];
+							if (checkLoc.getCityID() == searchedLoc.getCityID())
+								add = false;
+						}
+						if (add) {
+							app.addLocation(searchedLoc);
+							locBar.removeActionListener(Jcombo);
+							populateMyLocationsBox();
+						}
 						app.setVisibleLocation(searchedLoc);
-						locBar.removeActionListener(Jcombo);
-						populateMyLocationsBox();
 						refreshPanels();
 				 }
 			}
