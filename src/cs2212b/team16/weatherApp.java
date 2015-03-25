@@ -647,7 +647,7 @@ public class weatherApp {
 	    String tmp = null;
 	    int i =0;
 	    
-	   while(i <=7){
+	   while(i <=5){
 	    	
 	    	tmp = tokens[i];
 	    	i++;
@@ -702,7 +702,7 @@ public class weatherApp {
 	   longTerm[1].setSunrise(formattedDate); //sets date of the first one
 	   
 	   //used to grab data for the next 7 days
-	   for(int k =1; k <= 7; k++){
+	   for(int k =1; k <= 5; k++){
 		   
 		   tokens2 = new StringTokenizer(tokens[k],  " \" "  ); //tokenizes current line of data
 		   descrip = "";
