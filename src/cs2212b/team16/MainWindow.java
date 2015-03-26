@@ -72,8 +72,11 @@ import java.util.Date;
 		public Color color2 = new Color(40, 10, 90); //Bottom gradient color
 		public Color shortColor1 = new Color(160, 120, 240); //Top gradient color
 		public Color shortColor2 = new Color(40, 10, 90); //Bottom gradient color
+		public Color longColor1 = new Color(160, 120, 240); //Top gradient color
+		public Color longColor2 = new Color(40, 10, 90); //Bottom gradient color
 		
 		public Color[] shortColors = new Color[20];
+		public Color[] longColors = new Color[10];
 		public int cCount1 = 0;
 		public int cCount2 = 10;
 
@@ -93,10 +96,7 @@ import java.util.Date;
 			}
 		};
 		
-		Color test1 = shortColor1;
-		Color test2 = shortColor2;
-		
-		private JPanel shortPanel = new JPanel(){ //used to display current data
+		private JPanel shortPanel = new JPanel(){ //used to display short data
 			@Override
 			protected void paintComponent(Graphics g) {
 				super.paintComponent(g);
@@ -106,12 +106,28 @@ import java.util.Date;
 				int h = getHeight();
 //				Color color1 = new Color(30, 255, 90);
 //				Color color2 = new Color(45, 110, 35);
-				GradientPaint gp = new GradientPaint(0, 0, test1, 0, h, test2);
+				GradientPaint gp = new GradientPaint(0, 0, shortColor1, 0, h, shortColor2);
 				g2d.setPaint(gp);
 				g2d.fillRect(0, 0, w, h);
 			}
-		}; //used to display short data
-		private JPanel longPanel = new JPanel(); //used to display long data
+		};
+		
+		private JPanel longPanel = new JPanel(){ //used to display long data
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				Graphics2D g2d = (Graphics2D) g;
+				g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+				int w = getWidth();
+				int h = getHeight();
+//				Color color1 = new Color(30, 255, 90);
+//				Color color2 = new Color(45, 110, 35);
+				GradientPaint gp = new GradientPaint(0, 0, longColor1, 0, h, longColor2);
+				g2d.setPaint(gp);
+				g2d.fillRect(0, 0, w, h);
+			}
+		};
+		
 		private JPanel marsPanel = new JPanel(); //used to display mars data
 		private ActionListener Jcombo = new ActionListener() { //updates weatherView when a new item is searched
 			@Override
@@ -193,7 +209,7 @@ import java.util.Date;
 					)
 					.addComponent(refreshLabel)
 
-		);
+			);
 			
 			
 			//this.add(lbl1);
@@ -530,12 +546,30 @@ private void createFormThree() throws IOException{
 			//used for formatting
 			//JLabel lbl1 = new JLabel("Time: ");
 			JLabel lbl1 = new JLabel("Date: ");
+			lbl1.setForeground(Color.WHITE);
 			JLabel lbl2 = new JLabel("Temp: ");
+			lbl2.setForeground(Color.WHITE);
 			JLabel lbl2A = new JLabel("Min-Temp: ");
+			lbl2A.setForeground(Color.WHITE);
 			JLabel lbl2B = new JLabel("Max-Temp: ");
+			lbl2B.setForeground(Color.WHITE);
 			JLabel lbl3 = new JLabel("Weather Condition:");
+			lbl3.setForeground(Color.WHITE);
+			
+			//JLabel lbl1 = new JLabel("Time: ");
+			JLabel lbl4 = new JLabel("Date: ");
+			lbl4.setForeground(Color.WHITE);
+			JLabel lbl5 = new JLabel("Temp: ");
+			lbl5.setForeground(Color.WHITE);
+			JLabel lbl5A = new JLabel("Min-Temp: ");
+			lbl5A.setForeground(Color.WHITE);
+			JLabel lbl5B = new JLabel("Max-Temp: ");
+			lbl5B.setForeground(Color.WHITE);
+			JLabel lbl6 = new JLabel("Weather Condition:");
+			lbl6.setForeground(Color.WHITE);
 			
 			JLabel lblcity = new JLabel(tmp[0].getName() + ", " + tmp[0].getCount() + ", " + tmp[0].getLon() + ", " + tmp[0].getLat() ); //displays location info
+			lblcity.setForeground(Color.WHITE);
 			JLabel[] date = new JLabel[7]; //array of dates
 			JLabel[] temp = new JLabel[7]; //array of temperature labels
 			JLabel[] min = new JLabel[7]; //array of min temp labels
@@ -568,15 +602,52 @@ private void createFormThree() throws IOException{
 				max[i] = hold5;
 				hold6 = new JLabel("" + tmp[i+1].getSunrise());//timestamp stored in Sunrise, since this variable was not in use for ShorTerm
 				date[i] = hold6;
+				
+				temp[i].setForeground(Color.WHITE);
+				descrip[i].setForeground(Color.WHITE);
+				min[i].setForeground(Color.WHITE);
+				max[i].setForeground(Color.WHITE);
+				date[i].setForeground(Color.WHITE);
+			}
+
+			JPanel[] subLong = new JPanel[7];
+			JPanel blank = new JPanel();
+			JPanel top = new JPanel();
+			JPanel bot = new JPanel();
+			GroupLayout[] layout = new GroupLayout[12];
+			
+			GridLayout outGrid = new GridLayout(2, 1);
+			GridLayout inGridA = new GridLayout(1, 4);
+			GridLayout inGridB = new GridLayout(1, 4);
+			longPanel.setLayout(outGrid);
+			top.setLayout(inGridA);
+			bot.setLayout(inGridB);
+			
+			//Sets the ShortTerm cell colors to default values
+			resetLongColors();			
+			//Initializes the sub-panels so components can be added to them 
+			makeLongComps(subLong);
+			
+			for(int i = 0; i < 7; i++)
+			{
+				subLong[i].setBackground(Color.BLACK);
+				layout[i] = new GroupLayout(subLong[i]);
+				//layout[i].setAutoCreateGaps(true);
+				layout[i].setAutoCreateContainerGaps(true);
 			}
 			
+			blank.setBackground(Color.BLACK);
+
+			
 			//Group layout used to organize GUI
-			GroupLayout layout = new GroupLayout(longPanel);
-			layout.setAutoCreateGaps(true);
-			layout.setAutoCreateContainerGaps(true);
-			layout.setHorizontalGroup( layout.createSequentialGroup() //sets the horizontal groups
+			//GroupLayout layout = new GroupLayout(longPanel);
+			//layout.setAutoCreateGaps(true);
+			//layout.setAutoCreateContainerGaps(true);
+
+			//Group layout used to organize GUI
+			layout[0].setHorizontalGroup( layout[0].createSequentialGroup() //sets the horizontal groups
 						
-						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING) //shows city data
+						.addGroup(layout[0].createParallelGroup(GroupLayout.Alignment.LEADING) //shows city data
 								.addComponent(lblcity)
 								.addGap(10)
 								.addComponent(lbl1)
@@ -585,152 +656,238 @@ private void createFormThree() throws IOException{
 								.addComponent(lbl2B)
 								.addComponent(lbl3)
 								
-						)
-						//the rest of the horizontal groups contain weather Data in 3 hour increments
-						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-								
-								.addComponent(lblPic[0])
-								.addComponent(date[0])
-								.addComponent(temp[0])
-								.addComponent(min[0])
-								.addComponent(max[0])
-								.addComponent(descrip[0])
-								.addGap(30)
-								/*.addComponent(lblPic[5])
-								.addComponent(date[5])
-								.addComponent(temp[5])
-								.addComponent(min[5])
-								.addComponent(max[5])
-								.addComponent(descrip[5])*/
-								
-						)
-						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-								
-								.addComponent(lblPic[1])
-								.addComponent(date[1])
-								.addComponent(temp[1])
-								.addComponent(min[1])
-								.addComponent(max[1])
-								.addComponent(descrip[1])
-								.addGap(30)
-								/*.addComponent(lblPic[6])
-								.addComponent(date[6])
-								.addComponent(temp[6])
-								.addComponent(min[6])
-								.addComponent(max[6])
-								.addComponent(descrip[6])*/
-								
-						)
-						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-								
-								.addComponent(lblPic[2])
-								.addComponent(date[2])
-								.addComponent(temp[2])
-								.addComponent(min[2])
-								.addComponent(max[2])
-								.addComponent(descrip[2])
-								.addGap(30)
-						)
-						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-								
-								.addComponent(lblPic[3])
-								.addComponent(date[3])
-								.addComponent(temp[3])
-								.addComponent(min[3])
-								.addComponent(max[3])
-								.addComponent(descrip[3])
-								.addGap(30)
-						)
-						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-								
-								.addComponent(lblPic[4])
-								.addComponent(date[4])
-								.addComponent(temp[4])
-								.addComponent(min[4])
-								.addComponent(max[4])
-								.addComponent(descrip[4])
-								
-						)
-						
-						);
-			layout.setVerticalGroup( layout.createSequentialGroup() //sets the vertical groups
-					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)//city is in its own vertical group
+						)						
+					);
+			layout[0].setVerticalGroup( layout[0].createSequentialGroup() //sets the vertical groups
+					.addGroup( layout[0].createParallelGroup(GroupLayout.Alignment.BASELINE)//city is in its own vertical group
 							.addComponent(lblcity)
 							)
-					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //pics aligned vertically
-							.addComponent(lblPic[0])
-							.addComponent(lblPic[1])
-							.addComponent(lblPic[2])
-							.addComponent(lblPic[3])
-							.addComponent(lblPic[4])
+					.addGroup( layout[0].createParallelGroup(GroupLayout.Alignment.LEADING)
+							.addGap(70)
 							)
-					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //dates alligned vertically
-							.addComponent(lbl1)
-							.addComponent(date[0])
-							.addComponent(date[1])
-							.addComponent(date[2])
-							.addComponent(date[3])
-							.addComponent(date[4])
-							)
-					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //temps aligned vertically
+					.addGroup( layout[0].createParallelGroup(GroupLayout.Alignment.LEADING) //times aligned vertically
 							.addComponent(lbl2)
-							.addComponent(temp[0])
-							.addComponent(temp[1])
-							.addComponent(temp[2])
-							.addComponent(temp[3])
-							.addComponent(temp[4])
 							)
-					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE) // min temps aligned vertically
-							.addComponent(lbl2A)
-							.addComponent(min[0])
-							.addComponent(min[1])
-							.addComponent(min[2])
-							.addComponent(min[3])
-							.addComponent(min[4])
-							)
-					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //max temps aligned vertically
-							.addComponent(lbl2B)
-							.addComponent(max[0])
-							.addComponent(max[1])
-							.addComponent(max[2])
-							.addComponent(max[3])
-							.addComponent(max[4])
-							)
-					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //descrips alligned vertically
+					.addGroup( layout[0].createParallelGroup(GroupLayout.Alignment.LEADING) //temps aligned vertically
 							.addComponent(lbl3)
-							.addComponent(descrip[0])
-							.addComponent(descrip[1])
-							.addComponent(descrip[2])
-							.addComponent(descrip[3])
-							.addComponent(descrip[4])
 							)
-					/*.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //this is the start of the second row of weather Data, pics aligned
-							.addComponent(lblPic[5])
-							.addComponent(lblPic[6])
+					.addGroup( layout[0].createParallelGroup(GroupLayout.Alignment.LEADING) //temps aligned vertically
+							.addComponent(lbl2A)
 							)
-					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)//dates aligned
-							.addComponent(date[5])
-							.addComponent(date[6])
+					.addGroup( layout[0].createParallelGroup(GroupLayout.Alignment.LEADING) //temps aligned vertically
+							.addComponent(lbl2B)
 							)
-					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)//temps aligned
-							.addComponent(temp[5])
-							.addComponent(temp[6])
+					.addGroup( layout[0].createParallelGroup(GroupLayout.Alignment.LEADING) //descrips alligned vertically
+							.addComponent(lbl1)
 							)
-					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)//min temps aligned
-							.addComponent(min[5])
-							.addComponent(min[6])
-							)
-					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)//max temps aligned
-							.addComponent(max[5])
-							.addComponent(max[6])
-							)		
-					.addGroup( layout.createParallelGroup(GroupLayout.Alignment.BASELINE)//descrips aligned
-							.addComponent(descrip[5])
-							.addComponent(descrip[6])
-							)	*/	
 					);
-			longPanel.setLayout(layout); //sets the defined layout to the panel
+			
+		layout[6].setHorizontalGroup( layout[6].createSequentialGroup() //sets the horizontal groups
+					
+					.addGroup(layout[6].createParallelGroup(GroupLayout.Alignment.LEADING) //shows city data
+							.addGap(20)
+							.addComponent(lbl4)
+							.addComponent(lbl5)
+							.addComponent(lbl5A)
+							.addComponent(lbl5B)
+							.addComponent(lbl6)
+							
+					)						
+				);
+		layout[6].setVerticalGroup( layout[6].createSequentialGroup() //sets the vertical groups
+				.addGroup( layout[6].createParallelGroup(GroupLayout.Alignment.LEADING)
+						.addGap(100)
+						)
+				.addGroup( layout[6].createParallelGroup(GroupLayout.Alignment.LEADING) //times aligned vertically
+						.addComponent(lbl5)
+						)
+				.addGroup( layout[6].createParallelGroup(GroupLayout.Alignment.LEADING) //temps aligned vertically
+						.addComponent(lbl6)
+						)
+				.addGroup( layout[6].createParallelGroup(GroupLayout.Alignment.LEADING) //temps aligned vertically
+						.addComponent(lbl5A)
+						)
+				.addGroup( layout[6].createParallelGroup(GroupLayout.Alignment.LEADING) //temps aligned vertically
+						.addComponent(lbl5B)
+						)
+				.addGroup( layout[6].createParallelGroup(GroupLayout.Alignment.LEADING) //descrips alligned vertically
+						.addComponent(lbl4)
+						)
+				);
+			
+			//Actual weather cells
+			for(int i = 0; i < 5; i++)
+			{
+				layout[i+1].setHorizontalGroup( layout[i+1].createSequentialGroup() //sets the horizontal groups
+						.addGroup(layout[i+1].createParallelGroup(GroupLayout.Alignment.LEADING)							
+							.addComponent(lblPic[i])
+							.addComponent(temp[i])
+							.addComponent(descrip[i])
+							.addComponent(min[i])
+							.addComponent(max[i])
+							.addComponent(date[i])
+						)
+					);
+				layout[i+1].setVerticalGroup( layout[i+1].createSequentialGroup() //sets the vertical groups
+						.addGroup( layout[i+1].createParallelGroup(GroupLayout.Alignment.BASELINE) //pics aligned vertically
+								.addComponent(lblPic[i])
+								)
+						.addGroup( layout[i+1].createParallelGroup(GroupLayout.Alignment.LEADING) //pics aligned vertically
+								.addComponent(temp[i])
+								)
+						.addGroup( layout[i+1].createParallelGroup(GroupLayout.Alignment.LEADING) //pics aligned vertically
+								.addComponent(descrip[i])
+								)
+						.addGroup( layout[i+1].createParallelGroup(GroupLayout.Alignment.LEADING) //pics aligned vertically
+								.addComponent(min[i])
+								)
+						.addGroup( layout[i+1].createParallelGroup(GroupLayout.Alignment.LEADING) //pics aligned vertically
+								.addComponent(max[i])
+								)
+						.addGroup( layout[i+1].createParallelGroup(GroupLayout.Alignment.LEADING) //pics aligned vertically
+								.addComponent(date[i])
+								)
+						);
+			}
+			
+			subLong[0].setLayout(layout[0]);
+			top.add(subLong[0]);
+			subLong[0].validate();
+			subLong[0].repaint();
+			
+			for(int i = 1; i < 4; i++)
+			{
+				subLong[i].setLayout(layout[i]); //sets the defined layout to the panel
+				top.add(subLong[i]);
+				//if(i < 2)
+				setLongBgColors(tmp[i], i-1, i+4);
+				subLong[i].validate();
+				subLong[i].repaint();
+				//shortPanel.validate();
+				//shortPanel.repaint();
+				//shortColor1 = new Color(160, 120, 240); //Top gradient color
+				//shortColor2 = new Color(40, 10, 90); //Bottom gradient color
+			}
+			
+			subLong[6].setLayout(layout[6]);
+			bot.add(subLong[6]);
+			subLong[6].validate();
+			subLong[6].repaint();
+			
+			for(int i = 4; i < 6; i++)
+			{
+				subLong[i].setLayout(layout[i]); //sets the defined layout to the panel
+				bot.add(subLong[i]);
+				//if(i < 2)
+				setLongBgColors(tmp[i], i-1, i+4);
+				subLong[i].validate();
+				subLong[i].repaint();
+				//shortPanel.validate();
+				//shortPanel.repaint();
+				//shortColor1 = new Color(160, 120, 240); //Top gradient color
+				//shortColor2 = new Color(40, 10, 90); //Bottom gradient color
+			}
+			bot.add(blank);
+			//top.add(bot);
+			longPanel.add(top);
+			longPanel.add(bot);
 		}
+
+	//Resets the short-term color values to white and black
+	public void resetLongColors(){
+		for(int i = 0; i < 5; i++){
+			longColors[i] = Color.white;
+		}
+		for(int i = 0; i < 10; i++){
+			longColors[i] = Color.black;
+		}
+	}
+
+	//Initializes the short-term subpanels so that they can have gradient backgrounds
+	public void makeLongComps(JPanel[] subLong){
+		subLong[0] = new JPanel();
+		subLong[1] = new JPanel(){ //Side Panel #1
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				Graphics2D g2d = (Graphics2D) g;
+				g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+				int w = getWidth();
+				int h = getHeight();
+				//			Color color1 = new Color(30, 255, 90);
+				//			Color color2 = new Color(45, 110, 35);
+				GradientPaint gp = new GradientPaint(0, 0, longColors[0], 0, h, longColors[5]); //change w to 0 for 'basic' version
+				g2d.setPaint(gp);
+				g2d.fillRect(2, 2, w, h);
+			}
+		};
+
+		subLong[2] = new JPanel(){ //used to display current data
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				Graphics2D g2d = (Graphics2D) g;
+				g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+				int w = getWidth();
+				int h = getHeight();
+				//			Color color1 = new Color(30, 255, 90);
+				//			Color color2 = new Color(45, 110, 35);
+				GradientPaint gp = new GradientPaint(0, 0, longColors[1], 0, h, longColors[6]); 
+				g2d.setPaint(gp);
+				g2d.fillRect(2, 2, w, h);
+			}
+		};
+
+		subLong[3] = new JPanel(){ //used to display current data
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				Graphics2D g2d = (Graphics2D) g;
+				g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+				int w = getWidth();
+				int h = getHeight();
+				//			Color color1 = new Color(30, 255, 90);
+				//			Color color2 = new Color(45, 110, 35);
+				GradientPaint gp = new GradientPaint(0, 0, longColors[2], 0, h, longColors[7]); //change w to 0 for 'basic' version
+				g2d.setPaint(gp);
+				g2d.fillRect(2, 2, w, h);
+			}
+		};
+
+		subLong[4] = new JPanel(){ //used to display current data
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				Graphics2D g2d = (Graphics2D) g;
+				g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+				int w = getWidth();
+				int h = getHeight();
+				//			Color color1 = new Color(30, 255, 90);
+				//			Color color2 = new Color(45, 110, 35);
+				GradientPaint gp = new GradientPaint(0, 0, longColors[3], 0, h, longColors[8]); //change w to 0 for 'basic' version
+				g2d.setPaint(gp);
+				g2d.fillRect(2, 2, w, h);
+			}
+		};
+
+		subLong[5] = new JPanel(){ //used to display current data
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				Graphics2D g2d = (Graphics2D) g;
+				g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+				int w = getWidth();
+				int h = getHeight();
+				//			Color color1 = new Color(30, 255, 90);
+				//			Color color2 = new Color(45, 110, 35);
+				GradientPaint gp = new GradientPaint(0, 0, longColors[4], 0, h, longColors[9]); //change w to 0 for 'basic' version
+				g2d.setPaint(gp);
+				g2d.fillRect(2, 2, w, h);
+			}
+		};
+		subLong[6] = new JPanel();
+	}
+
 		
 		/*
 		 * used to create Panel for the shorTermForecast Tab
@@ -1328,6 +1485,101 @@ private void createFormThree() throws IOException{
 			currentPanel.validate();
 			currentPanel.repaint();
 			}
+
+		//Sets background colours to a gradient effect based on current weather		
+		public void setLongBgColors(weatherData tmp, int i, int j) {
+			//currentPanel.removeAll();
+			switch(tmp.getCondit()) {
+				case "sky is clear ":
+				case "clear sky ":
+							longColors[i] = new Color(255, 215,0);
+							longColors[j] = new Color(255, 111, 0);
+							break;
+				case "few clouds ":
+							longColors[i] = new Color(160, 255, 0);
+							longColors[j] = new Color(9, 173, 33);
+							break;
+				case "scattered clouds ":
+							longColors[i] = new Color(30, 255, 90);
+							longColors[j] = new Color(45, 110, 35);
+							break;
+				case "broken clouds ":
+				case "overcast clouds ":
+							longColors[i] = new Color(30, 255, 150);
+							longColors[j] = new Color(40, 150, 130);
+							break;
+				case "shower rain ":
+				case "light intensity drizzle ":
+				case "drizzle ":
+				case "heavy intensity drizzle ":
+				case "light intensity drizzle rain ":
+				case "drizzle rain ":
+				case "heavy intensity drizzle rain ":
+				case "shower rain and drizzle ":
+				case "heavy shower rain and drizzle ":
+				case "shower drizzle ":
+				case "light intensity shower rain ":
+				case "heavy intensity shower rain ":
+				case "ragged shower rain ":
+							longColors[i] = new Color(0,255,255);
+							longColors[j] = new Color(30, 130, 160);
+							break;
+				case "rain ":
+				case "light rain ":
+				case "moderate rain ":
+				case "heavy intensity rain ":
+				case "very heavy rain ":
+				case "extreme rain ":
+							longColors[i] = new Color(0, 166, 255);
+							longColors[j] = new Color(30, 50, 160);
+							break;
+				case "thunderstorm ":
+				case "thunderstorm with light rain ":
+				case "thunderstorm with rain ":
+				case "thunderstorm with heavy rain ":
+				case "light thunderstorm ":
+				case "heavy thunderstorm ":
+				case "ragged thunderstorm ":
+				case "thunderstorm with light drizzle ":
+				case "thunderstorm with drizzle ":
+				case "thunderstorm with heavy drizzle ":
+							longColors[i] = new Color(0, 95, 255);
+							longColors[j] = new Color(60, 30, 160);
+							break;
+				case "snow ":
+				case "freezing rain ":
+				case "light snow ":
+				case "heavy snow ":
+				case "sleet ":
+				case "shower sleet ":
+				case "light rain and snow ":
+				case "rain and snow ":
+				case "light shower snow ":
+				case "shower snow ":
+				case "heavy shower snow ":
+							longColors[i] = new Color(145, 245, 245);
+							longColors[j] = new Color(75, 150, 160);
+							break;
+				case "mist ":
+				case "smoke ":
+				case "haze ":
+				case "sand, dust whirls ":
+				case "fog ":
+				case "sand ":
+				case "dust ":
+				case "volcanic ash ":
+				case "squalls ":
+				case "tornado ":
+							longColors[i] = new Color(200, 210, 210);
+							longColors[j] = new Color(85, 110, 100);
+							break;
+				default:
+							longColors[i] = new Color(160, 120, 240);
+							longColors[j] = new Color(40, 10, 90);
+							break;
+			}
+		}
+
 		
 		//Sets background colours to a gradient effect based on current weather		
 		public void setShortBgColors(weatherData tmp, int i, int j) {
