@@ -68,19 +68,17 @@ import java.util.Date;
 		private JLabel refreshLabel = new JLabel();
 		private JTabbedPane tabbedPane = new JTabbedPane(); //creates a tab pane
 		
-		public Color color1 = new Color(160, 120, 240); //Top gradient color
-		public Color color2 = new Color(40, 10, 90); //Bottom gradient color
-		public Color shortColor1 = new Color(160, 120, 240); //Top gradient color
-		public Color shortColor2 = new Color(40, 10, 90); //Bottom gradient color
-		public Color longColor1 = new Color(160, 120, 240); //Top gradient color
-		public Color longColor2 = new Color(40, 10, 90); //Bottom gradient color
-		public Color marsColor1 = new Color(240, 58, 26);
-		public Color marsColor2 = new Color(10, 4, 3);
+		public Color color1 = new Color(160, 120, 240); //Top gradient color for Current panel
+		public Color color2 = new Color(40, 10, 90); //Bottom gradient color for Current panel
+		public Color shortColor1 = new Color(160, 120, 240); //Top gradient color for Short-Term panel
+		public Color shortColor2 = new Color(40, 10, 90); //Bottom gradient color for Short-Term panel
+		public Color longColor1 = new Color(160, 120, 240); //Top gradient color for Long-Term panel
+		public Color longColor2 = new Color(40, 10, 90); //Bottom gradient color for Long-Term panel
+		public Color marsColor1 = new Color(240, 58, 26); //Top gradient color for Mars panel
+		public Color marsColor2 = new Color(10, 4, 3); //Bottom gradient color for Mars panel
 		
-		public Color[] shortColors = new Color[20];
-		public Color[] longColors = new Color[10];
-		public int cCount1 = 0;
-		public int cCount2 = 10;
+		public Color[] shortColors = new Color[20]; //Array of colors for inside Short Panel
+		public Color[] longColors = new Color[10]; //Array of colors for inside Long Panel
 
 		private JPanel currentPanel = new JPanel(){ //used to display current data
 			@Override
@@ -228,9 +226,6 @@ import java.util.Date;
 
 			);
 			
-			
-			//this.add(lbl1);
-			//this.add(tabbedPane, BorderLayout.CENTER);//adds the tabbed pane to the main window
 			this.getContentPane().setLayout(layout);
 		}
 		
@@ -545,7 +540,7 @@ import java.util.Date;
 		 * @param none
 		 * @return none, fills panel with data
 		 */
-private void createFormThree() throws IOException{
+		private void createFormThree() throws IOException{
 			
 			weatherData[] tmp = new weatherData[8]; //holds weather data objects
 			try {
@@ -555,8 +550,7 @@ private void createFormThree() throws IOException{
 			} 
 			tmp = app.getLongTerm(); //grabs weatherData objects now filled with data
 			
-			//used for formatting
-			//JLabel lbl1 = new JLabel("Time: ");
+			//Left-most panel
 			JLabel lbl1 = new JLabel("Date: ");
 			lbl1.setForeground(Color.WHITE);
 			JLabel lbl2 = new JLabel("Temp: ");
@@ -568,7 +562,7 @@ private void createFormThree() throws IOException{
 			JLabel lbl3 = new JLabel("Weather Condition:");
 			lbl3.setForeground(Color.WHITE);
 			
-			//JLabel lbl1 = new JLabel("Time: ");
+			//Second set
 			JLabel lbl4 = new JLabel("Date: ");
 			lbl4.setForeground(Color.WHITE);
 			JLabel lbl5 = new JLabel("Temp: ");
@@ -622,41 +616,37 @@ private void createFormThree() throws IOException{
 				date[i].setForeground(Color.WHITE);
 			}
 
-			JPanel[] subLong = new JPanel[7];
-			JPanel blank = new JPanel();
-			JPanel top = new JPanel();
-			JPanel bot = new JPanel();
+			JPanel[] subLong = new JPanel[7]; //Array of sub-panels for long-term
+			JPanel blank = new JPanel(); //Empty panel
+			JPanel top = new JPanel(); //Upper panel
+			JPanel bot = new JPanel(); //Lower panel
 			GroupLayout[] layout = new GroupLayout[12];
 			
-			GridLayout outGrid = new GridLayout(2, 1);
-			GridLayout inGridA = new GridLayout(1, 4);
-			GridLayout inGridB = new GridLayout(1, 4);
+			GridLayout outGrid = new GridLayout(2, 1); //Overall grid: top and bottom
+			GridLayout inGridA = new GridLayout(1, 4); //Grid inside the outer grid at the top
+			GridLayout inGridB = new GridLayout(1, 4); //Grid inside the outer grid at the bottom
+			
 			longPanel.setLayout(outGrid);
 			top.setLayout(inGridA);
 			bot.setLayout(inGridB);
 			
 			//Sets the ShortTerm cell colors to default values
-			resetLongColors();			
+			resetLongColors();
+			
 			//Initializes the sub-panels so components can be added to them 
 			makeLongComps(subLong);
 			
+			//Sets layout and base background color for each sub-panel
 			for(int i = 0; i < 7; i++)
 			{
 				subLong[i].setBackground(Color.BLACK);
 				layout[i] = new GroupLayout(subLong[i]);
-				//layout[i].setAutoCreateGaps(true);
 				layout[i].setAutoCreateContainerGaps(true);
 			}
 			
 			blank.setBackground(Color.BLACK);
 
-			
-			//Group layout used to organize GUI
-			//GroupLayout layout = new GroupLayout(longPanel);
-			//layout.setAutoCreateGaps(true);
-			//layout.setAutoCreateContainerGaps(true);
-
-			//Group layout used to organize GUI
+			//Group layout used to organize GUI - layer[0] is the upper-left panel
 			layout[0].setHorizontalGroup( layout[0].createSequentialGroup() //sets the horizontal groups
 						
 						.addGroup(layout[0].createParallelGroup(GroupLayout.Alignment.LEADING) //shows city data
@@ -694,7 +684,8 @@ private void createFormThree() throws IOException{
 							)
 					);
 			
-		layout[6].setHorizontalGroup( layout[6].createSequentialGroup() //sets the horizontal groups
+			//Organizes layout of layer[6] - layer[6] is a copy of layer[0] but without the city name
+			layout[6].setHorizontalGroup( layout[6].createSequentialGroup() //sets the horizontal groups
 					
 					.addGroup(layout[6].createParallelGroup(GroupLayout.Alignment.LEADING) //shows city data
 							.addGap(20)
@@ -706,7 +697,7 @@ private void createFormThree() throws IOException{
 							
 					)						
 				);
-		layout[6].setVerticalGroup( layout[6].createSequentialGroup() //sets the vertical groups
+			layout[6].setVerticalGroup( layout[6].createSequentialGroup() //sets the vertical groups
 				.addGroup( layout[6].createParallelGroup(GroupLayout.Alignment.LEADING)
 						.addGap(100)
 						)
@@ -727,7 +718,7 @@ private void createFormThree() throws IOException{
 						)
 				);
 			
-			//Actual weather cells
+			//Sets content for the actual weather panels/cells within the grid
 			for(int i = 0; i < 5; i++)
 			{
 				layout[i+1].setHorizontalGroup( layout[i+1].createSequentialGroup() //sets the horizontal groups
@@ -762,143 +753,126 @@ private void createFormThree() throws IOException{
 						);
 			}
 			
+			//Adds layout[0] to the top section
 			subLong[0].setLayout(layout[0]);
 			top.add(subLong[0]);
 			subLong[0].validate();
 			subLong[0].repaint();
 			
+			//Sets the layout and colors for the rest of the top panels
 			for(int i = 1; i < 4; i++)
 			{
-				subLong[i].setLayout(layout[i]); //sets the defined layout to the panel
+				subLong[i].setLayout(layout[i]);
 				top.add(subLong[i]);
-				//if(i < 2)
 				setLongBgColors(tmp[i], i-1, i+4);
 				subLong[i].validate();
 				subLong[i].repaint();
-				//shortPanel.validate();
-				//shortPanel.repaint();
-				//shortColor1 = new Color(160, 120, 240); //Top gradient color
-				//shortColor2 = new Color(40, 10, 90); //Bottom gradient color
 			}
 			
+			//Adds layer[6] to the bottom section
 			subLong[6].setLayout(layout[6]);
 			bot.add(subLong[6]);
 			subLong[6].validate();
 			subLong[6].repaint();
 			
+			//Sets the layout and colors for the rest of the bottom panels
 			for(int i = 4; i < 6; i++)
 			{
 				subLong[i].setLayout(layout[i]); //sets the defined layout to the panel
 				bot.add(subLong[i]);
-				//if(i < 2)
 				setLongBgColors(tmp[i], i-1, i+4);
 				subLong[i].validate();
 				subLong[i].repaint();
-				//shortPanel.validate();
-				//shortPanel.repaint();
-				//shortColor1 = new Color(160, 120, 240); //Top gradient color
-				//shortColor2 = new Color(40, 10, 90); //Bottom gradient color
 			}
 			bot.add(blank);
-			//top.add(bot);
 			longPanel.add(top);
 			longPanel.add(bot);
 		}
 
-	//Resets the short-term color values to white and black
-	public void resetLongColors(){
-		for(int i = 0; i < 5; i++){
-			longColors[i] = Color.white;
+		//Resets the short-term color values to white and black
+		public void resetLongColors(){
+			for(int i = 0; i < 5; i++){
+				longColors[i] = Color.white;
 		}
-		for(int i = 0; i < 10; i++){
-			longColors[i] = Color.black;
+			for(int i = 0; i < 10; i++){
+				longColors[i] = Color.black;
+			}
 		}
-	}
 
-	//Initializes the short-term subpanels so that they can have gradient backgrounds
-	public void makeLongComps(JPanel[] subLong){
-		subLong[0] = new JPanel();
-		subLong[1] = new JPanel(){ //Side Panel #1
-			@Override
-			protected void paintComponent(Graphics g) {
-				super.paintComponent(g);
-				Graphics2D g2d = (Graphics2D) g;
-				g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-				int w = getWidth();
-				int h = getHeight();
-				//			Color color1 = new Color(30, 255, 90);
-				//			Color color2 = new Color(45, 110, 35);
-				GradientPaint gp = new GradientPaint(0, 0, longColors[0], 0, h, longColors[5]); //change w to 0 for 'basic' version
-				g2d.setPaint(gp);
-				g2d.fillRect(2, 2, w, h);
-			}
-		};
+		//Initializes the long-term subpanels so that they can have gradient backgrounds
+		public void makeLongComps(JPanel[] subLong){
+			subLong[0] = new JPanel();
+			subLong[1] = new JPanel(){
+				@Override
+				protected void paintComponent(Graphics g) {
+					super.paintComponent(g);
+					Graphics2D g2d = (Graphics2D) g;
+					g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+					int w = getWidth();
+					int h = getHeight();
+					GradientPaint gp = new GradientPaint(0, 0, longColors[0], 0, h, longColors[5]);
+					g2d.setPaint(gp);
+					g2d.fillRect(2, 2, w, h);
+				}
+			};
 
-		subLong[2] = new JPanel(){ //used to display current data
-			@Override
-			protected void paintComponent(Graphics g) {
-				super.paintComponent(g);
-				Graphics2D g2d = (Graphics2D) g;
-				g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-				int w = getWidth();
-				int h = getHeight();
-				//			Color color1 = new Color(30, 255, 90);
-				//			Color color2 = new Color(45, 110, 35);
-				GradientPaint gp = new GradientPaint(0, 0, longColors[1], 0, h, longColors[6]); 
-				g2d.setPaint(gp);
-				g2d.fillRect(2, 2, w, h);
-			}
-		};
+			subLong[2] = new JPanel(){
+				@Override
+				protected void paintComponent(Graphics g) {
+					super.paintComponent(g);
+					Graphics2D g2d = (Graphics2D) g;
+					g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+					int w = getWidth();
+					int h = getHeight();
+					GradientPaint gp = new GradientPaint(0, 0, longColors[1], 0, h, longColors[6]); 
+					g2d.setPaint(gp);
+					g2d.fillRect(2, 2, w, h);
+				}
+			};
 
-		subLong[3] = new JPanel(){ //used to display current data
-			@Override
-			protected void paintComponent(Graphics g) {
-				super.paintComponent(g);
-				Graphics2D g2d = (Graphics2D) g;
-				g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-				int w = getWidth();
-				int h = getHeight();
-				//			Color color1 = new Color(30, 255, 90);
-				//			Color color2 = new Color(45, 110, 35);
-				GradientPaint gp = new GradientPaint(0, 0, longColors[2], 0, h, longColors[7]); //change w to 0 for 'basic' version
-				g2d.setPaint(gp);
-				g2d.fillRect(2, 2, w, h);
-			}
-		};
+			subLong[3] = new JPanel(){
+				@Override
+				protected void paintComponent(Graphics g) {
+					super.paintComponent(g);
+					Graphics2D g2d = (Graphics2D) g;
+					g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+					int w = getWidth();
+					int h = getHeight();
+					GradientPaint gp = new GradientPaint(0, 0, longColors[2], 0, h, longColors[7]);
+					g2d.setPaint(gp);
+					g2d.fillRect(2, 2, w, h);
+				}
+			};
 
-		subLong[4] = new JPanel(){ //used to display current data
-			@Override
-			protected void paintComponent(Graphics g) {
-				super.paintComponent(g);
-				Graphics2D g2d = (Graphics2D) g;
-				g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-				int w = getWidth();
-				int h = getHeight();
-				//			Color color1 = new Color(30, 255, 90);
-				//			Color color2 = new Color(45, 110, 35);
-				GradientPaint gp = new GradientPaint(0, 0, longColors[3], 0, h, longColors[8]); //change w to 0 for 'basic' version
-				g2d.setPaint(gp);
-				g2d.fillRect(2, 2, w, h);
-			}
-		};
+			subLong[4] = new JPanel(){
+				@Override
+				protected void paintComponent(Graphics g) {
+					super.paintComponent(g);
+					Graphics2D g2d = (Graphics2D) g;
+					g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+					int w = getWidth();
+					int h = getHeight();
+					GradientPaint gp = new GradientPaint(0, 0, longColors[3], 0, h, longColors[8]);
+					g2d.setPaint(gp);
+					g2d.fillRect(2, 2, w, h);
+				}
+			};
 
-		subLong[5] = new JPanel(){ //used to display current data
-			@Override
-			protected void paintComponent(Graphics g) {
-				super.paintComponent(g);
-				Graphics2D g2d = (Graphics2D) g;
-				g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-				int w = getWidth();
-				int h = getHeight();
-				//			Color color1 = new Color(30, 255, 90);
-				//			Color color2 = new Color(45, 110, 35);
-				GradientPaint gp = new GradientPaint(0, 0, longColors[4], 0, h, longColors[9]); //change w to 0 for 'basic' version
-				g2d.setPaint(gp);
-				g2d.fillRect(2, 2, w, h);
-			}
-		};
-		subLong[6] = new JPanel();
-	}
+			subLong[5] = new JPanel(){
+				@Override
+				protected void paintComponent(Graphics g) {
+					super.paintComponent(g);
+					Graphics2D g2d = (Graphics2D) g;
+					g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+					int w = getWidth();
+					int h = getHeight();
+					GradientPaint gp = new GradientPaint(0, 0, longColors[4], 0, h, longColors[9]);
+					g2d.setPaint(gp);
+					g2d.fillRect(2, 2, w, h);
+				}
+			};
+			subLong[6] = new JPanel();
+		}
 
 		
 		/*
@@ -977,6 +951,7 @@ private void createFormThree() throws IOException{
 			JPanel[] subShort = new JPanel[12];
 			GroupLayout[] layout = new GroupLayout[12];
 			
+			//Grid format for the panel
 			GridLayout grid = new GridLayout(3, 5);
 			shortPanel.setLayout(grid);
 			
@@ -985,15 +960,15 @@ private void createFormThree() throws IOException{
 			//Initializes the sub-panels so components can be added to them 
 			makeShortComps(subShort);
 			
+			//Sets the layout for each sub-panel
 			for(int i = 0; i < 12; i++)
 			{
 				subShort[i].setBackground(Color.BLACK);
 				layout[i] = new GroupLayout(subShort[i]);
-				//layout[i].setAutoCreateGaps(true);
 				layout[i].setAutoCreateContainerGaps(true);
 			}
 			
-			//Group layout used to organize GUI
+			//Group layout used to organize GUI - sets format of top side panel
 			layout[0].setHorizontalGroup( layout[0].createSequentialGroup() //sets the horizontal groups
 						
 						.addGroup(layout[0].createParallelGroup(GroupLayout.Alignment.LEADING) //shows city data
@@ -1012,20 +987,21 @@ private void createFormThree() throws IOException{
 					.addGroup( layout[0].createParallelGroup(GroupLayout.Alignment.LEADING)
 							.addGap(70)
 							)
-					.addGroup( layout[0].createParallelGroup(GroupLayout.Alignment.LEADING) //times aligned vertically
+					.addGroup( layout[0].createParallelGroup(GroupLayout.Alignment.LEADING) //time aligned vertically
 							.addComponent(lbl1)
 							)
-					.addGroup( layout[0].createParallelGroup(GroupLayout.Alignment.LEADING) //temps aligned vertically
+					.addGroup( layout[0].createParallelGroup(GroupLayout.Alignment.LEADING) //temp aligned vertically
 							.addComponent(lbl2)
 							)
-					.addGroup( layout[0].createParallelGroup(GroupLayout.Alignment.LEADING) //descrips alligned vertically
+					.addGroup( layout[0].createParallelGroup(GroupLayout.Alignment.LEADING) //weather condition alligned vertically
 							.addComponent(lbl3)
 							)
 					);
 			
+			//Sets layout for side panel #2 similar to layer[0] layout
 			layout[10].setHorizontalGroup( layout[10].createSequentialGroup() //sets the horizontal groups
 					
-					.addGroup(layout[10].createParallelGroup(GroupLayout.Alignment.LEADING) //shows city data
+					.addGroup(layout[10].createParallelGroup(GroupLayout.Alignment.LEADING)
 							.addGap(10)
 							.addComponent(lbl4)
 							.addComponent(lbl5)
@@ -1038,17 +1014,18 @@ private void createFormThree() throws IOException{
 				.addGroup( layout[10].createParallelGroup(GroupLayout.Alignment.BASELINE)
 						.addGap(95)
 						)
-				.addGroup( layout[10].createParallelGroup(GroupLayout.Alignment.LEADING) //times aligned vertically
+				.addGroup( layout[10].createParallelGroup(GroupLayout.Alignment.LEADING) //time aligned vertically
 						.addComponent(lbl4)
 						)
-				.addGroup( layout[10].createParallelGroup(GroupLayout.Alignment.LEADING) //temps aligned vertically
+				.addGroup( layout[10].createParallelGroup(GroupLayout.Alignment.LEADING) //temp aligned vertically
 						.addComponent(lbl5)
 						)
-				.addGroup( layout[10].createParallelGroup(GroupLayout.Alignment.LEADING) //descrips alligned vertically
+				.addGroup( layout[10].createParallelGroup(GroupLayout.Alignment.LEADING) //weather condition alligned vertically
 						.addComponent(lbl6)
 						)
 				);
 		
+		//Third cell of the left side column
 		layout[11].setHorizontalGroup( layout[11].createSequentialGroup() //sets the horizontal groups
 				
 				.addGroup(layout[11].createParallelGroup(GroupLayout.Alignment.LEADING) //shows city data
@@ -1067,10 +1044,10 @@ private void createFormThree() throws IOException{
 			.addGroup( layout[11].createParallelGroup(GroupLayout.Alignment.LEADING) //times aligned vertically
 					.addComponent(lbl7)
 					)
-			.addGroup( layout[11].createParallelGroup(GroupLayout.Alignment.LEADING) //temps aligned vertically
+			.addGroup( layout[11].createParallelGroup(GroupLayout.Alignment.LEADING) //temp aligned vertically
 					.addComponent(lbl8)
 					)
-			.addGroup( layout[11].createParallelGroup(GroupLayout.Alignment.LEADING) //descrips alligned vertically
+			.addGroup( layout[11].createParallelGroup(GroupLayout.Alignment.LEADING) //weather condition alligned vertically
 					.addComponent(lbl9)
 					)
 			);
@@ -1090,34 +1067,34 @@ private void createFormThree() throws IOException{
 						.addGroup( layout[i+1].createParallelGroup(GroupLayout.Alignment.BASELINE) //pics aligned vertically
 								.addComponent(lblPic[i])
 								)
-						.addGroup( layout[i+1].createParallelGroup(GroupLayout.Alignment.LEADING) //pics aligned vertically
+						.addGroup( layout[i+1].createParallelGroup(GroupLayout.Alignment.LEADING) //times aligned vertically
 								.addComponent(time[i])
 								)
-						.addGroup( layout[i+1].createParallelGroup(GroupLayout.Alignment.LEADING) //pics aligned vertically
+						.addGroup( layout[i+1].createParallelGroup(GroupLayout.Alignment.LEADING) //temps aligned vertically
 								.addComponent(temp[i])
 								)
-						.addGroup( layout[i+1].createParallelGroup(GroupLayout.Alignment.LEADING) //pics aligned vertically
+						.addGroup( layout[i+1].createParallelGroup(GroupLayout.Alignment.LEADING) //conditions aligned vertically
 								.addComponent(descrip[i])
 								)
 						);
 			}
 
-			subShort[0].setLayout(layout[0]); //sets the defined layout to the panel
+			subShort[0].setLayout(layout[0]); //sets the layout for the first left-side panel
 			shortPanel.add(subShort[0]);
 			
+			//Sets the layout for each weather panel
 			for(int i = 1; i < 10; i++)
 			{
 				subShort[i].setLayout(layout[i]); //sets the defined layout to the panel
 				shortPanel.add(subShort[i]);
-				//if(i < 2)
 					setShortBgColors(tmp[i], i, i+10);
-				if(i == 3){
+				if(i == 3){ //sets the layout for the second left-side panel
 					subShort[10].setLayout(layout[10]);
 					subShort[10].validate();
 					subShort[10].repaint();
 					shortPanel.add(subShort[10]);
 				}
-				else if(i == 6){
+				else if(i == 6){ //sets the layout for the third left-side panel
 					subShort[11].setLayout(layout[11]);
 					subShort[11].validate();
 					subShort[11].repaint();
@@ -1125,12 +1102,7 @@ private void createFormThree() throws IOException{
 				}
 				subShort[i].validate();
 				subShort[i].repaint();
-				//shortPanel.validate();
-				//shortPanel.repaint();
-				//shortColor1 = new Color(160, 120, 240); //Top gradient color
-				//shortColor2 = new Color(40, 10, 90); //Bottom gradient color
-			}
-			
+			}			
 		}
 		
 		//Resets the short-term color values to white and black
@@ -1153,15 +1125,13 @@ private void createFormThree() throws IOException{
 					g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 					int w = getWidth();
 					int h = getHeight();
-//					Color color1 = new Color(30, 255, 90);
-//					Color color2 = new Color(45, 110, 35);
-					GradientPaint gp = new GradientPaint(0, 0, shortColors[0], 0, h, shortColors[10]); //change w to 0 for 'basic' version
+					GradientPaint gp = new GradientPaint(0, 0, shortColors[0], 0, h, shortColors[10]);
 					g2d.setPaint(gp);
 					g2d.fillRect(2, 2, w, h);
 				}
 			};
 			
-			subShort[1] = new JPanel(){ //used to display current data
+			subShort[1] = new JPanel(){
 				@Override
 				protected void paintComponent(Graphics g) {
 					super.paintComponent(g);
@@ -1169,15 +1139,13 @@ private void createFormThree() throws IOException{
 					g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 					int w = getWidth();
 					int h = getHeight();
-//					Color color1 = new Color(30, 255, 90);
-//					Color color2 = new Color(45, 110, 35);
 					GradientPaint gp = new GradientPaint(0, 0, shortColors[1], 0, h, shortColors[11]); 
 					g2d.setPaint(gp);
 					g2d.fillRect(2, 2, w, h);
 				}
 			};
 			
-			subShort[2] = new JPanel(){ //used to display current data
+			subShort[2] = new JPanel(){
 				@Override
 				protected void paintComponent(Graphics g) {
 					super.paintComponent(g);
@@ -1185,15 +1153,13 @@ private void createFormThree() throws IOException{
 					g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 					int w = getWidth();
 					int h = getHeight();
-//					Color color1 = new Color(30, 255, 90);
-//					Color color2 = new Color(45, 110, 35);
-					GradientPaint gp = new GradientPaint(0, 0, shortColors[2], 0, h, shortColors[12]); //change w to 0 for 'basic' version
+					GradientPaint gp = new GradientPaint(0, 0, shortColors[2], 0, h, shortColors[12]);
 					g2d.setPaint(gp);
 					g2d.fillRect(2, 2, w, h);
 				}
 			};
 			
-			subShort[3] = new JPanel(){ //used to display current data
+			subShort[3] = new JPanel(){
 				@Override
 				protected void paintComponent(Graphics g) {
 					super.paintComponent(g);
@@ -1201,15 +1167,13 @@ private void createFormThree() throws IOException{
 					g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 					int w = getWidth();
 					int h = getHeight();
-//					Color color1 = new Color(30, 255, 90);
-//					Color color2 = new Color(45, 110, 35);
-					GradientPaint gp = new GradientPaint(0, 0, shortColors[3], 0, h, shortColors[13]); //change w to 0 for 'basic' version
+					GradientPaint gp = new GradientPaint(0, 0, shortColors[3], 0, h, shortColors[13]);
 					g2d.setPaint(gp);
 					g2d.fillRect(2, 2, w, h);
 				}
 			};
 			
-			subShort[4] = new JPanel(){ //used to display current data
+			subShort[4] = new JPanel(){
 				@Override
 				protected void paintComponent(Graphics g) {
 					super.paintComponent(g);
@@ -1217,15 +1181,13 @@ private void createFormThree() throws IOException{
 					g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 					int w = getWidth();
 					int h = getHeight();
-//					Color color1 = new Color(30, 255, 90);
-//					Color color2 = new Color(45, 110, 35);
-					GradientPaint gp = new GradientPaint(0, 0, shortColors[4], 0, h, shortColors[14]); //change w to 0 for 'basic' version
+					GradientPaint gp = new GradientPaint(0, 0, shortColors[4], 0, h, shortColors[14]);
 					g2d.setPaint(gp);
 					g2d.fillRect(2, 2, w, h);
 				}
 			};
 			
-			subShort[5] = new JPanel(){ //used to display current data
+			subShort[5] = new JPanel(){
 				@Override
 				protected void paintComponent(Graphics g) {
 					super.paintComponent(g);
@@ -1233,15 +1195,13 @@ private void createFormThree() throws IOException{
 					g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 					int w = getWidth();
 					int h = getHeight();
-//					Color color1 = new Color(30, 255, 90);
-//					Color color2 = new Color(45, 110, 35);
-					GradientPaint gp = new GradientPaint(0, 0, shortColors[5], 0, h, shortColors[15]); //change w to 0 for 'basic' version
+					GradientPaint gp = new GradientPaint(0, 0, shortColors[5], 0, h, shortColors[15]);
 					g2d.setPaint(gp);
 					g2d.fillRect(2, 2, w, h);
 				}
 			};
 			
-			subShort[6] = new JPanel(){ //used to display current data
+			subShort[6] = new JPanel(){
 				@Override
 				protected void paintComponent(Graphics g) {
 					super.paintComponent(g);
@@ -1249,15 +1209,13 @@ private void createFormThree() throws IOException{
 					g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 					int w = getWidth();
 					int h = getHeight();
-//					Color color1 = new Color(30, 255, 90);
-//					Color color2 = new Color(45, 110, 35);
-					GradientPaint gp = new GradientPaint(0, 0, shortColors[6], 0, h, shortColors[16]); //change w to 0 for 'basic' version
+					GradientPaint gp = new GradientPaint(0, 0, shortColors[6], 0, h, shortColors[16]);
 					g2d.setPaint(gp);
 					g2d.fillRect(2, 2, w, h);
 				}
 			};
 			
-			subShort[7] = new JPanel(){ //used to display current data
+			subShort[7] = new JPanel(){
 				@Override
 				protected void paintComponent(Graphics g) {
 					super.paintComponent(g);
@@ -1265,15 +1223,13 @@ private void createFormThree() throws IOException{
 					g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 					int w = getWidth();
 					int h = getHeight();
-//					Color color1 = new Color(30, 255, 90);
-//					Color color2 = new Color(45, 110, 35);
-					GradientPaint gp = new GradientPaint(0, 0, shortColors[7], 0, h, shortColors[17]); //change w to 0 for 'basic' version
+					GradientPaint gp = new GradientPaint(0, 0, shortColors[7], 0, h, shortColors[17]);
 					g2d.setPaint(gp);
 					g2d.fillRect(2, 2, w, h);
 				}
 			};
 			
-			subShort[8] = new JPanel(){ //used to display current data
+			subShort[8] = new JPanel(){
 				@Override
 				protected void paintComponent(Graphics g) {
 					super.paintComponent(g);
@@ -1281,15 +1237,13 @@ private void createFormThree() throws IOException{
 					g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 					int w = getWidth();
 					int h = getHeight();
-//					Color color1 = new Color(30, 255, 90);
-//					Color color2 = new Color(45, 110, 35);
-					GradientPaint gp = new GradientPaint(0, 0, shortColors[8], 0, h, shortColors[18]); //change w to 0 for 'basic' version
+					GradientPaint gp = new GradientPaint(0, 0, shortColors[8], 0, h, shortColors[18]);
 					g2d.setPaint(gp);
 					g2d.fillRect(2, 2, w, h);
 				}
 			};
 			
-			subShort[9] = new JPanel(){ //used to display current data
+			subShort[9] = new JPanel(){
 				@Override
 				protected void paintComponent(Graphics g) {
 					super.paintComponent(g);
@@ -1297,9 +1251,7 @@ private void createFormThree() throws IOException{
 					g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 					int w = getWidth();
 					int h = getHeight();
-//					Color color1 = new Color(30, 255, 90);
-//					Color color2 = new Color(45, 110, 35);
-					GradientPaint gp = new GradientPaint(0, 0, shortColors[9], 0, h, shortColors[19]); //change w to 0 for 'basic' version
+					GradientPaint gp = new GradientPaint(0, 0, shortColors[9], 0, h, shortColors[19]);
 					g2d.setPaint(gp);
 					g2d.fillRect(2, 2, w, h);
 				}
@@ -1406,7 +1358,6 @@ private void createFormThree() throws IOException{
 			layout.setAutoCreateContainerGaps(true);
 			layout.setHorizontalGroup( layout.createSequentialGroup() //sets horizontal groups
 						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER) //holds all the identifier labels
-							//.addGap(currentPanel.getWidth()/2)
 							.addComponent(lblcity)
 							.addComponent(lblPic)
 							.addGroup(layout.createSequentialGroup()
@@ -1422,10 +1373,8 @@ private void createFormThree() throws IOException{
 									.addComponent(lblrise)
 									.addComponent(lblset)
 							)
-//							)
-							
-							.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING) //sets wetaher Data labels
-							//.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+
+							.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING) //sets weather Data labels
 									.addComponent(lbldescrip2)
 									.addComponent(lbltemp2)
 									.addComponent(lblmin2)
@@ -1439,10 +1388,6 @@ private void createFormThree() throws IOException{
 							)
 						)
 					)
-							
-/*						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER) //holds all the identifier labels
-							.addComponent(lblcity)
-							)*/
 				);
 			
 			layout.setVerticalGroup( layout.createSequentialGroup() //sets verticsal groups
@@ -1508,10 +1453,10 @@ private void createFormThree() throws IOException{
 
 		//Sets background colours to a gradient effect based on current weather		
 		public void setLongBgColors(weatherData tmp, int i, int j) {
-			//currentPanel.removeAll();
 			switch(tmp.getCondit()) {
 				case "sky is clear ":
 				case "clear sky ":
+				case "Sky is Clear ":
 							longColors[i] = new Color(255, 215,0);
 							longColors[j] = new Color(255, 111, 0);
 							break;
@@ -1603,10 +1548,10 @@ private void createFormThree() throws IOException{
 		
 		//Sets background colours to a gradient effect based on current weather		
 		public void setShortBgColors(weatherData tmp, int i, int j) {
-			//currentPanel.removeAll();
 			switch(tmp.getCondit()) {
 				case "sky is clear ":
 				case "clear sky ":
+				case "Sky is Clear ":
 							shortColors[i] = new Color(255, 215,0);
 							shortColors[j] = new Color(255, 111, 0);
 							break;
@@ -1697,40 +1642,10 @@ private void createFormThree() throws IOException{
 		
 		//Sets background colours to a gradient effect based on current weather		
 				public void setBgColours(weatherData tmp) {
-					//currentPanel.removeAll();
 					switch(tmp.getCondit()) {
 						case "sky is clear ":
 						case "clear sky ":
-									//For Clear
-//									Color color1 = new Color(255, 215,0);
-//									Color color2 = new Color(255, 111, 0);
-									//For Few Clouds
-//									Color color1 = new Color(160, 255, 0);
-//									Color color2 = new Color(9, 173, 33);
-									//For Scattered Clouds
-//									Color color1 = new Color(30, 255, 90);
-//									Color color2 = new Color(45, 110, 35);
-									//For Broken Clouds
-//									Color color1 = new Color(30, 255, 150);
-//									Color color2 = new Color(40, 150, 130);
-									//For Shower Rain
-//									Color color1 = new Color(0,255,255);
-//									Color color2 = new Color(30, 130, 160);
-									//For Rain
-//									Color color1 = new Color(0, 166, 255);
-//									Color color2 = new Color(30, 50, 160);
-									//For Thunderstorm
-//									Color color1 = new Color(0, 95, 255);
-//									Color color2 = new Color(60, 30, 160);
-									//For Snow
-//									Color color1 = new Color(95, 215, 220);
-//									Color color2 = new Color(30, 110, 120);
-									//For Mist
-//									Color color1 = new Color(200, 210, 210);
-//									Color color2 = new Color(85, 110, 100);
-									//For Default
-//									Color color1 = new Color(160, 120, 240);
-//									Color color2 = new Color(40, 10, 90);
+						case "Sky is Clear ":
 									color1 = new Color(255, 215,0);
 									color2 = new Color(255, 111, 0);
 									break;
@@ -1833,7 +1748,7 @@ private void createFormThree() throws IOException{
 				throw new IOException("error");
 			}
 			tmp = app.getMars();
-			System.out.println("1");
+
 			JLabel lblcity = new JLabel("Mars Weather"); //displays location info
 			lblcity.setForeground(Color.WHITE);
 			lblcity.setFont(new Font("Lucida Console", Font.PLAIN, 40));
@@ -1912,13 +1827,13 @@ private void createFormThree() throws IOException{
 			JLabel lblset2 = new JLabel("" + tmp.getSunset()); //actual sunset
 			lblset2.setForeground(Color.WHITE);
 			lblset2.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, 18));
-			System.out.println("2");
+
 			//used to set picture
 			File sourceimage = new File("mars picture.jpg");
 			//BufferedImage pic = ImageIO.read(sourceimage);
 			//pic  = Scalr.resize(pic, 80);
 			JLabel lblPic = new JLabel(" "); //holds picture
-			System.out.println("3");
+
 			//adds control with layout organization
 			GroupLayout layout = new GroupLayout(marsPanel);
 			layout.setAutoCreateGaps(true);
@@ -1995,7 +1910,7 @@ private void createFormThree() throws IOException{
 							.addComponent(lblset2)
 							)					
 						);
-			System.out.println("4");	
+	
 						marsPanel.setLayout(layout); //sets the layout		
 								
 			}
