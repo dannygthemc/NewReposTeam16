@@ -194,7 +194,7 @@ import java.util.Date;
 				
 			}
 			this.setTitle("Weather Application"); //sets title of frame 
-			this.setSize(1300, 600); //sets size of frame
+			this.setSize(2000, 600); //sets size of frame
 			this.setLocationRelativeTo(null);
 			this.setDefaultCloseOperation(EXIT_ON_CLOSE); //initiates exit on close command
 			this.setJMenuBar(this.createMenubar()); 
