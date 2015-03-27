@@ -74,6 +74,8 @@ import java.util.Date;
 		public Color shortColor2 = new Color(40, 10, 90); //Bottom gradient color
 		public Color longColor1 = new Color(160, 120, 240); //Top gradient color
 		public Color longColor2 = new Color(40, 10, 90); //Bottom gradient color
+		public Color marsColor1 = new Color(240, 58, 26);
+		public Color marsColor2 = new Color(10, 4, 3);
 		
 		public Color[] shortColors = new Color[20];
 		public Color[] longColors = new Color[10];
@@ -128,7 +130,22 @@ import java.util.Date;
 			}
 		};
 		
-		private JPanel marsPanel = new JPanel(); //used to display mars data
+		private JPanel marsPanel = new JPanel(){ //used to display mars data
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				Graphics2D g2d = (Graphics2D) g;
+				g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+				int w = getWidth();
+				int h = getHeight();
+//				Color color1 = new Color(30, 255, 90);
+//				Color color2 = new Color(45, 110, 35);
+				GradientPaint gp = new GradientPaint(0, 0, marsColor1, 0, h, marsColor2);
+				g2d.setPaint(gp);
+				g2d.fillRect(0, 0, w, h);
+			}
+		};
+		
 		private ActionListener Jcombo = new ActionListener() { //updates weatherView when a new item is searched
 			@Override
 			public void actionPerformed(ActionEvent event){
@@ -1815,13 +1832,29 @@ private void createFormThree() throws IOException{
 			tmp = app.getMars();
 			
 			JLabel lblcity = new JLabel("Mars Weather"); //displays location info
+			lblcity.setForeground(Color.WHITE);
+			lblcity.setFont(new Font("Lucida Console", Font.PLAIN, 40));
 			JLabel lbldescrip = new JLabel("Weather Condition: ");
+			lbldescrip.setForeground(Color.WHITE);
+			lbldescrip.setFont(new Font("Courier New", Font.BOLD, 18));
 			JLabel lbldescrip2 = new JLabel("" +tmp.getCondit());
+			lbldescrip2.setForeground(Color.WHITE);
+			lbldescrip2.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, 18));
 			JLabel lblmin = new JLabel("Min Temp: "); //label for min
+			lblmin.setForeground(Color.WHITE);
+			lblmin.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, 18));
 			JLabel lblmin2 = new JLabel("" + tmp.getMin()); //actual min
+			lblmin2.setForeground(Color.WHITE);
+			lblmin2.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, 18));
 			JLabel lblmax = new JLabel("Max Temp: " ); //label for max
+			lblmax.setForeground(Color.WHITE);
+			lblmax.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, 18));
 			JLabel lblmax2 = new JLabel("" + tmp.getMax()); //actual max
+			lblmax2.setForeground(Color.WHITE);
+			lblmax2.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, 18));
 			JLabel lblspeed = new JLabel("Wind Speed: "); //label for speed
+			lblspeed.setForeground(Color.WHITE);
+			lblspeed.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, 18));
 			//considers whether the wind speed is null in the JSON
 			JLabel lblspeed2 = new JLabel();
 			if(tmp.getSpeed()==99){
@@ -1830,8 +1863,12 @@ private void createFormThree() throws IOException{
 			else{
 				lblspeed2 = new JLabel("" + tmp.getSpeed()); 
 			}
+			lblspeed2.setForeground(Color.WHITE);
+			lblspeed2.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, 18));
 			//JLabel lblspeed2 = new JLabel("" + tmp.getSpeed()); //actual speed
 			JLabel lbldir = new JLabel("Wind Direction: "); //label for dir 
+			lbldir.setForeground(Color.WHITE);
+			lbldir.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, 18));
 			//considers whether the wind direction is null in the JSON
 			JLabel lbldir2 = new JLabel();
 			if(tmp.getDir() == 99){ //accounts for erroneous input
@@ -1840,9 +1877,17 @@ private void createFormThree() throws IOException{
 			else{
 				lbldir2 = new JLabel("" + tmp.getDir()); //actual dir
 			}
+			lbldir2.setForeground(Color.WHITE);
+			lbldir2.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, 18));
 			JLabel lblpress = new JLabel("Air Pressure: "); //label for pressure
+			lblpress.setForeground(Color.WHITE);
+			lblpress.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, 18));
 			JLabel lblpress2 = new JLabel("" + tmp.getPress()); //actual pressure
+			lblpress2.setForeground(Color.WHITE);
+			lblpress2.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, 18));
 			JLabel lblhumid = new JLabel("Humidity: "); //label for humid
+			lblhumid.setForeground(Color.WHITE);
+			lblhumid.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, 18));
 			JLabel lblhumid2 = new JLabel();
 			if(tmp.getHumid() == 99){ //accounts for erroneous input
 				lblhumid2 = new JLabel("Null"); //print N/A
@@ -1850,10 +1895,20 @@ private void createFormThree() throws IOException{
 			else{
 				lblhumid2 = new JLabel("" + tmp.getHumid()); //actual humdid
 			}
+			lblhumid2.setForeground(Color.WHITE);
+			lblhumid2.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, 18));
 			JLabel lblrise = new JLabel("Sunrise Time: "); //label for sunrise
+			lblrise.setForeground(Color.WHITE);
+			lblrise.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, 18));
 			JLabel lblrise2 = new JLabel("" + tmp.getSunrise()); //actual sunrise
+			lblrise2.setForeground(Color.WHITE);
+			lblrise2.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, 18));
 			JLabel lblset = new JLabel("Sunset Time: "); //label for susnet
+			lblset.setForeground(Color.WHITE);
+			lblset.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, 18));
 			JLabel lblset2 = new JLabel("" + tmp.getSunset()); //actual sunset
+			lblset2.setForeground(Color.WHITE);
+			lblset2.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, 18));
 			
 			//used to set picture
 			File sourceimage = new File("mars picture.jpg");
