@@ -73,7 +73,6 @@ public class weatherApp {
 	 * @return none, stores last 'current location'
 	 */
 	public void storePref() throws IOException{
-		
 		File store = new File("prefFile.txt");
 		if(store.exists() == true){
 			store.delete();
@@ -864,7 +863,7 @@ public class weatherApp {
 	    	}
 	    	if(tmp.equals("wind_speed")){ //grabs current wind speed
 	    		if ((tokens.nextElement()).toString().compareTo("null")==0){
-	    			windSpeed = 0.0f;
+	    			windSpeed = 99f;
 	    		}
 	    		else{
 	    			windSpeed = Float.parseFloat(tokens.nextToken());

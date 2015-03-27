@@ -44,7 +44,7 @@ public class SearchIndex {
 		/* Begin reading file */
 		try 
 		{
-			reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("city_list.txt")));
+			reader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("city_list.txt")));
 			reader.readLine();
 			
 			while((line = reader.readLine()) != null) //loop through lines in the file

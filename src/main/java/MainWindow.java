@@ -44,7 +44,7 @@ import java.awt.Color;
 
 import javax.swing.GroupLayout;
 
-import org.imgscalr.Scalr;
+//import org.imgscalr.Scalr;
 
 import cs2212b.team16.SearchIndex;
 import cs2212b.team16.location;
@@ -421,12 +421,7 @@ import java.util.Date;
 			mniFileExit.addActionListener(new ActionListener() {
 			 @Override
 			 public void actionPerformed(ActionEvent event) { //when clicked
-				 try {
-					app.storePref();
-				} catch (Exception e) {
-					JFrame error = new JFrame();
-					JOptionPane.showMessageDialog(error, "An error occured");
-				}
+				
 				 System.exit(0); } //exit program
 			});
 			
@@ -610,7 +605,7 @@ private void createFormThree() throws IOException{
 				descrip[i] = hold2;
 				
 				pic = tmp[i+1].getIcon();
-				pic  = Scalr.resize(pic, 80);
+				//pic  = Scalr.resize(pic, 80);
 				hold3 = new JLabel(new ImageIcon(pic)); //holds current pic
 				lblPic[i] = hold3;
 				hold4 = new JLabel("" + tmp[i+1].getMin());//holds current min
@@ -967,7 +962,7 @@ private void createFormThree() throws IOException{
 				descrip[i] = hold2;
 				
 				pic = tmp[i+1].getIcon();
-				pic  = Scalr.resize(pic, 80);
+				//pic  = Scalr.resize(pic, 80);
 				hold3 = new JLabel(new ImageIcon(pic));
 				lblPic[i] = hold3;
 				hold4 = new JLabel(tmp[i+1].getSunrise());//timestamp stored in Sunrise, since this variable was not in use for ShorTerm
@@ -1321,6 +1316,7 @@ private void createFormThree() throws IOException{
 		 */
 		private void createForm() throws IOException {
 			
+			 
 			weatherData tmp = new weatherData();
 			try {
 				app.grab(app.getVisibleLocation().getCityID(), app.getUnits());
@@ -1397,7 +1393,7 @@ private void createFormThree() throws IOException{
 			
 			//used to set picture
 			BufferedImage pic = tmp.getIcon();
-			pic  = Scalr.resize(pic, 80);
+			//pic  = Scalr.resize(pic, 80);
 			JLabel lblPic = new JLabel(new ImageIcon(pic)); //holds picture
 			
 			//Set the colours for the background gradient
@@ -1501,6 +1497,13 @@ private void createFormThree() throws IOException{
 						//currentPanel.setLayout(layout); //sets the layout		
 			currentPanel.validate();
 			currentPanel.repaint();
+
+			 try {
+					app.storePref();
+				} catch (Exception e) {
+					JFrame error = new JFrame();
+					JOptionPane.showMessageDialog(error, "An error occured");
+				}
 			}
 
 		//Sets background colours to a gradient effect based on current weather		
@@ -1830,7 +1833,7 @@ private void createFormThree() throws IOException{
 				throw new IOException("error");
 			}
 			tmp = app.getMars();
-			
+			System.out.println("1");
 			JLabel lblcity = new JLabel("Mars Weather"); //displays location info
 			lblcity.setForeground(Color.WHITE);
 			lblcity.setFont(new Font("Lucida Console", Font.PLAIN, 40));
@@ -1909,14 +1912,13 @@ private void createFormThree() throws IOException{
 			JLabel lblset2 = new JLabel("" + tmp.getSunset()); //actual sunset
 			lblset2.setForeground(Color.WHITE);
 			lblset2.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, 18));
-			
+			System.out.println("2");
 			//used to set picture
 			File sourceimage = new File("mars picture.jpg");
-			BufferedImage pic = ImageIO.read(sourceimage);
-			pic  = Scalr.resize(pic, 80);
-			JLabel lblPic = new JLabel(new ImageIcon(pic)); //holds picture
-			
-			
+			//BufferedImage pic = ImageIO.read(sourceimage);
+			//pic  = Scalr.resize(pic, 80);
+			JLabel lblPic = new JLabel(" "); //holds picture
+			System.out.println("3");
 			//adds control with layout organization
 			GroupLayout layout = new GroupLayout(marsPanel);
 			layout.setAutoCreateGaps(true);
@@ -1993,7 +1995,7 @@ private void createFormThree() throws IOException{
 							.addComponent(lblset2)
 							)					
 						);
-							
+			System.out.println("4");	
 						marsPanel.setLayout(layout); //sets the layout		
 								
 			}
