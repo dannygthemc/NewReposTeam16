@@ -12,6 +12,9 @@ import javax.swing.JFrame; //used to create a Jframe
 
 
 
+
+
+
 //used to create a menu bar and responses to user Interface
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,6 +24,9 @@ import java.awt.image.BufferedImage;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+
+
+
 
 
 
@@ -39,12 +45,18 @@ import javax.swing.JTextField;
 
 
 
+
+
+
 //used to organize layout
 import java.awt.Color;
 
 import javax.swing.GroupLayout;
 
 //import org.imgscalr.Scalr;
+
+
+
 
 import cs2212b.team16.SearchIndex;
 import cs2212b.team16.location;
@@ -53,6 +65,8 @@ import cs2212b.team16.weatherData;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -179,7 +193,7 @@ import java.util.Date;
 			if(new File("prefFile.txt").exists() == false){ //if this is the first run
 				select = JOptionPane.showInputDialog(tmp, "It appears this is your first run. "
 						+ "Enter the city name of your current location:"); //prompts user for their current location
-				searchBoxUsed(select); //used the search function
+				searchBoxUsed2(select); //used the search function
 				app.setCurrentLocation(app.getVisibleLocation()); //sets the current location
 			}
 			else{ //if it's been run before
@@ -397,6 +411,48 @@ import java.util.Date;
 						}
 						app.setVisibleLocation(searchedLoc);
 						refreshPanels();
+				 }
+			}
+		}
+		
+		private void searchBoxUsed2(String txt){
+			JFrame frame = new JFrame();
+			ArrayList<location> simLoc = dataBase.search(txt);
+			if (simLoc == null) JOptionPane.showMessageDialog(frame, "'" + txt + "' not found.");
+			else if (simLoc.size() == 1){
+				location searchedLoc = simLoc.get(0);
+				app.addLocation(searchedLoc);
+				app.setVisibleLocation(searchedLoc);
+				locBar.removeActionListener(Jcombo);
+				populateMyLocationsBox();
+			}
+			else {
+				String [] possibilities = new String[simLoc.size()];
+				
+				for (int i = 0; i <  simLoc.size(); i ++){
+					possibilities[i] = i + 1 + ". " + simLoc.get(i).getName() + ", " + simLoc.get(i).getCountryCode() + " Lat: " 
+							+ simLoc.get(i).getLatitude() + " Long: " + simLoc.get(i).getLongitude();
+				}
+				
+				String response = (String) JOptionPane.showInputDialog(frame, "Which '" + txt + "' did you mean?", "Search Location",  
+						JOptionPane.QUESTION_MESSAGE, null, possibilities, "Titan");
+			
+				if (response != null) {
+						location searchedLoc = simLoc.get(Integer.parseInt(response.substring(0, response.indexOf('.'))) - 1);
+						String[] temp = response.split(" ");
+						int length = app.getMyLocations().length;
+						boolean add = true;
+						for (int i = 0; i < length; i ++){
+							location checkLoc = app.getMyLocations()[i];
+							if (checkLoc.getCityID() == searchedLoc.getCityID())
+								add = false;
+						}
+						if (add) {
+							app.addLocation(searchedLoc);
+							locBar.removeActionListener(Jcombo);
+							populateMyLocationsBox();
+						}
+						app.setVisibleLocation(searchedLoc);
 				 }
 			}
 		}
@@ -1829,11 +1885,13 @@ import java.util.Date;
 			lblset2.setFont(new Font(lbldescrip.getFont().getFontName(), Font.BOLD, 18));
 
 			//used to set picture
-			File sourceimage = new File("mars picture.jpg");
-			//BufferedImage pic = ImageIO.read(sourceimage);
+			InputStream img = getClass().getResourceAsStream("/mars_picture.png");
+			System.out.println("1");
+			BufferedImage pic = ImageIO.read(img);
+			System.out.println("3");
 			//pic  = Scalr.resize(pic, 80);
-			JLabel lblPic = new JLabel(" "); //holds picture
-
+			JLabel lblPic = new JLabel(new ImageIcon(pic)); //holds picture
+			System.out.println("4");
 			//adds control with layout organization
 			GroupLayout layout = new GroupLayout(marsPanel);
 			layout.setAutoCreateGaps(true);
