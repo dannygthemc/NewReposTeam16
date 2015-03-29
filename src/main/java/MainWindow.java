@@ -189,12 +189,24 @@ import java.util.Date;
 			JFrame error = new JFrame();
 			JFrame tmp = new JFrame();
 			tmp.setSize(50, 50);
-			String select = "";
+			String select = null;
 			if(new File("prefFile.txt").exists() == false){ //if this is the first run
-				select = JOptionPane.showInputDialog(tmp, "It appears this is your first run. "
-						+ "Enter the city name of your current location:"); //prompts user for their current location
-				searchBoxUsed2(select); //used the search function
-				app.setCurrentLocation(app.getVisibleLocation()); //sets the current location
+				while (select != null){
+					select = JOptionPane.showInputDialog(tmp, "It appears this is your first run. "
+							+ "Enter the city name of your current location:"); //prompts user for their current location
+					if (select != null){
+						searchBoxUsed2(select); //used the search function
+						app.setCurrentLocation(app.getVisibleLocation()); //sets the current location
+					} else {
+						location newCur = new location();
+						newCur.setCityID(6058560);
+						newCur.setCountryCode("CA");
+						newCur.setName("London");
+						newCur.setLatitude(42);
+						newCur.setLongitude(-81);
+						app.setCurrentLocation(app.getVisibleLocation()); //sets the current location
+					}
+				}
 			}
 			else{ //if it's been run before
 				location tmpLoc = new location();
@@ -208,7 +220,7 @@ import java.util.Date;
 				
 			}
 			this.setTitle("Weather Application"); //sets title of frame 
-			this.setSize(2000, 600); //sets size of frame
+			this.setSize(1300, 600); //sets size of frame
 			this.setLocationRelativeTo(null);
 			this.setDefaultCloseOperation(EXIT_ON_CLOSE); //initiates exit on close command
 			this.setJMenuBar(this.createMenubar()); 
@@ -418,7 +430,10 @@ import java.util.Date;
 		private void searchBoxUsed2(String txt){
 			JFrame frame = new JFrame();
 			ArrayList<location> simLoc = dataBase.search(txt);
-			if (simLoc == null) JOptionPane.showMessageDialog(frame, "'" + txt + "' not found.");
+			if (simLoc == null){ 
+				JOptionPane.showMessageDialog(frame, "'" + txt + "' not found.");
+				searchBoxUsed2("hong kong");
+			}
 			else if (simLoc.size() == 1){
 				location searchedLoc = simLoc.get(0);
 				app.addLocation(searchedLoc);
@@ -1886,12 +1901,9 @@ import java.util.Date;
 
 			//used to set picture
 			InputStream img = getClass().getResourceAsStream("/mars_picture.png");
-			System.out.println("1");
 			BufferedImage pic = ImageIO.read(img);
-			System.out.println("3");
 			//pic  = Scalr.resize(pic, 80);
 			JLabel lblPic = new JLabel(new ImageIcon(pic)); //holds picture
-			System.out.println("4");
 			//adds control with layout organization
 			GroupLayout layout = new GroupLayout(marsPanel);
 			layout.setAutoCreateGaps(true);
