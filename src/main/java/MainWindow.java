@@ -216,7 +216,7 @@ private void initUI () {
 				
 			}
 			this.setTitle("Weather Application"); //sets title of frame 
-			this.setSize(2000, 600); //sets size of frame
+			this.setSize(1300, 600); //sets size of frame
 			this.setLocationRelativeTo(null);
 			this.setDefaultCloseOperation(EXIT_ON_CLOSE); //initiates exit on close command
 			this.setJMenuBar(this.createMenubar()); 
@@ -742,7 +742,7 @@ private void initUI () {
 							.addComponent(lblcity)
 							)
 					.addGroup( layout[0].createParallelGroup(GroupLayout.Alignment.LEADING)
-							.addGap(70)
+							.addGap(35)
 							)
 					.addGroup( layout[0].createParallelGroup(GroupLayout.Alignment.LEADING) //times aligned vertically
 							.addComponent(lbl2)
@@ -776,7 +776,7 @@ private void initUI () {
 				);
 			layout[6].setVerticalGroup( layout[6].createSequentialGroup() //sets the vertical groups
 				.addGroup( layout[6].createParallelGroup(GroupLayout.Alignment.LEADING)
-						.addGap(100)
+						.addGap(65)
 						)
 				.addGroup( layout[6].createParallelGroup(GroupLayout.Alignment.LEADING) //times aligned vertically
 						.addComponent(lbl5)
@@ -1062,7 +1062,7 @@ private void initUI () {
 							.addComponent(lblcity)
 							)
 					.addGroup( layout[0].createParallelGroup(GroupLayout.Alignment.LEADING)
-							.addGap(70)
+							.addGap(35)
 							)
 					.addGroup( layout[0].createParallelGroup(GroupLayout.Alignment.LEADING) //time aligned vertically
 							.addComponent(lbl1)
@@ -1089,7 +1089,7 @@ private void initUI () {
 		//Second cell of the left side column
 		layout[10].setVerticalGroup( layout[10].createSequentialGroup() //sets the vertical groups
 				.addGroup( layout[10].createParallelGroup(GroupLayout.Alignment.BASELINE)
-						.addGap(95)
+						.addGap(65)
 						)
 				.addGroup( layout[10].createParallelGroup(GroupLayout.Alignment.LEADING) //time aligned vertically
 						.addComponent(lbl4)
@@ -1116,7 +1116,7 @@ private void initUI () {
 		//Third cell of the left side column
 		layout[11].setVerticalGroup( layout[11].createSequentialGroup() //sets the vertical groups
 			.addGroup( layout[11].createParallelGroup(GroupLayout.Alignment.BASELINE)
-					.addGap(95)
+					.addGap(65)
 					)
 			.addGroup( layout[11].createParallelGroup(GroupLayout.Alignment.LEADING) //times aligned vertically
 					.addComponent(lbl7)
