@@ -184,29 +184,25 @@ import java.util.Date;
 		 * @return none, initializes UI
 		 * 
 		 */
-		private void initUI () {
+private void initUI () {
 			
 			JFrame error = new JFrame();
 			JFrame tmp = new JFrame();
 			tmp.setSize(50, 50);
-			String select = null;
+			String select = "cheese";
+			boolean boolTemp = false;
 			if(new File("prefFile.txt").exists() == false){ //if this is the first run
-				while (select != null){
+				while(select.equals("cheese")){
 					select = JOptionPane.showInputDialog(tmp, "It appears this is your first run. "
 							+ "Enter the city name of your current location:"); //prompts user for their current location
-					if (select != null){
-						searchBoxUsed2(select); //used the search function
-						app.setCurrentLocation(app.getVisibleLocation()); //sets the current location
-					} else {
-						location newCur = new location();
-						newCur.setCityID(6058560);
-						newCur.setCountryCode("CA");
-						newCur.setName("London");
-						newCur.setLatitude(42);
-						newCur.setLongitude(-81);
-						app.setCurrentLocation(app.getVisibleLocation()); //sets the current location
+					if(select != null){
+						boolTemp = searchBoxUsedTwo(select); //used the search function
+					}
+					if(boolTemp == false){
+						select = "cheese";
 					}
 				}
+				app.setCurrentLocation(app.getVisibleLocation()); //sets the current location
 			}
 			else{ //if it's been run before
 				location tmpLoc = new location();
@@ -220,7 +216,7 @@ import java.util.Date;
 				
 			}
 			this.setTitle("Weather Application"); //sets title of frame 
-			this.setSize(1300, 600); //sets size of frame
+			this.setSize(2000, 600); //sets size of frame
 			this.setLocationRelativeTo(null);
 			this.setDefaultCloseOperation(EXIT_ON_CLOSE); //initiates exit on close command
 			this.setJMenuBar(this.createMenubar()); 
@@ -427,12 +423,18 @@ import java.util.Date;
 			}
 		}
 		
-		private void searchBoxUsed2(String txt){
+		/*
+		 * Refresh the views when new city is searched on first run
+		 * @param String of city searched for
+		 * @return boolean, adds city to search Box
+		 */
+		private boolean searchBoxUsedTwo(String txt){
 			JFrame frame = new JFrame();
+			boolean boolTemp;
 			ArrayList<location> simLoc = dataBase.search(txt);
 			if (simLoc == null){ 
 				JOptionPane.showMessageDialog(frame, "'" + txt + "' not found.");
-				searchBoxUsed2("hong kong");
+				boolTemp = false;
 			}
 			else if (simLoc.size() == 1){
 				location searchedLoc = simLoc.get(0);
@@ -440,6 +442,7 @@ import java.util.Date;
 				app.setVisibleLocation(searchedLoc);
 				locBar.removeActionListener(Jcombo);
 				populateMyLocationsBox();
+				boolTemp = true;
 			}
 			else {
 				String [] possibilities = new String[simLoc.size()];
@@ -468,8 +471,11 @@ import java.util.Date;
 							populateMyLocationsBox();
 						}
 						app.setVisibleLocation(searchedLoc);
+						
 				 }
+				boolTemp = true;
 			}
+			return boolTemp;
 		}
 		
 		/*
