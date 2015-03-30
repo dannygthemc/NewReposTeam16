@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 /**
  * location.java stores values for the user's location
+ * 
  * @author Daniel Gilbert
  * @author Omar Abdel-Qader
  * @author James Crocker

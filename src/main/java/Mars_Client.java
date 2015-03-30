@@ -1,8 +1,14 @@
 package cs2212b.team16;
-/*
- * this class is used to grab Mars weather data
- * will eventually be integrated into the weatherApp class
- * @author Daniel, James, Omar, Long, Angus, Nick
+
+/**
+ * This class is used to grab Mars weather data
+ * 
+ * @author Daniel Gilbert
+ * @author Omar Abdel-Qader
+ * @author James Crocker
+ * @author Long Le
+ * @author Angus Poole
+ * @author Nicholas Teixeira
  * 
  */
 import java.io.BufferedReader;

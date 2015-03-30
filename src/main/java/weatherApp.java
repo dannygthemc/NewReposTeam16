@@ -1,9 +1,15 @@
 package cs2212b.team16;
-/*
- * @author: Daniel, James, Omar, Long, Angus, Nick
- * this class used to define the weather Application
- * calls the location and weatherData classes to perform its duties
+
+/**
+ * This class is used to define the weather application, 
+ * and makes use of the location and weatherData classes to perform its duties
  * 
+ * @author Daniel Gilbert
+ * @author Omar Abdel-Qader
+ * @author James Crocker
+ * @author Long Le
+ * @author Angus Poole
+ * @author Nicholas Teixeira
  */
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -29,6 +35,10 @@ import javax.imageio.ImageIO;
 
 public class weatherApp {
 	
+	/**
+	 * Attributes representing all the fields of the weatherApp class
+	 */
+	
 	private weatherData current; //used to store current location data
 	private weatherData[] longTerm; //used to store long term data
 	private weatherData[] shortTerm; //used to store short term data
@@ -38,11 +48,9 @@ public class weatherApp {
 	private location visibleLocation;	//Location that is currently visible on app
 	private String units; //used to keep track of type of unit being used
 	
-	/*
-	 * instantiates an object of the class
-	 * initiates all the arrays
-	 * @param no parameters
-	 * @return no returns
+	/**
+	 * Constructor instantiates an object of the class
+	 * and initializes all arrays.
 	 */
 	public weatherApp(){
 		
@@ -67,10 +75,9 @@ public class weatherApp {
 		units = "metric";
 	}
 	
-	/*
-	 * this method is used to store the location at the end of the program run
-	 * @param none
-	 * @return none, stores last 'current location'
+	/**
+	 * The storePref method is used to store the location at the end of the program run,
+	 * has no parameters or return values 
 	 */
 	public void storePref() throws IOException{
 		File store = new File("prefFile.txt");
@@ -91,10 +98,10 @@ public class weatherApp {
 		  
 	  }
 	
-	/*
-	 * this method is used to load the location stored at the end of the last program run
-	 * @param none
-	 * @return location	 
+	/**
+	 * The loadPref method is used to load the location stored at the end of the last program run
+	 * 
+	 * @return location	the city stored in the last run of the program  
 	 */
 	public location loadPref() throws ClassNotFoundException, IOException{
 		
@@ -112,98 +119,99 @@ public class weatherApp {
 		  
 	  }
 	
-	/*
-	 * returns current units
-	 * @param none
-	 * @return String units
+	/**
+	 * Getter method for current unit of measurement 
+	 *
+	 * @return String containging the units
 	 */
 	public String getUnits(){
 		return units;
 	}
 	
-	/*
-	 * sets the units String
-	 * @param String 
-	 * @return none
+	/**
+	 * Setter method for current unit of measurement
+	 * 
+	 * @param type a String containing the current unit 
 	 */
 	public void setUnits(String type){
 		units = type;
 	}
 	
-	/*
- 	* returns mars location data object
- 	* @param no parameters
- 	* @return location object holding mars Data
- 	*/
+	/**
+	 * The getMars method returns mars location data object
+	 * 
+	 * @return location object holding mars Data
+	 */
 	public weatherData getMars(){
 		return mars;
 	}
-	/*
- 	* returns current location data object
- 	* @param no parameters
- 	* @return location object holding current location
- 	*/
+	
+	/**
+	 * The getCurrentLocation method returns current location data object
+	 * 
+	 * @return location object holding current location
+	 */
 	public location getCurrentLocation(){
 		return currentLocation;
 	}
 
-	/*
- 	* sets current location data object
- 	* @param location object A
- 	* @return none, updates current location
- 	*/
+	
+	/**
+	 * The setCurrentLocation method sets current location data object
+	 * 
+	 * @param location object A
+	 */
 	public void setCurrentLocation(location A){
 		currentLocation = A;
 	}
 
-	/*
- 	* returns visible location data object
- 	* @param no parameters
- 	* @return location object holding visible location
- 	*/
+	/**
+	 * The getVisibleLocation method returns visible location data object 
+	 * 
+	 * @return location object holding visible location
+	 */
 	public location getVisibleLocation(){
 		return visibleLocation;
 	}
 
-	/*
- 	* sets visible location data object
- 	* @param location object A
- 	* @return none, updates visible location
- 	*/
+	/**
+	 * The setVisibleLocation method returns visible location data object 
+	 * 
+	 * @param location object to be set to visible
+	 */
 	public void setVisibleLocation(location A){
 		visibleLocation = A;
 	}
-	/*
-	 * returns current weather data object
-	 * @param no parameters
-	 * @return weather Data object holding current weatehr Data
+	
+	/**
+	 * The getCurrent method returns current weather data object
+	 *
+	 * @return weatherData object holding current weather Data
 	 */
 	public weatherData getCurrent() {
 		return current;
 	}
 	
-	/*
-	 * this method allows setting of the current weatherData object
-	 * @param no parameters
-	 * @return no returns
+	/**
+	 * The setCurrent method allows setting of the current weatherData object
 	 */
 	public void setCurrent(weatherData current){
 		this.current = current;
 	}
 	
-	/*
-	 * this method returns the longTerm weather data array
-	 * @param no parameters
-	 * @return weather Data array 
+	/**
+	 * The getLongTerm method returns the longTerm weather data array
+	 * 
+	 * @return weatherData[] an array containing long-term weather data 
 	 */
 	public weatherData[] getLongTerm() {
 		return longTerm;
 	}
 	
-	/*
-	 * the method is used to fill the longTerm array with weather Data
-	 * @param weather data array
-	 * @return no returns, fills longTerm
+	/**
+	 * The setLongTerm method is used to fill the longTerm array with weather Data
+	 * 
+	 * @param weatherData[] an array containing long-term weather data
 	 */
 	public void setLongTerm(weatherData[] longTerm){
 		int smallest = this.longTerm.length;
@@ -213,10 +221,10 @@ public class weatherApp {
 		}
 	}
 	
-	/*
-	 * the method is used to fill the shortTerm array with weather Data
-	 * @param weather data array
-	 * @return no returns, fills shortTerm
+	/**
+	 * The setShortTerm method is used to fill the shortTerm array with weather Data
+	 * 
+	 * @param weatherData[] an array containing short-term weather data
 	 */
 	public void setShortTerm(weatherData[] shortTerm){
 		int smallest = this.shortTerm.length;
@@ -225,29 +233,29 @@ public class weatherApp {
 			this.shortTerm[i] = shortTerm[i];
 		}
 	}
-	/*
-	 * this method returns the shorTerm data array
-	 * @param no parameters
-	 * @return weather Data array
+	
+	/**
+	 * The getShortTerm method returns the shorTerm data array
+	 *
+	 * @return weatherData[] an array containing short-term weather data
 	 */
 	public weatherData[] getShortTerm(){
 		return shortTerm;
 	}
 	
-	/*
-	 * this method returns the array of user's saved location data
-	 * @param no parameters
-	 * @return location array
+	/**
+	 * The getMyLocations method returns the array of user's saved location data
+	 * 
+	 * @return location[] an array containing the user's saved locations 
 	 */
 	public location[] getMyLocations(){
 		return myLocations;
 	}
 	
-	/*
-	 * adds a location to the myLocation array
-	 * @param location
-	 * @return no returns
-	 * 	 
+	/**
+	 * The addLocation method adds a location to the myLocation array
+	 * 
+	 * @param location the city to be added to the array  	 
 	 */
 	public void addLocation(location A){
 		int j = 0;
@@ -263,10 +271,11 @@ public class weatherApp {
 		}
 	}
 	
-	/*
-	 * removes a location from the location array
-	 * @param String A, representing location
-	 * @return no returns
+	/**
+	 * The removeLocation method removes a location from the location array
+	 * 
+	 * @param name a String representing the name of the location
+	 * @param code a String representing the country code of the location
 	 */
 	public void removeLocation(String name, String code){
 		int i = 0;
@@ -279,13 +288,12 @@ public class weatherApp {
 	}
 	
 	
-	/*
-	 * fills current weatherData object with JSON data
-	 * will eventually pass in a city ID and units
-	 * @param (none yet) eventually: city id & units
-	 * @return no returns
+	/**
+	 * The grab method fills current weatherData object with JSON data
+	 * 
+	 * @param cityId a unique int representing the city, used to get weather information
+	 * @param units the unit of measurement to represent results
 	 */
-
 	public void grab(int cityId, String units) throws MalformedURLException, IOException{
 			
 			String Id = Integer.toString(cityId);
@@ -422,10 +430,11 @@ public class weatherApp {
 		    current.fill(lon, lat, pic, city, country,  temp, windSpeed, windDir, pressure, humidity, description, minTemp, maxTemp, formattedSunrise, formattedSunset);
 	}
 	
-	/*
-	 * this grabs the data for the short term data structure
-	 * @param city id & units
-	 * @return no returns
+	/**
+	 * The grabShortTerm method grabs the data for the short term data structure
+	 * 
+	 * @param cityId a unique int representing the city, used to get weather information
+	 * @param units the unit of measurement to represent results
 	 */
 	public void grabShortTerm(int cityId, String units) throws MalformedURLException, IOException{
 		
@@ -586,10 +595,12 @@ public class weatherApp {
 	   
 	   
 	}
-	/*
-	 * this grabs the data for the long term data structure
-	 * @param city id & units
-	 * @return no returns
+	
+	/**
+	 * The grabLongTerm method grabs the data for the long term data structure
+	 * 
+	 * @param cityId a unique int representing the city, used to get weather information
+	 * @param units the unit of measurement to represent results
 	 */
 	public void grabLongTerm(int cityId, String units)throws MalformedURLException, IOException{
 		
@@ -754,10 +765,10 @@ public class weatherApp {
 	   }
 	}
 	
-	/*
-	 * this method grabs and formats the data for the Mars weather structure
-	 * @param String to define unit type
-	 * @return none, fills AMrs object
+	/**
+	 * The grabMars method grabs and formats the data for the Mars weather structure
+	 * 
+	 * @param units a String definining unit type
 	 */
 	public void grabMars(String units) throws IOException{
 		

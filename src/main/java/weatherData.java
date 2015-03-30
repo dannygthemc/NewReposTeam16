@@ -1,13 +1,24 @@
 package cs2212b.team16;
-/*
- * @author Daniel, James, Omar, Long, Angus, Nick
- * this class is used to define the weather Data info of a city
- * holds all data in one convenient object and allows returns of data
+
+/**
+ * This class is used to define the weather information of a city, and
+ * holds all data in one convenient object to allow for quick data access
+ * 
+ * @author Daniel Gilbert
+ * @author Omar Abdel-Qader
+ * @author James Crocker
+ * @author Long Le
+ * @author Angus Poole
+ * @author Nicholas Teixeira
  */
 import java.awt.image.BufferedImage;
 
 public class weatherData {
 
+	/**
+	 * Attributes representing all the fields of a WeatherData object 
+	 */
+	
 	private BufferedImage weatherIcon; //holds weather icon
 	private String name; //holds city name
 	private String country; //holds country name
@@ -24,16 +35,31 @@ public class weatherData {
 	private float lon; //holds longitude data
 	private float lat; //holds latitude date
 	
-	//instantiates an object of the class
+	/**
+	 * Constructor instantiates an object of the class
+	 */
 	public weatherData(){
 		
 	}
 	
-	
-	/*
-	 * assigns values to all variables in the object
-	 * @param parameters which hold every part of a weather Data object including temperatures, picture of current conidition and more
-	 * @return no returns, fills object
+	/**
+	 * Fill method assigns values to all variables in the WeatherData object, and does not return anything
+	 * 
+	 * @param longit the longitude of the location
+	 * @param latit the latitiude of the location
+	 * @param pic the picture associated with the weather in this location
+	 * @param city the name of the location 
+	 * @param count the country code associated with the city 
+	 * @param temp2 the current temperature
+	 * @param windSpeed2 the current wind speed
+	 * @param windDir2 the current wind direction
+	 * @param pressure2 the current air pressure
+	 * @param humidity2 the current humidity
+	 * @param condit the current sky condition
+	 * @param minTemp2 the minimum temperature at the specified location
+	 * @param maxTemp2 the maximum temperature at the specified location
+	 * @param rise the local sunrise time 
+	 * @param set the local sunset time
 	 */
 	public void fill(float longit, float latit, BufferedImage pic, String city, String count, float temp2, float windSpeed2, float windDir2, float pressure2, float humidity2, String condit, float minTemp2, float maxTemp2, String rise, String set){
 		
@@ -54,208 +80,277 @@ public class weatherData {
 		sunset = set;
 	}
 	
-	/*
-	 * @param float that holds longitude
-	 * @return
+	/* Setter Methods */
+	
+	/**
+	 * Setter method for longitude of the city
+	 * 
+	 * @param longitude a float that represents longitude
 	 */
 	public void setLon(float longitude){
 		lon = longitude;
 	}
 	
-	/*
-	 * @param float that holds latitude
-	 * @return
+	/**
+	 * Setter method for latitude of the city
+	 * 
+	 * @param latitude a float that represents latitude
 	 */
 	public void setLat(float latitude){
 		lat= latitude; 
 	}
-	/*
-	 * @param String that holds the city Name
-	 * @return 
+	
+	/**
+	 * Setter method for the name of the city
+	 * 
+	 * @param nm a String containing the name
 	 */
 	public void setName(String nm){
 		name = nm;
 	}
-	/*
-	 * @param String that holds country name
-	 * @return
+	
+	/**
+	 * Setter method for the country code
+	 * 
+	 * @param count a String containing the country code
 	 */
 	public void setCount(String count){
 		country = count; 
 	}
-	/*
-	 * @param float that holds temperature
-	 * @return
+
+	/**
+	 * Setter method for temperature
+	 * 
+	 * @param tmp a float that represents temperature
 	 */
 	public void setTemp(float tmp){
 		temp = tmp;
 	}
-	/*
-	 * @param float that holds latitude
-	 * @return
+	
+	/**
+	 * Setter method for wind speed
+	 * 
+	 * @param speed a float that represents wind speed
 	 */
 	public void setSpeed(float speed){
 		windSpeed = speed;
 	}
-	/*
-	 * @param float that holds wind direction
-	 * @return
+	
+	/**
+	 * Setter method for wind direction
+	 * 
+	 * @param dir a float that represents wind direction
 	 */
 	public void setDir(float dir){
 		windDir = dir;
 	}
-	/*
-	 * @param float that holds air pressure
-	 * @return
+	
+	/**
+	 * Setter method for atmospheric pressure
+	 * 
+	 * @param press a float that represents pressure
 	 */
 	public void setPress(float press){
 		pressure = press;
 	}
-	/*
-	 * @param float that holds humidity
-	 * @return
+	
+	/**
+	 * Setter method for humidity
+	 * 
+	 * @param humid a float that represents humidity
 	 */
 	public void setHumid(float humid){
 		humidity = humid;
 	}
-	/*
-	 * @param String that holds weather description
-	 * @return
+	
+	/**
+	 * Setter method for sky condition
+	 * 
+	 * @param condit a String containing the current sky condition
 	 */
 	public void setCondit(String condit){
 		condition = condit;
 	}
-	/*
-	 * @param float that holds min temperature
-	 * @return
+	
+	/**
+	 * Setter method for minimum temperature
+	 * 
+	 * @param min a float that represents minimum temperature
 	 */
 	public void setMin(float min){
 		minTemp = min;
 	}
-	/*
-	 * @param float that holds max temperature
-	 * @return
+	
+	/**
+	 * Setter method for maximum temperature
+	 * 
+	 * @param max a float that represents maximum temperature
 	 */
 	public void setMax(float max){
 		maxTemp = max;
 	}
+	
+	/**
+	 * Setter method for sunrise time
+	 * 
+	 * @param rise a String containing the sunrise time
+	 */
 	public void setSunrise(String rise){
 		sunrise = rise;
 	}
+	
+	/**
+	 * Setter method for sunset time
+	 * 
+	 * @param rise a String containing the sunset time
+	 */
 	public void setSunset(String set){
 		sunset = set;
 	}
+	
+	/**
+	 * Setter method for the weather icon
+	 * 
+	 * @param icon a BufferedImage containing the icon representing the weather
+	 */
 	public void setIcon(BufferedImage icon){
 		weatherIcon = icon;
 	}
 	
-	//methods to get the variables
+	/* Getter Methods */
 	
-	/*
-	 * @param none
-	 * @return the longitude
+	/**
+	 * Getter method for longitude
+	 * 
+	 * @return float representing the longitude
 	 */
 	public Float getLon(){
 		return lon;
 	}
-	/*
-	 * @param none
-	 * @return the latitude
+	
+	/**
+	 * Getter method for longitude
+	 * 
+	 * @return float representing the latitude
 	 */
 	public Float getLat(){
 		return lat; 
 	}
-	/*
-	 * @param none
-	 * @return the city name
+	
+	/**
+	 * Getter method for longitude
+	 * 
+	 * @return String containting the name
 	 */
 	public String getName(){
 		return name;
 	}
-	/*
-	 * @param none
-	 * @return the country
+	
+	/**
+	 * Getter method for the country code
+	 * 
+	 * @return String containing the country code 
 	 */
 	public String getCount(){
 		return country; 
 	}
-	/*
-	 * @param none
-	 * @return the temperature
+	
+	/**
+	 * Getter method for temperature
+	 * 
+	 * @return float representing the temperature
 	 */
 	public float getTemp(){
 		return temp;
 	}
-	/*
-	 * @param none
-	 * @return the wind speed
+	
+	/**
+	 * Getter method for wind speed
+	 * 
+	 * @return float representing the wind speed
 	 */
 	public float getSpeed(){
 		return windSpeed;
 	}
-	/*
-	 * @param none
-	 * @return the wind direction
+	
+	/**
+	 * Getter method for wind direction
+	 * 
+	 * @return float representing the wind direction
 	 */
 	public float getDir(){
 		return windDir;
 	}
-	/*
-	 * @param none
-	 * @return the pressure
+	
+	/**
+	 * Getter method for atmospheric pressure
+	 * 
+	 * @return float representing the pressure
 	 */
 	public float getPress(){
 		return pressure;
 	}
-	/*
-	 * @param none
-	 * @return the humidity
+	
+	/**
+	 * Getter method for humidity
+	 * 
+	 * @return float representing the humidity
 	 */
 	public float getHumid(){
 		return humidity;
 	}
-	/*
-	 * @param none
-	 * @return the condition
+	
+	/**
+	 * Getter method for sky condition
+	 * 
+	 * @return String representing the sky condition
 	 */
 	public String getCondit(){
 		return condition;
 	}
-	/*
-	 * @param none
-	 * @return the min temperature
+	
+	/**
+	 * Getter method for minimum temperature
+	 * 
+	 * @return float representing the minimum temperature
 	 */
 	public float getMin(){
 		return minTemp;
 	}
-	/*
-	 * @param none
-	 * @return the max temperature
+	
+	/**
+	 * Getter method for maximum temperature
+	 * 
+	 * @return float representing the maximum temperature
 	 */
 	public float getMax(){
 		return maxTemp;
 	}
-	/*
-	 * @param none
-	 * @return the sunrise time
+	
+	/**
+	 * Getter method for sunrise time
+	 * 
+	 * @return String representing sunrise time
 	 */
 	public String getSunrise(){
 		return sunrise;
 	}
-	/*
-	 * @param none
-	 * @return the sunset time
+	
+	/**
+	 * Getter method for sunset time
+	 * 
+	 * @return String representing sunset time
 	 */
 	public String getSunset(){
 		return sunset;
 	}
-	/*
-	 * @param none
-	 * @return the weather Icon
+	
+	/**
+	 * Getter method for the weather icon
+	 * 
+	 * @return BufferedImage of the icon representing the current weather
 	 */
 	public BufferedImage getIcon(){
 		return weatherIcon;
 	}
-	
-	
 }

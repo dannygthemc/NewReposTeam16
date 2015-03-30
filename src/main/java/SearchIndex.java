@@ -1,4 +1,17 @@
 package cs2212b.team16;
+
+/**
+ * The SearchIndex class creates a database of possible search locations on OpenWeatherMap.
+ * A text file is read line by line to create new city objects, and a successful query of the database
+ * returns a unique city ID used to search for weather conditions in OpenWeather map.
+ * 
+ * @author Daniel Gilbert
+ * @author Omar Abdel-Qader
+ * @author James Crocker
+ * @author Long Le
+ * @author Angus Poole
+ * @author Nicholas Teixeira
+ */
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -10,13 +23,18 @@ import java.io.InputStreamReader;
 
 public class SearchIndex {
 
-	/* Attributes */
+	/**
+	 * Attributes representing all the fields of the SearchIndex class
+	 */
 	
 	private ConcurrentHashMap<String, ArrayList<location>> database;
 	private int count; 
 	
-	/* Constructor */
-	
+	/**
+	 * Constructor reads the city_list text file and inserts the resulting location objects 
+	 * into a HashMap, which makes use of ArrayLists for separate chaining in order to resolve
+	 * collisions. 
+	 */
 	public SearchIndex()
 	{
 		/* Initialize data structure to hold the names and number of entries */
@@ -83,12 +101,13 @@ public class SearchIndex {
 				code = tokenizer.nextToken(); //Get the country code
 				
 				city = new location();
-				city.setCityID(id); //CityProfile(id, name, longitude, latitude, code); //create new city object
+				city.setCityID(id); 
 				city.setLatitude((int)latitude);
 				city.setLongitude((int)longitude);
 				city.setName(name);
 				city.setCountryCode(code);
 				insert(city); //add the new object to the HashMap
+				
 				/* Reset all values before next iteration */ 
 				
 				id = 0;
@@ -112,22 +131,27 @@ public class SearchIndex {
 		
 	}
 	
+	/**
+	 * This method returns the number of elements contained in the table
+	 * 
+	 * @return int representing the number of cities in the list 
+	 */
 	public int numElements()
 	{
 		return this.count;
 	}
 	
-	/* Search method queries the database for a certain city name
+	/**
+	 * The search method queries the database for a certain city name
 	 * and returns an ArrayList containing the results in that HashMap position 
+	 * 
+	 * @param cityName the name of the city to be searched
+	 * @return ArrayList<location> an array list of all cities contained in the specified position
 	 */
 	public ArrayList<location> search(String cityName)
 	{  
 
-		//String searchWord = cityName.toLowerCase();
 		ArrayList<location> results = this.database.get(cityName.toLowerCase());
-		
-		//System.out.println("RESULTS: " + results);
-		//System.out.println(this.database.isEmpty());
 		
 		if(results != null)
 		{
@@ -137,9 +161,12 @@ public class SearchIndex {
 			return null;
 	}
 
-	/* Insert method creates a key from the given CityProfile and inserts the corresponding
+	/** 
+	 * The insert method creates a key from the given CityProfile and inserts the corresponding
 	 * object into the database. If the position in the HashMap is unoccupied, a new list 
-	 * is created, inserted, and the element then added to it.  
+	 * is created, inserted, and the element then added to it.
+	 * 
+	 * @param city the location object to be added to the database 
 	 */
 	private void insert(location city)
 	{

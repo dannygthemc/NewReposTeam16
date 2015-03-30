@@ -2,10 +2,17 @@ package cs2212b.team16;
 
 
 
-/*
- * @author: Daniel, James, Omar, Long, Angus, Nick
- * this class used to define the GUI for the application
- * Calls the main weatherApp class only
+/**
+ * This class used to define the GUI for the application,
+ * and calls the main weatherApp class only
+ * 
+ * @author Daniel Gilbert
+ * @author Omar Abdel-Qader
+ * @author James Crocker
+ * @author Long Le
+ * @author Angus Poole
+ * @author Nicholas Teixeira
+ * 
  */
 import javax.imageio.ImageIO;
 import javax.swing.JFrame; //used to create a Jframe
@@ -168,21 +175,16 @@ import java.util.Date;
 			}
 		};
 		
-		/*
-		 * instantiates an instance of the MainWindow that's been defined
-		 * @param none
-		 * @return none
+		/**
+		 * This method instantiates an instance of the MainWindow that's been defined
 		 */
 		public MainWindow() {
 			this.initUI();
 			
 		}
 		
-		/*
-		 * initializes the User Interface elements defined below
-		 * @param none
-		 * @return none, initializes UI
-		 * 
+		/**
+		 * This method initializes the User Interface elements defined below
 		 */
 private void initUI () {
 			
@@ -251,11 +253,8 @@ private void initUI () {
 			this.getContentPane().setLayout(layout);
 		}
 		
-		/*
-		 * Refreshes the User Interface elements defined below
-		 * @param none
-		 * @return none, refreshes UI
-		 * 
+		/**
+		 * This method refreshes the User Interface elements defined below
 		 */
 		private void refreshPanels(){
 			
@@ -270,10 +269,8 @@ private void initUI () {
 			updateRefreshTime();
 		}
 		
-		/*
-		 * Makes calls to populate tab information
-		 * @param none
-		 * @return none, pulls weather data
+		/**
+		 * This method makes calls to populate tab information
 		 */
 		private void createFormCalls(){
 			JFrame error = new JFrame();
@@ -303,10 +300,8 @@ private void initUI () {
 			}
 		}
 		
-		/*
-		 * used to fill the location box with preset locations
-		 * @param none
-		 * @return none, fills location box
+		/**
+		 * This method is used to fill the location box with preset locations
 		 */
 		private void populateMyLocationsBox(){
 			//locBar.removeActionListener(Jcombo);
@@ -326,10 +321,9 @@ private void initUI () {
 			locBar.addActionListener(Jcombo);
 		}
 		
-		/*
-		 * Refresh the views when saved city is clicked
-		 * @param string of city name clicked
-		 * @return none, updates weatherView
+		/**
+		 * This method refresh the views when saved city is clicked
+		 * @param cityName the name of the selected city
 		 */
 		private void updateWeatherView(String cityName){
 			
@@ -374,10 +368,10 @@ private void initUI () {
 			}
 		}
 				
-		/*
-		 * Refresh the views when new city is searched
-		 * @param String of city searched for
-		 * @return none, adds city to search Box
+		/**
+		 * This method refreshes the views when new city is searched
+		 * 
+		 * @param txt a String of the city searched for
 		 */
 		private void searchBoxUsed(String txt){
 			JFrame frame = new JFrame();
@@ -423,10 +417,11 @@ private void initUI () {
 			}
 		}
 		
-		/*
-		 * Refresh the views when new city is searched on first run
-		 * @param String of city searched for
-		 * @return boolean, adds city to search Box
+		/**
+		 * This method reefreshes the views when new city is searched on first run
+		 * 
+		 * @param txt a String of the city searched for
+		 * @return boolean representing if the search box was used 
 		 */
 		private boolean searchBoxUsedTwo(String txt){
 			JFrame frame = new JFrame();
@@ -478,8 +473,8 @@ private void initUI () {
 			return boolTemp;
 		}
 		
-		/*
-		 * defines a Menu bar with a "File" option, which can be called by "alt + f"
+		/**
+		 * This method defines a Menu bar with a "File" option, which can be called by "alt + f"
 		 * menu bar contains option for exiting current program
 		 */
 		private JMenuBar createMenubar() {
@@ -604,18 +599,15 @@ private void initUI () {
 			return menubar;
 		}
 		
-		/*
-		 * used to refresh update time on new weather grab
-		 * @param none
-		 * @return none
+		/**
+		 * This method is used to refresh update time on new weather grab	
 		 */
 		private void updateRefreshTime(){
 			refreshLabel.setText("Last Updated: " + (new Date()).toString());
 		}
-		/*
-		 * this method is used to fill a panel with the Long term weather Data
-		 * @param none
-		 * @return none, fills panel with data
+		
+		/**
+		 * This method is used to fill a panel with the Long term weather Data
 		 */
 		private void createFormThree() throws IOException{
 			
@@ -866,7 +858,9 @@ private void initUI () {
 			longPanel.add(bot);
 		}
 
-		//Resets the short-term color values to white and black
+		/**
+		 * This method resets the short-term color values to white and black
+		 */
 		public void resetLongColors(){
 			for(int i = 0; i < 5; i++){
 				longColors[i] = Color.white;
@@ -876,7 +870,9 @@ private void initUI () {
 			}
 		}
 
-		//Initializes the long-term subpanels so that they can have gradient backgrounds
+		/**
+		 * This method initializes the long-term subpanels so that they can have gradient backgrounds
+		 */
 		public void makeLongComps(JPanel[] subLong){
 			subLong[0] = new JPanel();
 			subLong[1] = new JPanel(){
@@ -952,10 +948,8 @@ private void initUI () {
 		}
 
 		
-		/*
-		 * used to create Panel for the shorTermForecast Tab
-		 * @param none
-		 * @return none, fills panel with data
+		/**
+		 * This method is used to create Panel for the shorTermForecast Tab
 		 */
 		private void createFormTwo() throws IOException{
 			
@@ -1182,7 +1176,9 @@ private void initUI () {
 			}			
 		}
 		
-		//Resets the short-term color values to white and black
+		/**
+		 * This method Resets the short-term color values to white and black
+		 */
 		public void resetShortColors(){
 			for(int i = 0; i < 10; i++){
 				shortColors[i] = Color.white;
@@ -1192,7 +1188,9 @@ private void initUI () {
 			}
 		}
 		
-		//Initializes the short-term subpanels so that they can have gradient backgrounds
+		/**
+		 * This method initializes the short-term subpanels so that they can have gradient backgrounds
+		 */
 		public void makeShortComps(JPanel[] subShort){
 			subShort[0] = new JPanel(){ //Side Panel #1
 				@Override
@@ -1338,10 +1336,8 @@ private void initUI () {
 			subShort[11] = new JPanel(); //Side Panel #3
 		}
 		
-		/*
-		 * used to add current weather data to a Panel
-		 * @param none
-		 * @return none
+		/**
+		 * This method is used to add current weather data to a Panel
 		 */
 		private void createForm() throws IOException {
 			
@@ -1623,7 +1619,9 @@ private void initUI () {
 		}
 
 		
-		//Sets background colours to a gradient effect based on current weather		
+		/**
+		 * This method sets background colours to a gradient effect based on current weather
+		 */
 		public void setShortBgColors(weatherData tmp, int i, int j) {
 			switch(tmp.getCondit()) {
 				case "sky is clear ":
@@ -1717,7 +1715,9 @@ private void initUI () {
 			}
 		}
 		
-		//Sets background colours to a gradient effect based on current weather		
+		/**
+		 * This method sets background colours to a gradient effect based on current weather
+		 */
 				public void setBgColours(weatherData tmp) {
 					switch(tmp.getCondit()) {
 						case "sky is clear ":
@@ -1811,10 +1811,8 @@ private void initUI () {
 					}
 				}
 		
-		/*
-		 * used to add Mars weather data to a Panel
-		 * @param none
-		 * @return none
+		/**
+		 * This method is used to add Mars weather data to a Panel
 		 */
 		private void createFormMars() throws IOException {
 			

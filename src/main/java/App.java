@@ -4,7 +4,8 @@ package cs2212b.team16;
 import javax.swing.SwingUtilities;
 
 /**
- * App.java creates the window for the app and runs it
+ * App.java is the driver for the Weather Application. It creates the window for the app and runs it
+ * 
  * @author Daniel Gilbert
  * @author Omar Abdel-Qader
  * @author James Crocker
