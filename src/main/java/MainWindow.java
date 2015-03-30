@@ -11,7 +11,6 @@ package cs2212b.team16;
  * @author James Crocker
  * @author Long Le
  * @author Angus Poole
- * @author Nicholas Teixeira
  * 
  */
 import javax.imageio.ImageIO;

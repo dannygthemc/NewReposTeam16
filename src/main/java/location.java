@@ -10,7 +10,6 @@ import java.io.Serializable;
  * @author James Crocker
  * @author Long Le
  * @author Angus Poole
- * @author Nicholas Teixeira
  *
  */
 public class location implements Serializable {

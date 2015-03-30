@@ -10,7 +10,6 @@ package cs2212b.team16;
  * @author James Crocker
  * @author Long Le
  * @author Angus Poole
- * @author Nicholas Teixeira
  */
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;

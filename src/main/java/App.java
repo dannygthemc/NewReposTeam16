@@ -11,7 +11,6 @@ import javax.swing.SwingUtilities;
  * @author James Crocker
  * @author Long Le
  * @author Angus Poole
- * @author Nicholas Teixeira
  *
  */
 
