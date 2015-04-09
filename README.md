@@ -1,4 +1,4 @@
-﻿#Team 16 - The Weather v1.0
+﻿<center> <h1>Team 16 - The Weather v1.0</h1> </center>
 
 ##ABOUT
 
@@ -23,7 +23,7 @@ For more in-depth documentation, see the [Javadoc](https://github.com/UWO-2212-W
 
 ##SEE IT IN ACTION!
 
-<a href="https://www.youtube.com/watch?v=OAVIzbSmu78">Click here</a> to see a real-time demonstration of how our weather app works. 
+Click the image below to see a real-time demonstration of how our weather app works. 
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=OAVIzbSmu78
 " target="_blank"><img src="http://img.youtube.com/vi/OAVIzbSmu78/0.jpg" 
