@@ -11,7 +11,7 @@ Weather information is gathered using OpenWeatherMap’s [free API](http://openw
 *__Want to install and use the program?__* Just download our prepackaged, ready-to-use .jar file by clicking [here](https://github.com/UWO-2212-W2015/team16/blob/master/target/16-TheWeather.jar?raw=true), and simply double-click to use. Installation time is minimal, and the app is very quick to use. If you are experiencing any performance issues, please allow some extra time for the app to load your results as OpenWeatherMap’s API can be slower when handling a higher request load. 
 
 *__Want to contribute?__* Download all the source files [here](https://github.com/UWO-2212-W2015/team16/tree/master/src/main/java). You will also need to [download imgscalr](http://www.thebuzzmedia.com/software/imgscalr-java-image-scaling-library/) – an image scaling library used in displaying the weather icons. 
-To build the package using the Maven build tool type the following commands into Git Bash: 
+To build the package using the Maven build tool, type the following commands into Git Bash: 
 
 ```
 mvn compile
@@ -25,5 +25,7 @@ For more in-depth documentation, see the [Javadoc](https://github.com/UWO-2212-W
 
 <a href="https://www.youtube.com/watch?v=OAVIzbSmu78">Click here</a> to see a real-time demonstration of how our weather app works. 
 
-
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=OAVIzbSmu78
+" target="_blank"><img src="http://img.youtube.com/vi/OAVIzbSmu78/0.jpg" 
+alt="CLICK HERE" width="240" height="180" border="10" /></a>
 
