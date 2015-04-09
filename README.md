@@ -1,4 +1,4 @@
-﻿<center> <h1>Team 16 - The Weather v1.0</h1> </center>
+﻿<h1 align="center">Team 16 - The Weather v1.0</h1>
 
 ##ABOUT
 
