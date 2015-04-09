@@ -8,15 +8,14 @@ Weather information is gathered using OpenWeatherMap’s [free API](http://openw
 
 ##RUNNING THE PROGRAM
 
-*__Want to install and use the program?* Just download our prepackaged, ready-to-use .jar file by clicking [here](https://github.com/UWO-2212-W2015/team16/blob/master/target/16-TheWeather.jar?raw=true), and simply double-click to use. Installation time is minimal, and the app is very quick to use. If you are experiencing any performance issues, please allow some extra time for the app to load your results as OpenWeatherMap’s API can be slower when handling a higher request load. 
+*__Want to install and use the program?__* Just download our prepackaged, ready-to-use .jar file by clicking [here](https://github.com/UWO-2212-W2015/team16/blob/master/target/16-TheWeather.jar?raw=true), and simply double-click to use. Installation time is minimal, and the app is very quick to use. If you are experiencing any performance issues, please allow some extra time for the app to load your results as OpenWeatherMap’s API can be slower when handling a higher request load. 
 
 *__Want to contribute?__* Download all the source files [here](https://github.com/UWO-2212-W2015/team16/tree/master/src/main/java). You will also need to [download imgscalr](http://www.thebuzzmedia.com/software/imgscalr-java-image-scaling-library/) – an image scaling library used in displaying the weather icons. 
 To build the package using the Maven build tool type the following commands into Git Bash: 
 
 ```
 mvn compile
-```
-```
+
 mvn package
 ```
 
